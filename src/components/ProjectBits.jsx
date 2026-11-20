@@ -11,6 +11,14 @@ export const PlatformBadge = ({ project, className = "" }) => (
   </span>
 );
 
+/** Calm category marker: "Original" vs "32-Bit Preservation" (`kind` = section id). */
+export const KindBadge = ({ kind, badge, className = "" }) => (
+  <span className={`kind-badge ${className}`} data-kind={kind}>
+    <Icon name={badge.icon} className="size-3.5" />
+    {badge.label}
+  </span>
+);
+
 /** Origin platform → modern target, e.g. "32-bit iPad → Native Windows". */
 export const OriginTarget = ({ project }) => (
   <p className="origin-target">

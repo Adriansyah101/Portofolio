@@ -48,6 +48,13 @@
   --glow-b: rgb(148 163 184 / 0.22);
   --selection-bg: rgb(148 163 184 / 0.3);
   --selection-fg: #ffffff;
+  /* Category badges: neutral slate for original work, cool steel for preservation. */
+  --kind-original-fg: #b6bdc8;
+  --kind-original-bg: rgb(148 163 184 / 0.07);
+  --kind-original-border: rgb(148 163 184 / 0.22);
+  --kind-preservation-fg: #a3b6cb;
+  --kind-preservation-bg: rgb(124 152 182 / 0.12);
+  --kind-preservation-border: rgb(124 152 182 / 0.32);
 }
 
 :root[data-theme="light"] {
@@ -58,6 +65,12 @@
   --color-black-100: #ffffff; /* card surface */
   --color-black-200: #f1f5f9; /* raised surface */
   --color-blue-50: #526175; /* muted labels (AA on white and on tinted pills) */
+  --kind-original-fg: #475569;
+  --kind-original-bg: rgb(100 116 139 / 0.08);
+  --kind-original-border: rgb(100 116 139 / 0.24);
+  --kind-preservation-fg: #3b5674;
+  --kind-preservation-bg: rgb(59 86 116 / 0.08);
+  --kind-preservation-border: rgb(59 86 116 / 0.26);
   --color-blue-100: #f1f5f9; /* inputs */
 
   --color-accent-cyan: #334155; /* calm steel accent */
@@ -152,6 +165,17 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes sectionIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -941,15 +965,24 @@
 
   /* Cards in centred rows: 1 / 2 / 3 per row, so a lone last card sits in the middle. */
   .archive-grid {
-    @apply mt-8 flex flex-wrap justify-center gap-8;
+    @apply mt-8 grid grid-cols-1 gap-8;
   }
 
-  .archive-grid > * {
-    @apply w-full md:w-[calc((100%-2rem)/2)] xl:w-[calc((100%-4rem)/3)];
+  .archive-grid.is-original {
+    @apply md:grid-cols-2 lg:grid-cols-3;
   }
 
-  .archive-grid.is-pair > * {
-    @apply xl:w-[calc((100%-2rem)/2)];
+  /* Two-column tablet layout: centre the odd card out instead of leaving it flush left. */
+  @media (width >= 48rem) and (width < 64rem) {
+    .archive-grid.is-original > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc((100% - 2rem) / 2);
+    }
+  }
+
+  .archive-grid.is-preservation {
+    @apply lg:grid-cols-2;
   }
 
   .category-tabs {
@@ -966,6 +999,25 @@
 
   .catalog-section {
     @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12;
+    animation: sectionIn 0.45s ease both;
+  }
+
+  .catalog-section + .catalog-section {
+    animation-delay: 0.06s;
+  }
+
+  /* Category marker: two quiet slate/steel tones, never a loud accent. */
+  .kind-badge {
+    @apply inline-flex w-fit flex-none items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium tracking-wider whitespace-nowrap uppercase;
+    color: var(--kind-original-fg);
+    background-color: var(--kind-original-bg);
+    border-color: var(--kind-original-border);
+  }
+
+  .kind-badge[data-kind="preservation"] {
+    color: var(--kind-preservation-fg);
+    background-color: var(--kind-preservation-bg);
+    border-color: var(--kind-preservation-border);
   }
 
   .catalog-heading {
@@ -1146,6 +1198,7 @@
   .slide-wrapper,
   .marquee-track,
   .page-enter,
+  .catalog-section,
   .cta-button .arrow-wrapper svg {
     animation: none !important;
   }

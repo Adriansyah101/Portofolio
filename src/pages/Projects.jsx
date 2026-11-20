@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PageHeader from "../components/PageHeader.jsx";
 import ProjectPreview from "../components/ProjectPreview.jsx";
 import { ArrowRightIcon, Icon } from "../components/Icons.jsx";
-import { OriginTarget, PlatformBadge, ProjectActions, ProjectTags } from "../components/ProjectBits.jsx";
+import { KindBadge, OriginTarget, PlatformBadge, ProjectActions, ProjectTags } from "../components/ProjectBits.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import {
   originalProjects,
@@ -16,7 +16,7 @@ import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 import { usePageTitle } from "../utils/hooks.js";
 
-const ArchiveCard = ({ project, text }) => (
+const ArchiveCard = ({ project, badge, text }) => (
   <article className="archive-card">
     <ProjectPreview
       art={project.art}
@@ -28,8 +28,13 @@ const ArchiveCard = ({ project, text }) => (
     />
     <div className="flex flex-1 flex-col gap-4 p-6">
       <div className="flex flex-wrap items-center gap-2">
-        <PlatformBadge project={project} className="w-fit" />
-        {project.categoryLabel && <span className="category-chip">{project.categoryLabel}</span>}
+        <KindBadge kind={project.category} badge={badge} />
+        {/* Originals name their discipline; preservation ports name the legacy platform they rescue. */}
+        {project.category === "original" ? (
+          project.categoryLabel && <span className="category-chip">{project.categoryLabel}</span>
+        ) : (
+          <PlatformBadge project={project} className="w-fit" />
+        )}
       </div>
       <div>
         <h3 className="text-xl font-semibold wrap-break-word md:text-2xl">{softBreak(project.shortTitle)}</h3>
@@ -51,7 +56,7 @@ const ComparisonTable = ({ project, text, readCaseStudy }) => (
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black-50 px-5 py-5 md:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <PlatformBadge project={project} />
-        <h3 className="min-w-0 text-lg font-semibold wrap-break-word md:text-xl">{project.shortTitle}</h3>
+        <h4 className="min-w-0 text-lg font-semibold wrap-break-word md:text-xl">{project.shortTitle}</h4>
       </div>
       {project.caseStudy && (
         <Link to={project.caseStudy} className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-cyan hover:text-white">
@@ -94,14 +99,15 @@ const ComparisonTable = ({ project, text, readCaseStudy }) => (
   </article>
 );
 
-/** One category of the catalog: numbered heading, intro and its cards. */
-const CatalogSection = ({ id, section, items, text }) => (
+/** One category of the catalog: numbered heading, badge, intro, its cards and any extra content. */
+const CatalogSection = ({ id, section, items, text, children = null }) => (
   <section className="catalog-section" aria-labelledby={`${id}-title`}>
     <div className="catalog-heading">
       <span className="catalog-index" aria-hidden="true">
         {section.index}
       </span>
       <div className="min-w-0">
+        <KindBadge kind={id} badge={section.badge} className="mb-3" />
         <h2 id={`${id}-title`} className="text-2xl font-semibold md:text-3xl">
           {section.title}
           <span className="catalog-count">{items.length}</span>
@@ -109,18 +115,20 @@ const CatalogSection = ({ id, section, items, text }) => (
         <p className="mt-2 max-w-3xl text-body">{section.description}</p>
       </div>
     </div>
-    <div className={`archive-grid ${items.length === 2 ? "is-pair" : ""}`}>
+    <div className={`archive-grid is-${id}`}>
       {items.map((project) => (
-        <ArchiveCard key={project.id} project={project} text={text} />
+        <ArchiveCard key={project.id} project={project} badge={section.badge} text={text} />
       ))}
     </div>
+    {children}
   </section>
 );
 
 /**
  * `/projects`: Original Projects and 32-Bit Game Preservation Projects as two
  * clearly separated sections, filterable with `All / Original / 32-Bit` tabs
- * (`?category=original|preservation`), plus the preservation comparison tables.
+ * (`?category=original|preservation`). The architecture comparison tables live
+ * inside the preservation section.
  */
 const Projects = () => {
   const { projects: text, common } = useLocalized(ui);
@@ -170,31 +178,36 @@ const Projects = () => {
             </p>
           </div>
 
-          {showOriginal && <CatalogSection id="original" section={sections.original} items={originals} text={text} />}
-          {showPreservation && (
-            <CatalogSection id="preservation" section={sections.preservation} items={preserved} text={text} />
-          )}
+          {/* Keyed on the tab so switching filters replays the fade-in instead of snapping. */}
+          <div key={active}>
+            {showOriginal && <CatalogSection id="original" section={sections.original} items={originals} text={text} />}
+            {showPreservation && (
+              <CatalogSection id="preservation" section={sections.preservation} items={preserved} text={text}>
+                {/* Architecture comparison belongs to the preservation section, not after the whole catalog. */}
+                <div className="mt-14 md:mt-20" role="group" aria-labelledby="compare-title">
+                  <p className="font-mono text-xs tracking-widest text-accent-cyan uppercase">{text.compareEyebrow}</p>
+                  <h3 id="compare-title" className="mt-3 text-2xl font-semibold md:text-3xl">
+                    {text.compareTitle}
+                  </h3>
+                  <p className="mt-4 max-w-3xl text-lg text-white-50/70">{text.compareDescription}</p>
+                  <div className="mt-10 grid grid-cols-1 gap-8 2xl:grid-cols-2">
+                    {preserved
+                      .filter((project) => project.comparison)
+                      .map((project) => (
+                        <ComparisonTable
+                          key={project.id}
+                          project={project}
+                          text={text}
+                          readCaseStudy={common.readCaseStudy}
+                        />
+                      ))}
+                  </div>
+                </div>
+              </CatalogSection>
+            )}
+          </div>
         </div>
       </div>
-
-      {showPreservation && (
-        <section className="padding-x-lg mt-20 md:mt-28" aria-labelledby="compare-title">
-          <div className="mx-auto w-full max-w-[1600px]">
-            <p className="font-mono text-xs tracking-widest text-accent-cyan uppercase">{text.compareEyebrow}</p>
-            <h2 id="compare-title" className="mt-3 text-3xl font-semibold md:text-4xl">
-              {text.compareTitle}
-            </h2>
-            <p className="mt-4 max-w-3xl text-lg text-white-50/70">{text.compareDescription}</p>
-            <div className="mt-10 grid grid-cols-1 gap-8 2xl:grid-cols-2">
-              {preserved
-                .filter((project) => project.comparison)
-                .map((project) => (
-                  <ComparisonTable key={project.id} project={project} text={text} readCaseStudy={common.readCaseStudy} />
-                ))}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 };

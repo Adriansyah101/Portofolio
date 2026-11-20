@@ -451,22 +451,28 @@ export const projectCategories = [
   { id: "preservation", label: tx("32-Bit Preservation", "Preservasi 32-Bit") },
 ];
 
-/** Heading and intro shown above each catalog section. */
+/**
+ * Heading, intro and category badge for each catalog section. The same `badge`
+ * is repeated on every card in the section, so original work and binary
+ * preservation work stay distinguishable at a glance.
+ */
 export const projectSections = {
   original: {
     index: "01",
     title: tx("Original Projects", "Proyek Original"),
+    badge: { label: tx("Original", "Original"), icon: "code" },
     description: tx(
-      "Systems, simulations and games designed and built from scratch.",
-      "Sistem, simulasi, dan game yang dirancang dan dibangun dari nol.",
+      "Applications, 3D/VR simulations, and games engineered from scratch.",
+      "Aplikasi web, simulasi 3D/VR, dan game yang dirancang serta dibangun dari nol.",
     ),
   },
   preservation: {
     index: "02",
-    title: tx("32-Bit Game Preservation Projects", "Proyek Preservasi Game 32-Bit"),
+    title: tx("32-Bit Game Preservation", "Preservasi Game 32-Bit"),
+    badge: { label: tx("32-Bit Preservation", "Preservasi 32-Bit"), icon: "archive" },
     description: tx(
-      "Legacy 32-bit games rescued from platforms that can no longer run them, through static recompilation and native porting.",
-      "Game 32-bit lama yang diselamatkan dari platform yang tak lagi bisa menjalankannya, melalui rekompilasi statis dan porting native.",
+      "Static binary recompilation and graphics pipeline modernization rescuing unplayable 32-bit iPad and Mac classics for modern Windows and Linux systems.",
+      "Rekompilasi biner statis dan modernisasi pipeline grafis untuk menyelamatkan game klasik iPad dan Mac 32-bit agar dapat berjalan secara native di Windows dan Linux modern.",
     ),
   },
 };
