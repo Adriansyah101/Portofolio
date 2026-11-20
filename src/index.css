@@ -138,15 +138,6 @@
   }
 }
 
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes arrowBounce {
   0%,
   100% {
@@ -179,16 +170,6 @@
   }
 }
 
-@keyframes pulseGlow {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 /* -------------------------------------------------------------------------- */
 /*                                    Base                                    */
 /* -------------------------------------------------------------------------- */
@@ -207,8 +188,7 @@
       color 0.5s ease;
   }
 
-  section[id],
-  div[id="counter"] {
+  section[id] {
     scroll-margin-top: 90px;
   }
 
@@ -227,24 +207,59 @@
 /* -------------------------------------------------------------------------- */
 
 @layer components {
-  .padding-x {
-    @apply px-5 sm:px-10;
+  /*
+   * Viewport-locked desktop (>= 1024px): the shell is exactly one viewport
+   * tall and never scrolls; each page fills the space between the navbar and
+   * the one-line footer, and any panel that can outgrow it scrolls on its own.
+   * Below 1024px everything flows and the document scrolls normally.
+   */
+  .app-shell {
+    @apply flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden;
   }
 
-  .padding-x-lg {
-    @apply px-5 md:px-20;
+  .app-main {
+    @apply flex flex-1 flex-col lg:min-h-0;
   }
 
-  .section-padding {
-    @apply mt-24 px-5 md:mt-44 md:px-10;
+  /* Root of every inner page. */
+  .page-shell {
+    @apply relative flex w-full flex-col px-5 pt-28 md:px-20 md:pt-40 lg:min-h-0 lg:flex-1 lg:px-10 lg:pt-6 lg:pb-5 xl:px-16 xl:pt-8 xl:pb-6;
   }
 
-  .grid-4-cols {
-    @apply grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-4;
+  .page-frame {
+    @apply relative z-10 mx-auto flex w-full max-w-[1600px] flex-col lg:min-h-0 lg:flex-1;
   }
 
-  .grid-3-cols {
-    @apply grid grid-cols-1 gap-6 lg:grid-cols-3;
+  /* The row of panels under a page header: stacked below 1024px, side by side above. */
+  .page-split {
+    @apply mt-10 grid grid-cols-1 gap-6 md:mt-12 lg:mt-5 lg:min-h-0 lg:flex-1 lg:grid-rows-[minmax(0,1fr)] xl:mt-6 xl:gap-8;
+  }
+
+  .panel {
+    @apply flex min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 lg:min-h-0;
+  }
+
+  /* Scrolls internally on desktop when its content is taller than the viewport allows. */
+  .scroll-pane {
+    @apply min-w-0 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-white) 14%, transparent) transparent;
+  }
+
+  .tab-list {
+    @apply flex flex-wrap gap-1.5;
+  }
+
+  .tab {
+    @apply inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm font-medium whitespace-nowrap text-white-50/80 transition-colors hover:border-white/25 hover:text-white;
+  }
+
+  .tab[aria-selected="true"] {
+    @apply border-transparent bg-white-50 text-canvas hover:text-canvas;
+  }
+
+  .tab-panel {
+    animation: sectionIn 0.35s ease both;
   }
 
   .card-border {
@@ -260,10 +275,6 @@
     @apply rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 font-mono text-xs text-blue-50;
   }
 
-  .hero-badge {
-    @apply w-fit rounded-full bg-black-200 px-4 py-2 text-sm text-nowrap text-white-50 md:text-base;
-  }
-
   /* ------------------------------------------------------------------------ */
   /*                                  Navbar                                  */
   /* ------------------------------------------------------------------------ */
@@ -274,15 +285,16 @@
    * toggling `scrolled` cannot move any content (CLS stays at 0).
    */
   .navbar {
-    @apply fixed top-0 left-1/2 z-[100] w-full -translate-x-1/2 px-5 py-4 transition-all duration-300 ease-in-out md:px-20;
+    @apply fixed top-0 left-1/2 z-[100] w-full -translate-x-1/2 px-5 py-4 transition-all duration-300 ease-in-out md:px-20 lg:relative lg:left-0 lg:flex-none lg:translate-x-0 lg:border-b lg:border-white/6 lg:px-10 lg:py-2.5 xl:px-16;
   }
 
   .navbar.scrolled {
-    @apply border-b border-white/6 bg-canvas/85 backdrop-blur-md;
+    @apply border-b border-white/6 bg-canvas/85 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none;
   }
 
+  /* From 1024px up the bar sits in the shell's flow, so there is no resting offset. */
   .navbar.not-scrolled {
-    @apply translate-y-1 bg-transparent md:translate-y-11;
+    @apply translate-y-1 bg-transparent md:translate-y-11 lg:translate-y-0;
   }
 
   .navbar.menu-open {
@@ -413,18 +425,56 @@
     background: radial-gradient(55% 50% at 72% 45%, rgb(148 163 184 / 0.07), transparent 70%);
   }
 
-  .hero-layout {
-    @apply relative z-10 flex flex-col pt-32 md:pt-40 xl:min-h-screen xl:flex-row xl:items-center xl:pt-32 xl:pb-12;
+  /* Stacked below 1024px; a two-column split filling the shell above it. */
+  .hero {
+    @apply relative flex flex-col overflow-hidden lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,11fr)_minmax(0,10fr)];
   }
 
   .hero-header {
-    @apply relative z-10 flex w-full flex-col justify-center gap-7 px-5 md:px-20 xl:w-[52%] xl:pr-0;
-    pointer-events: none;
+    @apply relative z-10 flex w-full flex-col px-5 pt-32 md:px-20 md:pt-40 lg:py-6 lg:pr-6 lg:pl-10 xl:pl-16 2xl:pr-10;
   }
 
-  .hero-header a,
-  .hero-header button {
-    pointer-events: auto;
+  /* Vertically centred when it fits; when it does not, the pane scrolls from the top. */
+  .hero-copy {
+    @apply flex flex-col gap-6 md:gap-7 lg:my-auto lg:gap-[clamp(0.875rem,2.3vh,1.5rem)];
+  }
+
+  .hero-actions {
+    @apply flex flex-wrap items-center gap-3;
+  }
+
+  .hero-cta {
+    @apply h-12 w-64 md:h-14 md:w-72 lg:h-[clamp(2.75rem,5.6vh,3.25rem)] lg:w-64 xl:w-72;
+  }
+
+  .hero-cta .cta-button .cta-text {
+    @apply md:text-base lg:text-sm xl:text-base;
+  }
+
+  .hero-secondary {
+    @apply inline-flex h-12 items-center gap-2 rounded-lg border border-white/12 px-5 text-sm font-semibold tracking-wider text-white-50 uppercase transition-colors duration-300 hover:border-white/30 hover:text-white md:h-14 md:text-base lg:h-[clamp(2.75rem,5.6vh,3.25rem)] lg:text-sm xl:text-base;
+  }
+
+  /* Four compact metric cells; a 2 × 2 grid on phones. */
+  .metric-strip {
+    @apply grid grid-cols-2 gap-3 md:grid-cols-4 lg:gap-2.5 xl:gap-3;
+  }
+
+  .metric {
+    @apply flex min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-4 lg:px-3 lg:py-[clamp(0.5rem,1.4vh,0.875rem)] xl:px-4;
+  }
+
+  .metric-value {
+    @apply text-xl leading-tight font-semibold tracking-tight text-balance text-zinc-100 lg:text-[clamp(1rem,2.2vh,1.25rem)];
+  }
+
+  .metric-label {
+    @apply mt-1.5 text-xs leading-snug text-blue-50;
+  }
+
+  /* Dropped in the narrow 1024–1279px column, where the cells are only ~110px wide. */
+  .metric-note {
+    @apply mt-1 font-mono text-[10px] leading-snug text-body lg:max-xl:hidden;
   }
 
   .hero-eyebrow {
@@ -436,26 +486,30 @@
   }
 
   .hero-text h1 {
-    @apply max-w-[20ch] text-[30px] leading-[1.15] font-semibold tracking-tight text-balance text-zinc-100 md:text-[52px] xl:text-[48px] 2xl:text-[58px];
+    @apply max-w-[20ch] text-[30px] leading-[1.15] font-semibold tracking-tight text-balance text-zinc-100 md:text-[52px] lg:max-w-[22ch] lg:text-[clamp(1.875rem,min(4.6vh,3.3vw),3.25rem)];
   }
 
   /* "Focused on [rotating word]" line under the headline. */
   .hero-focus {
-    @apply text-xl leading-[1.25] font-medium whitespace-nowrap text-body md:text-3xl xl:text-[28px] 2xl:text-[32px];
+    @apply text-xl leading-[1.25] font-medium whitespace-nowrap text-body md:text-3xl lg:text-[clamp(1.125rem,2.6vh,1.75rem)];
   }
 
   .hero-bio {
-    @apply max-w-2xl text-base leading-relaxed text-body md:text-xl xl:max-w-[34rem] 2xl:max-w-[38rem];
+    @apply max-w-2xl text-base leading-relaxed text-body md:text-xl lg:max-w-[40rem] lg:text-[clamp(0.875rem,1.9vh,1.0625rem)] lg:leading-relaxed;
   }
 
+  /*
+   * Phones: a 340px canvas (420px from 640px) with the camera pills under it.
+   * Tablets overlay the pills on a 420px scene; from 1024px up the scene fills its column.
+   */
   .hero-3d-layout {
-    @apply relative h-[calc(52vh+5.5rem)] min-h-[440px] w-full md:h-[52vh] md:min-h-[360px] xl:absolute xl:top-0 xl:right-0 xl:h-full xl:w-[58%];
+    @apply relative mt-10 w-full md:mt-12 md:h-[420px] lg:mt-0 lg:h-auto lg:min-h-0;
   }
 
   /* Side by side, the scene's left edge fades into the page so the copy beside it stays readable. */
-  @media (min-width: 80rem) {
+  @media (min-width: 64rem) {
     .hero-3d-layout {
-      mask-image: linear-gradient(90deg, transparent, #000 16%);
+      mask-image: linear-gradient(90deg, transparent, #000 12%);
     }
   }
 
@@ -545,75 +599,8 @@
   }
 
   /* ------------------------------------------------------------------------ */
-  /*                                  Counter                                 */
+  /*                               Pill links                                 */
   /* ------------------------------------------------------------------------ */
-
-  .counter-card {
-    @apply flex flex-col justify-center rounded-xl border border-black-50 bg-black-100 p-8 md:p-10;
-  }
-
-  .counter-number {
-    @apply mb-2 text-5xl font-semibold tracking-tight text-zinc-100;
-  }
-
-  /* Word metrics ("Dozens", "2024 – 2026", "Windows & Linux"): smaller than numbers, wrap evenly in narrow cards. */
-  .counter-number.is-text {
-    @apply text-4xl leading-tight text-balance xl:text-[1.625rem] 2xl:text-[2rem];
-  }
-
-  /* ------------------------------------------------------------------------ */
-  /*                              Project showcase                            */
-  /* ------------------------------------------------------------------------ */
-
-  /* Home "Featured Work" cards. */
-  .work-card {
-    @apply relative flex h-full flex-col gap-6 overflow-hidden rounded-2xl border border-black-50 bg-black-100 p-6 md:p-8;
-  }
-
-  .work-card.is-pro,
-  .work-card.is-sys {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.015), transparent 40%), var(--color-black-100);
-  }
-
-  /* Cloud -> harbor servers -> gates, joined by a connector line on wide screens. */
-  .topology {
-    @apply relative grid gap-3 md:grid-cols-3 md:gap-4;
-  }
-
-  .topology-node {
-    @apply relative flex gap-3 rounded-xl border border-white/6 bg-white/[0.015] p-4 md:flex-col;
-  }
-
-  .topology-node + .topology-node::before {
-    content: "";
-    @apply absolute -top-3 left-8 h-3 w-px bg-white/12 md:top-9 md:-left-4 md:h-px md:w-4;
-  }
-
-  .topology-icon {
-    @apply flex-center size-10 flex-none rounded-lg border border-white/8 bg-white/[0.03] text-accent-cyan;
-  }
-
-  /* Key numbers on the enterprise card. <dt> precedes <dd> in the DOM;
-     flex-col-reverse shows the value above its label. */
-  .work-stats {
-    @apply grid grid-cols-1 gap-3 sm:grid-cols-3;
-  }
-
-  .work-stat {
-    @apply flex min-w-0 flex-col-reverse gap-1 rounded-xl border border-white/6 bg-white/[0.015] px-4 py-3;
-  }
-
-  .pipeline {
-    @apply grid gap-2;
-  }
-
-  .pipeline-step {
-    @apply relative flex items-center gap-3 rounded-xl border border-white/6 bg-white/[0.015] px-4 py-3;
-  }
-
-  .pipeline-index {
-    @apply w-6 flex-none font-mono text-xs text-blue-50;
-  }
 
   .project-link {
     @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300;
@@ -628,34 +615,7 @@
   }
 
   /* ------------------------------------------------------------------------ */
-  /*                                  Marquee                                 */
-  /* ------------------------------------------------------------------------ */
-
-  .marquee {
-    @apply relative w-full overflow-hidden;
-    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  }
-
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee 40s linear infinite;
-  }
-
-  .marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-
-  .marquee-item {
-    @apply mr-6 flex flex-none items-center gap-3 rounded-full border border-white/6 bg-black-100 px-6 py-4 text-lg font-medium whitespace-nowrap text-body md:mr-10 md:text-2xl;
-  }
-
-  .marquee-glyph {
-    @apply flex-center size-8 rounded-lg border border-white/8 bg-white/[0.04] font-mono text-xs font-semibold text-white-50/80 md:size-10 md:text-sm;
-  }
-
-  /* ------------------------------------------------------------------------ */
-  /*                       Glow card (timeline + highlights)                    */
+  /*                       Glow card (operational impact)                       */
   /* ------------------------------------------------------------------------ */
 
   .timeline-card {
@@ -707,22 +667,16 @@
   /*                                 Experience                               */
   /* ------------------------------------------------------------------------ */
 
-  .exp-card-wrapper {
-    @apply flex flex-col-reverse justify-between gap-10 xl:flex-row xl:gap-20;
+  .exp-entry + .exp-entry {
+    @apply mt-8 border-t border-black-50 pt-8;
   }
 
-  .timeline-logo {
-    @apply flex size-12 flex-none items-center justify-center rounded-full border border-white/8 bg-black-100 text-accent-cyan md:size-16;
-    box-shadow: 0 0 0 6px var(--color-canvas);
-  }
-
-  /* Company logo fills the round marker edge to edge. */
-  .timeline-logo.has-emblem {
-    @apply overflow-hidden border-0 bg-transparent p-0;
+  .exp-period {
+    @apply flex-none self-start rounded-full border border-white/10 px-3 py-1 font-mono text-xs whitespace-nowrap text-white-50/80;
   }
 
   .exp-card-head {
-    @apply mb-5 flex items-center gap-4 border-b border-black-50 pb-5;
+    @apply mb-5 flex items-center gap-4 border-b border-black-50 pb-5 lg:mb-4 lg:pb-4;
   }
 
   .exp-card-icon {
@@ -742,21 +696,17 @@
     @apply text-accent-cyan;
   }
 
-  .timeline-track {
-    @apply mt-3 w-[3px] flex-1 overflow-hidden rounded-full bg-white/5;
-  }
-
-  .timeline-progress {
-    @apply h-full w-full origin-top rounded-full bg-linear-to-b from-white-50/50 to-accent-cyan/30;
-  }
-
-  /* Operational impact cards: 1 / 2 / 3 columns; a lone last card spans the row on tablets. */
+  /* Operational impact cards, sized by the tab panel: 1 / 2 / 3 columns; a lone last card spans two. */
   .impact-grid {
-    @apply mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3;
+    @apply grid grid-cols-1 gap-4 @xl:grid-cols-2 @2xl:grid-cols-3 xl:gap-3;
   }
 
   .impact-grid > :last-child:nth-child(odd) {
-    @apply md:col-span-2 xl:col-span-1;
+    @apply @xl:col-span-2 @2xl:col-span-1;
+  }
+
+  .stack-item {
+    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-200/60 p-3;
   }
 
   /* Official brand logos on a light pill so their colours stay legible. */
@@ -784,7 +734,7 @@
 
   /* Production system link (logo + name) under an experience entry. */
   .system-link {
-    @apply flex items-center gap-4 rounded-xl border border-black-50 bg-black-100 py-3 pr-5 pl-3 transition-colors duration-300 hover:border-white/15;
+    @apply flex items-center gap-4 rounded-xl border border-black-50 bg-black-100 py-3 pr-5 pl-3 transition-colors duration-300 hover:border-white/15 lg:gap-3 lg:py-2;
   }
 
   /* ------------------------------------------------------------------------ */
@@ -792,12 +742,13 @@
   /* ------------------------------------------------------------------------ */
 
   /* Flex + wrap keeps rows centred: 2 + 2 + 2 on tablets, 3 + 3 on desktop. */
+  /* Sized by the tab panel: 1 / 2 / 3 emblems per row. */
   .tech-grid {
-    @apply mt-16 flex flex-wrap justify-center gap-6;
+    @apply mt-3 grid grid-cols-1 gap-3 @sm:grid-cols-2 @2xl:grid-cols-3 xl:gap-4;
   }
 
   .tech-card {
-    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/12 md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)];
+    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/12;
   }
 
   .tech-card-animated-bg {
@@ -805,11 +756,11 @@
   }
 
   .tech-card-content {
-    @apply relative z-10 flex flex-col items-center px-6 pt-4 pb-8 text-center;
+    @apply relative z-10 flex flex-col items-center px-4 pt-2 pb-5 text-center lg:pb-4;
   }
 
   .tech-icon-wrapper {
-    @apply flex-center h-56 w-full cursor-grab active:cursor-grabbing md:h-60;
+    @apply flex-center h-44 w-full cursor-grab active:cursor-grabbing lg:h-[clamp(6rem,14vh,10rem)];
   }
 
   /* ------------------------------------------------------------------------ */
@@ -834,19 +785,40 @@
     @apply border-emerald-400/30 text-emerald-300;
   }
 
+  /*
+   * Contact: one column below 1024px (intro, card, desk, links: the side
+   * column dissolves with `display: contents` so the desk can sit between),
+   * a 50/50 split filling the page above it.
+   */
+  .contact-layout {
+    @apply grid grid-cols-1 gap-8 lg:min-h-0 lg:flex-1 lg:grid-cols-2 lg:grid-rows-[minmax(0,1fr)] lg:gap-6 xl:gap-8;
+  }
+
+  .contact-side {
+    @apply contents lg:flex lg:flex-col lg:gap-4 lg:pr-1 xl:gap-5;
+  }
+
+  .contact-extra {
+    @apply order-last mt-4 lg:order-none lg:mt-0;
+  }
+
+  .contact-stage {
+    @apply min-w-0 lg:min-h-0;
+  }
+
   .contact-canvas {
-    @apply relative h-full min-h-96 w-full overflow-hidden rounded-3xl border border-black-50 hover:cursor-grab active:cursor-grabbing;
+    @apply relative h-[340px] w-full overflow-hidden rounded-3xl border border-black-50 hover:cursor-grab active:cursor-grabbing sm:h-[420px] lg:h-full;
     /* Must match `stage` in contactPalettes (scenePalettes.js), the fog colour. */
     background: var(--contact-stage);
     transition: background-color 0.5s ease;
   }
 
-  .contact-preview {
-    @apply relative overflow-hidden rounded-3xl border border-black-50 bg-black-100 p-7 md:p-14;
+  .community-card {
+    @apply flex h-full items-center gap-4 rounded-xl border border-black-50 bg-black-100 p-5 transition-colors duration-300 hover:border-white/15 lg:h-auto lg:gap-2 lg:rounded-full lg:py-1.5 lg:pr-3 lg:pl-2;
   }
 
-  .community-card {
-    @apply flex h-full items-center gap-4 rounded-xl border border-black-50 bg-black-100 p-5 transition-colors duration-300 hover:border-white/15;
+  .community-icon {
+    @apply flex-center size-11 flex-none rounded-full bg-black-50 text-accent-cyan lg:size-6 lg:bg-transparent;
   }
 
   /* ------------------------------------------------------------------------ */
@@ -858,19 +830,19 @@
   }
 
   .page-header {
-    @apply relative overflow-hidden px-5 pt-32 pb-4 md:px-20 md:pt-44;
+    @apply relative min-w-0 flex-none;
   }
 
   .page-eyebrow {
-    @apply inline-flex w-fit max-w-full rounded-full border border-white/8 bg-white/[0.02] px-4 py-1.5 font-mono text-xs tracking-widest text-accent-cyan uppercase;
+    @apply inline-flex w-fit max-w-full rounded-full border border-white/8 bg-white/[0.02] px-4 py-1.5 font-mono text-xs tracking-widest text-accent-cyan uppercase lg:py-1 lg:text-[11px];
   }
 
   .page-title {
-    @apply mt-6 max-w-5xl text-4xl leading-tight font-semibold tracking-tight text-zinc-100 md:text-6xl;
+    @apply mt-6 max-w-5xl text-4xl leading-tight font-semibold tracking-tight text-balance text-zinc-100 md:text-6xl lg:mt-3 lg:text-[clamp(1.75rem,3.9vh,2.5rem)];
   }
 
   .page-description {
-    @apply mt-6 max-w-3xl text-lg leading-relaxed text-body md:text-xl;
+    @apply mt-6 max-w-3xl text-lg leading-relaxed text-body md:text-xl lg:mt-2.5 lg:max-w-4xl lg:text-[0.9375rem] xl:text-base;
   }
 
   .jump-nav {
@@ -892,6 +864,86 @@
   /* Archive */
   .archive-card {
     @apply flex min-w-0 flex-col overflow-hidden rounded-2xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/15;
+  }
+
+  .archive-art {
+    @apply aspect-8/5;
+  }
+
+  .archive-body {
+    @apply flex flex-1 flex-col gap-4 p-6 lg:gap-3 lg:p-5;
+  }
+
+  .archive-title {
+    @apply text-xl font-semibold wrap-break-word md:text-2xl lg:text-xl;
+  }
+
+  .archive-subtitle {
+    @apply mt-1 text-sm wrap-break-word text-blue-50;
+  }
+
+  .archive-description {
+    @apply leading-relaxed text-body lg:text-sm;
+  }
+
+  /* Desktop "All" overview tiles: shorter art, two-line summary, no tag list (the category views show everything). */
+  .archive-card.is-compact .archive-art {
+    @apply lg:aspect-[2/1];
+  }
+
+  .archive-card.is-compact .archive-body {
+    @apply lg:gap-2.5 lg:p-4;
+  }
+
+  .archive-card.is-compact :is(.archive-subtitle, .archive-tags, .origin-target, .project-link-arrow) {
+    @apply lg:hidden;
+  }
+
+  /* On desktop every card sits under its group's heading, which already names the category. */
+  .archive-card .archive-kind {
+    @apply lg:hidden;
+  }
+
+  .project-actions {
+    @apply flex flex-wrap gap-3 lg:gap-2;
+  }
+
+  .archive-card.is-compact .project-actions {
+    @apply lg:gap-1.5;
+  }
+
+  .archive-card.is-compact .archive-title {
+    @apply lg:text-lg;
+  }
+
+  .archive-card.is-compact .archive-description {
+    @apply lg:line-clamp-2;
+  }
+
+  .archive-card.is-compact .project-link {
+    @apply lg:max-w-full lg:min-w-0 lg:px-3 lg:py-1.5 lg:text-xs lg:whitespace-nowrap;
+  }
+
+  /* Narrow tiles (1024px) shorten a long label; the full text stays in the tooltip and for screen readers. */
+  .archive-card.is-compact .project-link-label {
+    @apply lg:truncate;
+  }
+
+  .archive-card.is-compact .project-link.secondary {
+    @apply lg:size-7 lg:justify-center lg:p-0;
+  }
+
+  .archive-card.is-compact .project-link.secondary .project-link-label {
+    @apply lg:sr-only;
+  }
+
+  /* The overview keeps each group to its number, title and count. */
+  .catalog.is-all :is(.catalog-description, .catalog-heading .kind-badge) {
+    @apply lg:hidden;
+  }
+
+  .catalog.is-all .catalog-heading {
+    @apply lg:items-center;
   }
 
   /* Screenshots fill the 8:5 frame like the SVG artwork does (16:9 captures crop slightly at the sides). */
@@ -960,7 +1012,7 @@
 
   /* Cards in centred rows: 1 / 2 / 3 per row, so a lone last card sits in the middle. */
   .archive-grid {
-    @apply mt-8 grid grid-cols-1 gap-8;
+    @apply mt-8 grid grid-cols-1 gap-8 lg:mt-4 lg:gap-4 xl:gap-5;
   }
 
   .archive-grid.is-original {
@@ -992,9 +1044,44 @@
     @apply bg-canvas/20;
   }
 
+  /* Catalog pane: below the filters; on desktop it fills the rest of the page and scrolls on its own if needed. */
+  .catalog {
+    @apply lg:mt-4 lg:flex-1 xl:mt-5;
+  }
+
+  /* Desktop overview: the two groups side by side (3 originals | 2 preservation ports). */
+  .catalog.is-all {
+    @apply lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-5 xl:gap-6;
+  }
+
+  /* Desktop preservation view: the two ports beside the comparison table. */
+  .catalog.is-preservation .catalog-body {
+    @apply lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-6;
+  }
+
+  .catalog.is-preservation .archive-grid {
+    @apply lg:grid-cols-2;
+  }
+
+  .comparison {
+    @apply mt-14 md:mt-20 lg:mt-4;
+  }
+
+  .compare-link {
+    @apply hidden cursor-pointer items-center gap-2 text-sm font-medium text-accent-cyan transition-colors hover:text-white lg:inline-flex;
+  }
+
   .catalog-section {
-    @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12;
+    @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12 lg:mt-0 lg:rounded-2xl lg:border lg:border-black-50 lg:bg-white/[0.015] lg:p-4 xl:p-5;
     animation: sectionIn 0.45s ease both;
+  }
+
+  .catalog-title {
+    @apply text-2xl font-semibold md:text-3xl lg:text-xl;
+  }
+
+  .catalog-description {
+    @apply mt-2 max-w-3xl text-body lg:mt-1 lg:text-sm;
   }
 
   .catalog-section + .catalog-section {
@@ -1016,11 +1103,11 @@
   }
 
   .catalog-heading {
-    @apply flex items-start gap-4 md:gap-6;
+    @apply flex items-start gap-4 md:gap-6 lg:gap-3;
   }
 
   .catalog-index {
-    @apply flex-center mt-0.5 size-10 flex-none rounded-full border border-white/10 font-mono text-xs text-accent-cyan md:size-12 md:text-sm;
+    @apply flex-center mt-0.5 size-10 flex-none rounded-full border border-white/10 font-mono text-xs text-accent-cyan md:size-12 md:text-sm lg:size-9 lg:text-xs;
   }
 
   .catalog-count {
@@ -1098,8 +1185,9 @@
   }
 
   /* Case studies */
+  /* One numbered section of a case study or note, inside an `@container` reading column. */
   .case-section {
-    @apply mt-20 px-5 md:mt-28 md:px-20;
+    @apply mt-16 md:mt-24 lg:mt-14;
   }
 
   .case-timeline-item {
@@ -1118,13 +1206,13 @@
     @apply relative rounded-xl border border-black-50 bg-black-100 p-5;
   }
 
-  /* Arrow in the gap after a step: points down on phones, right on wide screens. */
+  /* Arrow in the gap after a step: points down in one column, right in one row (container widths). */
   .flow-connector {
-    @apply flex-center absolute -bottom-7 left-1/2 size-6 -translate-x-1/2 rotate-90 text-accent-cyan sm:hidden xl:top-1/2 xl:-right-6 xl:bottom-auto xl:left-auto xl:flex xl:translate-x-0 xl:-translate-y-1/2 xl:rotate-0;
+    @apply flex-center absolute -bottom-7 left-1/2 size-6 -translate-x-1/2 rotate-90 text-accent-cyan @lg:hidden @5xl:top-1/2 @5xl:-right-6 @5xl:bottom-auto @5xl:left-auto @5xl:flex @5xl:translate-x-0 @5xl:-translate-y-1/2 @5xl:rotate-0;
   }
 
   .arch-diagram {
-    @apply grid grid-cols-1 items-center gap-4 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,3fr)] xl:gap-6;
+    @apply grid grid-cols-1 items-center gap-4 @5xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,3fr)] @5xl:gap-6;
   }
 
   .arch-legacy {
@@ -1132,11 +1220,11 @@
   }
 
   .arch-replaced {
-    @apply flex items-center justify-center gap-2 font-mono text-xs tracking-widest text-blue-50 uppercase xl:flex-col;
+    @apply flex items-center justify-center gap-2 font-mono text-xs tracking-widest text-blue-50 uppercase @5xl:flex-col;
   }
 
   .arch-chain {
-    @apply grid grid-cols-1 gap-8 md:grid-cols-3;
+    @apply grid grid-cols-1 gap-8 @xl:grid-cols-3;
   }
 
   .arch-node {
@@ -1144,7 +1232,7 @@
   }
 
   .arch-connector {
-    @apply flex-center absolute -bottom-7 left-1/2 size-6 -translate-x-1/2 rotate-90 text-accent-cyan md:top-1/2 md:-right-7 md:bottom-auto md:left-auto md:translate-x-0 md:-translate-y-1/2 md:rotate-0;
+    @apply flex-center absolute -bottom-7 left-1/2 size-6 -translate-x-1/2 rotate-90 text-accent-cyan @xl:top-1/2 @xl:-right-7 @xl:bottom-auto @xl:left-auto @xl:translate-x-0 @xl:-translate-y-1/2 @xl:rotate-0;
   }
 
   .code-block {
@@ -1165,19 +1253,31 @@
   /* ------------------------------------------------------------------------ */
 
   .footer {
-    @apply my-10 px-5 text-white-50 md:my-16 md:px-20;
+    @apply my-10 px-5 text-white-50 md:my-16 md:px-20 lg:my-0 lg:flex-none lg:border-t lg:border-white/6 lg:px-10 lg:py-1.5 xl:px-16;
   }
 
   .footer-container {
-    @apply grid grid-cols-1 gap-6 border-t border-white/6 pt-10 md:grid-cols-3 md:gap-0;
+    @apply grid grid-cols-1 gap-6 border-t border-white/6 pt-10 md:grid-cols-3 md:gap-0 lg:flex lg:items-center lg:justify-between lg:gap-6 lg:border-t-0 lg:pt-0;
+  }
+
+  .footer-brand {
+    @apply flex flex-col justify-center text-center md:text-start lg:flex-row lg:items-baseline lg:gap-3;
+  }
+
+  .footer-role {
+    @apply mt-1 text-sm text-blue-50 lg:mt-0 lg:text-xs;
+  }
+
+  .footer-copy {
+    @apply text-center text-sm text-white-50/70 md:text-end lg:text-xs;
   }
 
   .socials {
-    @apply flex items-center justify-center gap-4;
+    @apply flex items-center justify-center gap-4 lg:gap-2;
   }
 
   .social-icon {
-    @apply flex-center size-11 rounded-xl border border-black-50 bg-black-100 text-white-50 transition-all duration-300 hover:border-white/20 hover:text-white md:size-12;
+    @apply flex-center size-11 rounded-xl border border-black-50 bg-black-100 text-white-50 transition-all duration-300 hover:border-white/20 hover:text-white md:size-12 lg:size-7 lg:rounded-lg;
   }
 }
 
@@ -1191,7 +1291,6 @@
   }
 
   .slide-wrapper,
-  .marquee-track,
   .page-enter,
   .catalog-section,
   .cta-button .arrow-wrapper svg {
@@ -1211,7 +1310,7 @@
 
 /* A whisper of depth so white cards separate from the alabaster page. */
 :root[data-theme="light"]
-  :is(.work-card, .counter-card, .archive-card, .tech-card, .timeline-card, .card-border, .contact-preview) {
+  :is(.metric, .archive-card, .tech-card, .timeline-card, .card-border, .panel, .notes-reader, .case-reader) {
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
 }
 
@@ -1226,12 +1325,12 @@
   }
 
   .hero-canvas {
-    @apply relative min-h-0 flex-1;
+    @apply relative h-[340px] min-h-0 flex-none sm:h-[420px] md:h-auto md:flex-1;
   }
 
   /* Pills over the bottom of the canvas: centred on phones, bottom-right beside the copy. */
   .scene-controls {
-    @apply pointer-events-none relative z-20 flex flex-wrap items-center justify-center gap-2 px-3 pt-3 md:absolute md:inset-x-3 md:bottom-5 md:p-0 xl:inset-x-auto xl:right-8 xl:bottom-8 xl:justify-end;
+    @apply pointer-events-none relative z-20 flex flex-wrap items-center justify-center gap-2 px-3 pt-3 md:absolute md:inset-x-3 md:bottom-5 md:p-0 lg:inset-x-auto lg:right-6 lg:bottom-5 lg:justify-end xl:right-8 xl:bottom-6;
   }
 
   .scene-presets {
@@ -1461,8 +1560,79 @@
     @apply mt-1.5 text-sm font-normal md:text-sm;
   }
 
+  /* In a page header's side slot: stacked, narrower, one size down. */
+  .gh-stats.is-compact {
+    @apply lg:w-[min(32rem,38vw)] lg:flex-col lg:items-stretch lg:gap-3 lg:p-4;
+  }
+
+  .gh-stats.is-compact .gh-stats-profile {
+    @apply lg:border-r-0 lg:pr-0;
+  }
+
+  .gh-stats.is-compact .gh-stats-figures {
+    @apply lg:gap-x-6 lg:gap-y-2;
+  }
+
+  .gh-stats.is-compact .gh-stats-figures dd {
+    @apply lg:text-base;
+  }
+
   .note-card {
-    @apply flex min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8;
+    @apply flex h-full min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8 lg:p-5;
+  }
+
+  /* The note open in the desktop reading pane. */
+  .note-card.is-selected {
+    @apply lg:border-accent-cyan/45 lg:bg-black-200;
+  }
+
+  /* Notes: list | reading pane from 1024px up. */
+  .notes-layout {
+    @apply grid grid-cols-1 gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(17rem,21rem)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] xl:grid-cols-[minmax(19rem,24rem)_minmax(0,1fr)] xl:gap-8;
+  }
+
+  .notes-sidebar {
+    @apply flex-col lg:pr-1;
+  }
+
+  .notes-intro .page-title {
+    @apply lg:text-[clamp(1.5rem,3.1vh,1.875rem)];
+  }
+
+  .notes-intro .page-description {
+    @apply lg:text-sm;
+  }
+
+  /* In the desktop list the whole card is the link and the open note's summary is in the pane. */
+  .notes-list .note-card p:last-of-type {
+    @apply lg:line-clamp-2;
+  }
+
+  .note-read {
+    @apply mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-white-50 lg:pt-4;
+  }
+
+  .notes-list .note-read {
+    @apply lg:hidden;
+  }
+
+  .notes-list {
+    @apply mt-10 grid grid-cols-1 gap-5 md:mt-12 md:grid-cols-2 lg:mt-5 lg:grid-cols-1 lg:gap-3;
+  }
+
+  /* Desktop reading pane (notes and case studies): a card that scrolls on its own. */
+  .notes-reader,
+  .case-reader {
+    @apply min-w-0 lg:flex-1 lg:rounded-2xl lg:border lg:border-black-50 lg:bg-black-100 lg:px-8 lg:py-7 xl:px-10 xl:py-8;
+  }
+
+  /* Case study: intro | reading pane from 1024px up. */
+  .case-layout {
+    @apply flex flex-col gap-12 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[minmax(0,1fr)] lg:gap-8 xl:gap-10;
+  }
+
+  .case-intro {
+    @apply min-w-0 lg:pr-2;
   }
 }
 

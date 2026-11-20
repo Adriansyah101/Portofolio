@@ -45,15 +45,17 @@ export const ProjectTags = ({ tags }) => {
  * "Read Case Study →" (internal route) followed by the project's external
  * GitHub / release links. Without a case study, the first external link is
  * styled as the primary action. `arrow: true` on a link adds a trailing →.
+ * Inside a compact archive tile (desktop overview) the CSS turns secondary
+ * links into icon buttons; their label stays for screen readers and as a tooltip.
  */
 export const ProjectActions = ({ project }) => {
   const { common } = useLocalized(ui);
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="project-actions">
       {project.caseStudy && (
         <Link to={project.caseStudy} className="project-link primary">
           {common.readCaseStudy}
-          <ArrowRightIcon className="size-4" />
+          <ArrowRightIcon className="project-link-arrow size-4" />
         </Link>
       )}
       {project.links.map((link, index) => (
@@ -63,10 +65,11 @@ export const ProjectActions = ({ project }) => {
           target="_blank"
           rel="noopener noreferrer"
           className={`project-link ${!project.caseStudy && index === 0 ? "primary" : "secondary"}`}
+          title={link.label}
         >
-          <Icon name={link.icon} className="size-4" />
-          {link.label}
-          {link.arrow && <ArrowRightIcon className="size-4" />}
+          <Icon name={link.icon} className="size-4 flex-none" />
+          <span className="project-link-label">{link.label}</span>
+          {link.arrow && <ArrowRightIcon className="project-link-arrow size-4" />}
         </a>
       ))}
     </div>

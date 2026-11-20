@@ -192,31 +192,6 @@ export const ui = {
     backTo: tx("Back to", "Kembali ke"),
     nextNote: tx("Next note", "Catatan berikutnya"),
     related: tx("Related work", "Karya terkait"),
-    teaserTitle: tx("Engineering Notes", "Catatan Teknis"),
-    teaserSub: tx("Technical deep-dives", "Pembahasan teknis mendalam"),
-    teaserAll: tx("All engineering notes", "Semua catatan teknis"),
-  },
-  featured: {
-    title: tx("Featured Work", "Karya Unggulan"),
-    sub: tx("Operations & Systems Engineering", "Operasional & Rekayasa Sistem"),
-    topologyLabel: tx("Systems operated", "Sistem yang dioperasikan"),
-  },
-  logos: {
-    label: tx("Core technologies", "Teknologi inti"),
-  },
-  capabilities: {
-    title: tx("Core Capabilities", "Kapabilitas Inti"),
-    sub: tx("Operations · Field Systems · Low-Level Code", "Operasional · Sistem Lapangan · Kode Tingkat Rendah"),
-  },
-  contactPreview: {
-    eyebrow: tx("Contact", "Kontak"),
-    title: tx("Need critical systems that stay online?", "Butuh sistem kritis yang tetap online?"),
-    body: tx(
-      "I'm open to systems operations, infrastructure and application support roles, plus low-level C/C++ engineering work. Send a message, or browse my source code on GitHub.",
-      "Saya terbuka untuk peran operasional sistem, infrastruktur, dan dukungan aplikasi, serta pekerjaan engineering C/C++ tingkat rendah. Kirim pesan, atau jelajahi source code saya di GitHub.",
-    ),
-    cta: tx("Get in Touch", "Hubungi Saya"),
-    github: tx("View GitHub", "Lihat GitHub"),
   },
   journey: {
     contactCta: tx("Get in Touch", "Hubungi Saya"),
@@ -230,11 +205,17 @@ export const ui = {
       "Enterprise application operations at PT ASDP Indonesia Ferry (Persero): hybrid cloud and harbor server deployments across dozens of ports, Omron barrier gate integration, and the day-to-day reliability of trip.ferizy.com.",
       "Operasional aplikasi enterprise di PT ASDP Indonesia Ferry (Persero): deployment hybrid cloud dan server pelabuhan di puluhan pelabuhan, integrasi barrier gate Omron, serta keandalan harian trip.ferizy.com.",
     ),
-    jumps: [
-      { id: "experience", label: tx("Experience", "Pengalaman") },
-      { id: "skills", label: tx("Tech Stack", "Tech Stack") },
-      { id: "highlights", label: tx("Impact", "Dampak") },
-    ],
+    tabsLabel: tx("Experience details", "Detail pengalaman"),
+    tabs: {
+      impact: tx("Operational Impact", "Dampak Operasional"),
+      stack: tx("Enterprise Stack", "Stack Enterprise"),
+      tech3d: tx("3D Tech Cards", "Kartu Teknologi 3D"),
+    },
+    stackIntro: tx(
+      "The systems and tools behind day-to-day production operations, from harbor servers to the edge.",
+      "Sistem dan tools di balik operasional produksi sehari-hari, dari server pelabuhan hingga edge.",
+    ),
+    tech3dHint: tx("Drag an emblem to turn it.", "Geser emblem untuk memutarnya."),
   },
   experience: {
     title: tx("Professional Experience", "Pengalaman Profesional"),
@@ -365,7 +346,8 @@ export const heroContent = {
     "Hi, I'm Adriansyah Prasetya Nugraha — a Systems & Application Operations Engineer based in Semarang, Indonesia, experienced in high-availability national ticketing infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments, industrial hardware integration, and low-level binary recompilation.",
     "Halo, saya Adriansyah Prasetya Nugraha — Engineer Sistem & Operasional Aplikasi asal Semarang, Indonesia, berpengalaman menangani infrastruktur tiket nasional berketersediaan tinggi (`trip.ferizy.com`), deployment hybrid cloud/on-premise di pelabuhan, integrasi perangkat keras industri, serta rekompilasi biner tingkat rendah.",
   ),
-  ctaText: tx("View My Work", "Lihat Karya Saya"),
+  ctaProjects: tx("Explore Projects", "Jelajahi Proyek"),
+  ctaJourney: tx("Work Experience", "Pengalaman Kerja"),
 };
 
 /** Optional `.glb` that replaces the procedural developer room in the hero. */
@@ -415,91 +397,6 @@ export const counterItems = [
     note: tx("Native preservation port targets", "Target native port preservasi"),
   },
 ];
-
-/* -------------------------------------------------------------------------- */
-/*                            Featured work (Home)                            */
-/* -------------------------------------------------------------------------- */
-
-/**
- * The two cards in the Home "Featured Work" section. The projects card is
- * framed as systems engineering; titles and artwork live on `/projects`.
- */
-export const featuredWork = {
-  enterprise: {
-    logo: "asdp",
-    kind: tx("Enterprise Application Operations", "Operasional Aplikasi Enterprise"),
-    org: "PT ASDP Indonesia Ferry (Persero)",
-    role: tx("Business Application Operational Support Staff", "Staf Dukungan Operasional Aplikasi Bisnis"),
-    period: "2024 – 2026",
-    summary: tx(
-      "Managed mission-critical ferry ticketing infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments across dozens of harbors, and industrial Omron barrier gate hardware integration.",
-      "Mengelola infrastruktur tiket kapal penyeberangan yang kritis (`trip.ferizy.com`), deployment hybrid cloud/on-premise di puluhan pelabuhan, serta integrasi perangkat keras barrier gate industri Omron.",
-    ),
-    topology: [
-      {
-        icon: "cloud",
-        title: tx("Cloud ticketing", "Tiket berbasis cloud"),
-        body: tx("`trip.ferizy.com` online sales, kept highly available", "Penjualan online `trip.ferizy.com`, dijaga tetap berketersediaan tinggi"),
-      },
-      {
-        icon: "server",
-        title: tx("Harbor servers", "Server pelabuhan"),
-        body: tx("Ticketing and counter apps on-prem at dozens of ports", "Aplikasi tiket dan loket on-prem di puluhan pelabuhan"),
-      },
-      {
-        icon: "lock",
-        title: tx("Barrier gates", "Barrier gate"),
-        body: tx("Omron-based automated gates at the Surabaya port", "Gate otomatis berbasis Omron di Pelabuhan Surabaya"),
-      },
-    ],
-    stats: [
-      { id: "years", value: "2024 – 2026", label: tx("Production operations", "Operasional produksi") },
-      { id: "ports", value: tx("Dozens", "Puluhan"), label: tx("Ferry ports deployed", "Pelabuhan ter-deploy") },
-      { id: "hybrid", value: "Hybrid", label: tx("Cloud & on-premise", "Cloud & on-premise") },
-    ],
-    tags: ["Hybrid Cloud", tx("Linux & Windows Servers", "Server Linux & Windows"), "Omron PLC", "Production Support"],
-    cta: { label: tx("View Work Experience", "Lihat Pengalaman Kerja"), to: routes.journey },
-    link: { label: "trip.ferizy.com", href: links.ferizy, brand: "ferizy" },
-  },
-  projects: {
-    icon: "chip",
-    kind: tx("Engineering · Open Source", "Rekayasa · Open Source"),
-    org: tx("Engineering & Preservation Projects", "Proyek Rekayasa & Preservasi"),
-    summary: tx(
-      "Five open-source projects: three original builds spanning a web information system, a VR simulation and real-time interactive software, plus two legacy 32-bit applications rebuilt as native Windows and Linux executables through static recompilation instead of emulation.",
-      "Lima proyek open source: tiga karya original yang mencakup sistem informasi web, simulasi VR, dan perangkat lunak interaktif real-time, serta dua aplikasi 32-bit lama yang dibangun ulang menjadi executable Windows dan Linux native melalui rekompilasi statis, bukan emulasi.",
-    ),
-    stats: [
-      { id: "original", value: "3", label: tx("Original projects", "Proyek original") },
-      { id: "preservation", value: "2", label: tx("32-bit preservation ports", "Port preservasi 32-bit") },
-    ],
-    pipelineLabel: tx("Preservation pipeline", "Pipeline preservasi"),
-    pipeline: [
-      {
-        icon: "chip",
-        title: tx("32-bit ARMv7 / x86 binaries", "Biner ARMv7 / x86 32-bit"),
-        body: tx("Original iPad and Mac executables", "Executable iPad dan Mac asli"),
-      },
-      {
-        icon: "terminal",
-        title: tx("Static recompilation", "Rekompilasi statis"),
-        body: tx("Functions and control flow lifted to C/C++", "Fungsi dan control flow di-lift ke C/C++"),
-      },
-      {
-        icon: "shader",
-        title: tx("OpenGL ES translation", "Translasi OpenGL ES"),
-        body: tx("Legacy GL ES 1.1/2.0 served on desktop GPUs", "GL ES 1.1/2.0 lama dijalankan di GPU desktop"),
-      },
-      {
-        icon: "monitor",
-        title: tx("Native Windows & Linux", "Windows & Linux native"),
-        body: tx("SHA-256 verified, versioned releases", "Rilis berversi, terverifikasi SHA-256"),
-      },
-    ],
-    tags: ["PHP & CodeIgniter", "Unity VR", "GameMaker", tx("Static Recompilation", "Rekompilasi Statis"), "OpenGL ES", "Win32 / Linux"],
-    cta: { label: tx("Browse All Projects", "Lihat Semua Proyek"), to: routes.projects },
-  },
-};
 
 /* -------------------------------------------------------------------------- */
 /*                                  Projects                                  */
@@ -1307,63 +1204,6 @@ export const caseStudies = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                               Logo marquee                                 */
-/* -------------------------------------------------------------------------- */
-
-/** Core technologies. `glyph` sets the monogram tile (fixed, so it never changes with the language). */
-export const logoItems = [
-  { id: "linux", name: tx("Linux Servers", "Server Linux"), glyph: "LX" },
-  { id: "windows", name: "Windows Server", glyph: "WS" },
-  { id: "hybrid", name: "Hybrid Cloud", glyph: "HC" },
-  { id: "omron", name: "Omron PLC / Barrier Gate", glyph: "OP" },
-  { id: "ferizy", name: "trip.ferizy.com", glyph: "TF" },
-  { id: "ops", name: tx("Production Ops", "Operasional Produksi"), glyph: "PO" },
-  { id: "workers", name: "Cloudflare Workers", glyph: "CW" },
-  { id: "d1", name: "D1 Database", glyph: "D1" },
-  { id: "cpp", name: "C/C++", glyph: "C++" },
-  { id: "win32", name: "Win32 API", glyph: "WA" },
-  { id: "recomp", name: tx("Static Recompilation", "Rekompilasi Statis"), glyph: "SR" },
-  { id: "armv7", name: "ARMv7", glyph: "AR" },
-  { id: "x86", name: "x86", glyph: "X8" },
-  { id: "gles", name: "OpenGL ES", glyph: "OE" },
-  { id: "ci", name: "Git & CI/CD", glyph: "CI" },
-];
-
-/* -------------------------------------------------------------------------- */
-/*                                 Abilities                                  */
-/* -------------------------------------------------------------------------- */
-
-export const abilities = [
-  {
-    id: "ops",
-    icon: "cloud",
-    title: tx("Enterprise Application & Cloud Operations", "Operasional Aplikasi Enterprise & Cloud"),
-    desc: tx(
-      "Hybrid server deployments, high-traffic web system reliability (`trip.ferizy.com`), and production incident resolution.",
-      "Deployment server hybrid, keandalan sistem web bertrafik tinggi (`trip.ferizy.com`), dan penanganan insiden produksi.",
-    ),
-  },
-  {
-    id: "field",
-    icon: "lock",
-    title: tx("Hardware & Field Systems Integration", "Integrasi Perangkat Keras & Sistem Lapangan"),
-    desc: tx(
-      "End-to-end installation and configuration of industrial Omron automated barrier gate systems at major seaports.",
-      "Instalasi dan konfigurasi end-to-end sistem barrier gate otomatis industri Omron di pelabuhan-pelabuhan besar.",
-    ),
-  },
-  {
-    id: "native",
-    icon: "chip",
-    title: tx("Low-Level Binary Recompilation & Graphics Systems", "Rekompilasi Biner Tingkat Rendah & Sistem Grafis"),
-    desc: tx(
-      "Static recompilation of legacy 32-bit ARM/x86 software into native Windows and Linux executables.",
-      "Rekompilasi statis perangkat lunak ARM/x86 32-bit lama menjadi executable Windows dan Linux native.",
-    ),
-  },
-];
-
-/* -------------------------------------------------------------------------- */
 /*                          Experience / milestones                           */
 /* -------------------------------------------------------------------------- */
 
@@ -1426,12 +1266,14 @@ export const expCards = [
 /**
  * `emblem` selects a procedural 3D emblem (and is the stable React key). Set
  * `glbPath` (relative to `/public`) to render your own `.glb` model instead.
+ * `icon` is the flat icon used in the "Enterprise Stack" list on `/journey`.
  */
 export const techStackIcons = [
   {
     name: tx("Linux & Windows Servers", "Server Linux & Windows"),
     subtitle: tx("Harbor & Cloud Hosts", "Host Pelabuhan & Cloud"),
     emblem: "servers",
+    icon: "server",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],
@@ -1440,6 +1282,7 @@ export const techStackIcons = [
     name: "Hybrid Cloud",
     subtitle: tx("Cloud + On-Prem Deployments", "Deployment Cloud + On-Prem"),
     emblem: "hybrid",
+    icon: "cloud",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],
@@ -1448,6 +1291,7 @@ export const techStackIcons = [
     name: tx("Omron PLC / Gate Integration", "Integrasi PLC / Gate Omron"),
     subtitle: tx("Industrial Field Hardware", "Perangkat Keras Lapangan Industri"),
     emblem: "gate",
+    icon: "lock",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],
@@ -1456,6 +1300,7 @@ export const techStackIcons = [
     name: "C / C++",
     subtitle: tx("Native & Low-Level Systems", "Sistem Native & Tingkat Rendah"),
     emblem: "cpp",
+    icon: "code",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],
@@ -1464,6 +1309,7 @@ export const techStackIcons = [
     name: "Cloudflare Workers & D1",
     subtitle: tx("Edge Services & Storage", "Layanan Edge & Penyimpanan"),
     emblem: "cloudflare",
+    icon: "database",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],
@@ -1472,6 +1318,7 @@ export const techStackIcons = [
     name: "Git & CI/CD",
     subtitle: tx("Versioned, Repeatable Releases", "Rilis Berversi & Dapat Diulang"),
     emblem: "git",
+    icon: "layers",
     glbPath: null,
     scale: 1,
     rotation: [0, 0, 0],

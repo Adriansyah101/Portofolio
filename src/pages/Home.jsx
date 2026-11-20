@@ -1,21 +1,13 @@
 import Hero from "../sections/Hero.jsx";
-import FeaturedWork from "../sections/FeaturedWork.jsx";
-import LogoSection from "../sections/LogoSection.jsx";
-import FeatureCards from "../sections/FeatureCards.jsx";
-import ContactPreview from "../sections/ContactPreview.jsx";
 import { usePageTitle } from "../utils/hooks.js";
 
-/** `/`: systems-engineering overview: 3D hero, metrics, featured work, capabilities and a contact teaser. */
+/** `/`: the command center: intro, metrics and calls to action beside the interactive 3D workstation. */
 const Home = () => {
   usePageTitle(null);
 
   return (
-    <div className="page-enter">
+    <div className="page-enter flex flex-col lg:min-h-0 lg:flex-1">
       <Hero />
-      <FeaturedWork />
-      <LogoSection />
-      <FeatureCards />
-      <ContactPreview />
     </div>
   );
 };

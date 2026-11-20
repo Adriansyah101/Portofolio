@@ -1,17 +1,23 @@
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
-import Button from "../components/Button.jsx";
 import AnimatedCounter from "../components/AnimatedCounter.jsx";
 import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
-import { Icon } from "../components/Icons.jsx";
+import { ArrowRightIcon, Icon } from "../components/Icons.jsx";
 import { CvButton } from "../components/Resume.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
-import { heroContent as heroSource, ui, words as wordSource } from "../constants/index.js";
+import { heroContent as heroSource, routes, ui, words as wordSource } from "../constants/index.js";
 import { renderInlineCode } from "../utils/text.jsx";
 
+/**
+ * Home command center. From 1024px up it is one split screen between the
+ * navbar and the footer: copy, metrics and calls to action on the left, the
+ * full-height 3D workstation (whose screens and tablet open the other pages)
+ * on the right. Below 1024px the two stack and the page scrolls.
+ */
 const Hero = () => {
   const sectionRef = useRef(null);
   const heroContent = useLocalized(heroSource);
@@ -23,13 +29,13 @@ const Hero = () => {
     () => {
       gsap.fromTo(
         ".hero-text > *",
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" },
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.18, duration: 0.9, ease: "power2.inOut" },
       );
       gsap.fromTo(
         ".hero-reveal",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.15, duration: 0.9, delay: 0.6, ease: "power2.out" },
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.12, duration: 0.8, delay: 0.5, ease: "power2.out" },
       );
     },
     { scope: sectionRef },
@@ -39,11 +45,11 @@ const Hero = () => {
   const sliderWords = [...words, ...words];
 
   return (
-    <section id="hero" ref={sectionRef} className="relative overflow-hidden">
+    <section id="hero" ref={sectionRef} className="hero">
       <div className="hero-bg" aria-hidden="true" />
 
-      <div className="hero-layout">
-        <header className="hero-header">
+      <header className="hero-header scroll-pane">
+        <div className="hero-copy">
           <p className="hero-eyebrow hero-reveal">
             <span className="size-1.5 flex-none rounded-full bg-emerald-400/80" aria-hidden="true" />
             {heroContent.eyebrow}
@@ -72,18 +78,30 @@ const Hero = () => {
 
           <p className="hero-bio hero-reveal">{renderInlineCode(heroContent.bio)}</p>
 
-          <div className="hero-reveal flex flex-wrap items-center gap-3 md:gap-4">
-            <Button text={heroContent.ctaText} className="h-12 w-64 md:h-16 md:w-80" id="button" targetId="work" />
-            <CvButton className="h-12 md:h-16" />
+          <AnimatedCounter className="hero-reveal" />
+
+          <div className="hero-actions hero-reveal">
+            <Link to={routes.projects} className="cta-wrapper hero-cta">
+              <div className="cta-button group">
+                <div className="bg-circle" />
+                <p className="cta-text">{heroContent.ctaProjects}</p>
+                <div className="arrow-wrapper">
+                  <ArrowRightIcon className="size-5" />
+                </div>
+              </div>
+            </Link>
+            <Link to={routes.journey} className="hero-secondary">
+              {heroContent.ctaJourney}
+              <ArrowRightIcon className="size-4" />
+            </Link>
+            <CvButton />
           </div>
-        </header>
+        </div>
+      </header>
 
-        <figure className="hero-3d-layout" aria-label={hero.sceneLabel}>
-          <HeroExperience theme={theme} />
-        </figure>
-      </div>
-
-      <AnimatedCounter />
+      <figure className="hero-3d-layout" aria-label={hero.sceneLabel}>
+        <HeroExperience theme={theme} />
+      </figure>
     </section>
   );
 };

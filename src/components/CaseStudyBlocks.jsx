@@ -8,8 +8,14 @@ import { ui } from "../constants/index.js";
 /*                         Case-study content blocks                          */
 /* -------------------------------------------------------------------------- */
 
+/*
+ * Grids here use container queries (`@xl:` …), not viewport breakpoints: the
+ * same blocks render full width on phones and inside a narrower reading pane
+ * on desktop, so they follow the width of the nearest `@container`.
+ */
+
 const cardGrid = (count) =>
-  count === 3 ? "md:grid-cols-2 lg:grid-cols-3" : count >= 4 ? "md:grid-cols-2 xl:grid-cols-4" : "md:grid-cols-2";
+  count === 3 ? "@xl:grid-cols-2 @3xl:grid-cols-3" : count >= 4 ? "@xl:grid-cols-2 @5xl:grid-cols-4" : "@xl:grid-cols-2";
 
 const Cards = ({ items }) => (
   <ul className={`grid grid-cols-1 gap-5 ${cardGrid(items.length)}`}>
@@ -17,7 +23,7 @@ const Cards = ({ items }) => (
       <li
         key={item.title}
         className={`card-border flex flex-col gap-3 rounded-xl p-6 ${
-          items.length === 3 && index === 2 ? "md:col-span-2 lg:col-span-1" : ""
+          items.length === 3 && index === 2 ? "@xl:col-span-2 @3xl:col-span-1" : ""
         }`}
       >
         <span className="flex-center size-11 rounded-full bg-black-50 text-accent-cyan">
@@ -31,7 +37,7 @@ const Cards = ({ items }) => (
 );
 
 const Timeline = ({ items }) => (
-  <ol className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+  <ol className="grid grid-cols-1 gap-5 @xl:grid-cols-2 @5xl:grid-cols-4">
     {items.map((item, index) => (
       <li key={item.title} className="case-timeline-item">
         <span className={`case-timeline-dot ${index === items.length - 1 ? "lost" : ""}`} aria-hidden="true" />
@@ -47,11 +53,11 @@ const Timeline = ({ items }) => (
 const Flow = ({ steps, caption }) => (
   <figure>
     <figcaption className="mb-4 font-mono text-xs tracking-widest text-blue-50 uppercase">{caption}</figcaption>
-    <ol className="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-5 xl:gap-6">
+    <ol className="grid grid-cols-1 gap-8 @lg:grid-cols-2 @5xl:grid-cols-5 @5xl:gap-6">
       {steps.map((step, index) => (
         <li
           key={step.title}
-          className={`flow-step ${steps.length % 2 === 1 && index === steps.length - 1 ? "sm:col-span-2 xl:col-span-1" : ""}`}
+          className={`flow-step ${steps.length % 2 === 1 && index === steps.length - 1 ? "@lg:col-span-2 @5xl:col-span-1" : ""}`}
         >
           <div className="flex items-center justify-between">
             <span className="flex-center size-10 rounded-lg bg-black-50 text-accent-cyan">
@@ -92,7 +98,7 @@ const Architecture = ({ legacy, nodes }) => {
 
       <div className="arch-replaced" aria-hidden="true">
         <span>{text.replacedBy}</span>
-        <ArrowRightIcon className="size-5 rotate-90 xl:rotate-0" />
+        <ArrowRightIcon className="size-5 rotate-90 @5xl:rotate-0" />
       </div>
 
       <ol className="arch-chain">
@@ -152,7 +158,7 @@ export const DataTable = ({ caption, columns, rows }) => (
 const Checklist = ({ title, items }) => (
   <div className="card-border rounded-xl p-6 md:p-8">
     <h3 className="text-lg font-semibold text-white-50">{title}</h3>
-    <ul className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+    <ul className="mt-5 grid grid-cols-1 gap-3 @xl:grid-cols-2">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-3 text-body">
           <Icon name="shield" className="mt-0.5 size-5 flex-none text-emerald-300" />
@@ -187,7 +193,7 @@ const CopyButton = ({ text }) => {
 const Code = ({ caption, snippets, note }) => (
   <div className="card-border rounded-xl p-6 md:p-8">
     <h3 className="text-lg font-semibold text-white-50">{caption}</h3>
-    <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="mt-5 grid grid-cols-1 gap-4 @3xl:grid-cols-2">
       {snippets.map((snippet) => (
         <div key={snippet.label} className="min-w-0">
           <div className="mb-2 flex items-center justify-between gap-3">

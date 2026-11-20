@@ -19,7 +19,7 @@ The whole site is **bilingual (English / Bahasa Indonesia)** and has a **dark (d
 theme**. Both choices are remembered in `localStorage`.
 
 **Stack:** React 19 + Vite · React Router (`HashRouter`) · Three.js via `@react-three/fiber`,
-`@react-three/drei` and `@react-three/postprocessing` · GSAP + ScrollTrigger · Tailwind CSS v4 ·
+`@react-three/drei` and `@react-three/postprocessing` · GSAP · Tailwind CSS v4 ·
 react-countup · react-responsive.
 
 The 3D scenes (hero systems workstation, tech-stack emblems, contact desk) and the project previews
@@ -33,16 +33,27 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
-| `#/`                  | Home                     | 3D systems workstation hero, operations metrics, featured work (PT ASDP + preservation archive summary), tech marquee, core capabilities, contact teaser |
-| `#/projects`          | Projects                 | Two separate sections (Original Projects, 32-Bit Game Preservation Projects) with `All / Original / 32-Bit Preservation` tabs (`?category=original` or `preservation`), plus the "Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port" tables |
+| `#/`                  | Home                     | Command center: intro, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact) |
+| `#/projects`          | Projects                 | Two separate groups (Original Projects, 32-Bit Game Preservation) with `All / Original / 32-Bit Preservation` filters (`?category=original` or `preservation`). "All" is a compact overview; the preservation view adds the "Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port" comparison as tabs |
 | `#/projects/gt-racing`| GT Racing case study     | Why it was lost, recompilation & graphics pipeline, leaderboard architecture, controls & release info |
 | `#/projects/gangstar` | Gangstar case study      | Why it was lost, Windows & Linux porting, V1.0.0 release packaging and checksum verification |
-| `#/journey`           | Journey                  | Work experience at PT ASDP, six interactive 3D enterprise & systems tech-stack cards, operational impact highlights |
+| `#/journey`           | Journey                  | PT ASDP experience card beside tabs: Operational Impact · Enterprise Stack · 3D Tech Cards |
+| `#/notes`, `#/notes/:slug` | Engineering Notes   | Note list and reading pane side by side on desktop; list and article pages on phones |
 | `#/contact`           | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
 Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
 Reloading or sharing any page always loads `index.html`, so GitHub Pages never returns a 404.
 Because the hash belongs to the router, in-page jumps use buttons that scroll, not `#anchor` links.
+
+### Layout: viewport-locked desktop, scrolling phones
+
+From 1024px wide (`lg`) the app shell (`.app-shell`) is exactly one viewport tall: a slim navbar,
+the page, and a one-line footer, with no page scrollbar. Every page is split into panels that fill
+that space; a panel whose content is taller than the screen (a long note or case study, the 3D tech
+cards on a short window) scrolls on its own (`.scroll-pane`). Below 1024px nothing is locked: the
+page scrolls normally, panels stack, and the 3D canvases are 340px tall (420px from 640px).
+Grids inside panels use container queries (`@xl:` …) so they follow the panel's width, not the
+window's.
 
 Each page is lazy-loaded. Pages without 3D (projects and case studies) never download Three.js.
 Leaving a 3D page unmounts its `<Canvas>`, which disposes the renderer and releases the WebGL
@@ -129,9 +140,10 @@ name or a version tag) shows the same text in both languages. Components read co
 - `caseStudies`: the two deep-dive pages. Each section is a list of typed blocks (`timeline`,
   `cards`, `flow`, `architecture`, `table`, `checklist`, `code`, `links`, `prose`).
 - `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
-- `heroContent`, `words`, `counterItems`, `featuredWork`, `logoItems` and `abilities`: the Home page.
+- `heroContent`, `words` and `counterItems`: the Home page.
   A counter item with `text` (e.g. `"Dozens"`) shows that word instead of an animated number.
-- `expCards`, `techStackIcons` and `highlights`: the Journey page (work experience only). Set `logo`
+- `expCards`, `techStackIcons` and `highlights`: the Journey page (work experience only). `icon` on a
+  `techStackIcons` entry is its flat icon in the Enterprise Stack tab. Set `logo`
   on an `expCards` entry (or `brand` on a highlight) to a key of `brandLogos`.
 - `brandLogos`: official company/product logos, read from `public/images/` with relative paths
   (`./images/asdp.png`, `./images/ferizy.svg`). Each lists fallback files in order (png → svg); if
@@ -183,17 +195,18 @@ src/
 ├── App.jsx                   # HashRouter, lazy routes, persistent NavBar + Footer
 ├── constants/index.js        # All bilingual content, UI copy, routes, links and asset hooks
 ├── context/                  # ThemeContext (dark/light) and LanguageContext (en/id)
-├── pages/                    # Home, Projects, CaseStudy, Journey, ContactPage, NotFound
+├── pages/                    # Home, Projects, CaseStudy, Journey, Notes, ContactPage, NotFound
 ├── components/
 │   ├── NavBar.jsx            # NavLinks with active underline + mobile slide-down menu
 │   ├── Preferences.jsx       # EN | ID pill and Sun/Moon theme toggle
-│   ├── ScrollToTop.jsx       # Resets scroll and refreshes ScrollTrigger on route change
-│   ├── PageHeader.jsx, ProjectBits.jsx, CaseStudyBlocks.jsx
-│   ├── Button.jsx, AnimatedCounter.jsx, TitleHeader.jsx, GlowCard.jsx, Icons.jsx, ProjectPreview.jsx
+│   ├── ScrollToTop.jsx       # Resets the window scroll on route change
+│   ├── Tabs.jsx              # Accessible tab list + panel (Journey, project comparison)
+│   ├── PageHeader.jsx, ProjectBits.jsx, CaseStudyBlocks.jsx, NoteBits.jsx, GitHubStats.jsx
+│   ├── AnimatedCounter.jsx, GlowCard.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx
 │   ├── HeroModels/           # Hero canvas, lights, particles, procedural room
 │   └── Models/               # Desk parts, contact scene, glTF loader, studio env, emblems
-├── sections/                 # Hero, FeaturedWork, Logos, Features, ContactPreview, Experience,
-│                             # TechStack, Highlights, Contact, Footer
+├── sections/                 # Hero, JourneyPanels (experience, impact, stack, 3D cards),
+│                             # Contact, Footer
 ├── utils/                    # i18n (tx/localize/format), asset URL, inline-code and page-title helpers
 └── index.css                 # Tailwind v4 theme, custom utilities and keyframes
 ```

@@ -10,10 +10,20 @@ export const usePageTitle = (title) => {
   }, [title, siteName, role]);
 };
 
-/** Instantly scrolls to an element on the page (in-page "#anchors" would change the HashRouter route). */
+/**
+ * Smooth-scrolls to an element (in-page "#anchors" would change the HashRouter
+ * route). Inside a desktop `.scroll-pane` that pane scrolls; elsewhere the
+ * window does, leaving room for the fixed navbar.
+ */
 export const scrollToId = (id, offset = 96) => {
   const target = document.getElementById(id);
   if (!target) return;
+  const pane = target.closest(".scroll-pane");
+  if (pane && pane.scrollHeight > pane.clientHeight && getComputedStyle(pane).overflowY !== "visible") {
+    const top = target.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop - 16;
+    pane.scrollTo({ top, behavior: "smooth" });
+    return;
+  }
   const top = target.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top, behavior: "smooth" });
 };

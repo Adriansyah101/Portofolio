@@ -1,25 +1,160 @@
-import PageHeader from "../components/PageHeader.jsx";
-import { NoteCard } from "../components/NoteBits.jsx";
-import { useLocalized } from "../context/LanguageContext.jsx";
-import { engineeringNotes, ui } from "../constants/index.js";
-import { usePageTitle } from "../utils/hooks.js";
+import { Link, useParams } from "react-router-dom";
 
-/** `/notes`: index of the Engineering Notes (Catatan Teknis). */
-const Notes = () => {
-  const { notes: text } = useLocalized(ui);
-  const notes = useLocalized(engineeringNotes);
-  usePageTitle(text.pageTitle);
+import PageHeader from "../components/PageHeader.jsx";
+import { ArrowLeftIcon, ArrowRightIcon } from "../components/Icons.jsx";
+import { CaseStudyBlock } from "../components/CaseStudyBlocks.jsx";
+import { NoteCard, noteRoute, readingMinutes } from "../components/NoteBits.jsx";
+import { ProjectTags } from "../components/ProjectBits.jsx";
+import NotFound from "./NotFound.jsx";
+import { useLanguage, useLocalized } from "../context/LanguageContext.jsx";
+import { engineeringNotes, routes, ui } from "../constants/index.js";
+import { format, formatDate } from "../utils/i18n.js";
+import { scrollToId, usePageTitle } from "../utils/hooks.js";
+
+/** The full text of one note: header, "on this page" chips, sections, related work and the next note. */
+const NoteReader = ({ note, next, isPageTitle }) => {
+  const { lang } = useLanguage();
+  const { notes: text, caseStudy: caseText, common } = useLocalized(ui);
+  // On `/notes` the list owns the page's h1, so the note title steps down one level.
+  const Title = isPageTitle ? "h1" : "h2";
+  const Heading = isPageTitle ? "h2" : "h3";
+  const titleId = `note-${note.slug}-title`;
 
   return (
-    <div className="page-enter">
-      <PageHeader eyebrow={text.eyebrow} title={text.title} description={text.description} />
-      <section className="padding-x-lg mt-12" aria-label={text.pageTitle}>
-        <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-5 lg:grid-cols-2">
-          {notes.map((note) => (
-            <NoteCard key={note.slug} note={note} headingLevel="h2" />
-          ))}
+    <article className="notes-reader scroll-pane" aria-labelledby={titleId}>
+      <div className="@container">
+        <nav aria-label={caseText.breadcrumb} className="mb-6 lg:hidden">
+          <ol className="flex flex-wrap items-center gap-2 text-sm text-blue-50">
+            <li>
+              <Link to={routes.notes} className="hover:text-white">
+                {text.pageTitle}
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" className="min-w-0 text-white-50">
+              {note.kicker}
+            </li>
+          </ol>
+        </nav>
+        <p className="page-eyebrow">{note.kicker}</p>
+        <Title id={titleId} className="page-title lg:text-[clamp(1.5rem,3.2vh,2.125rem)]">
+          {note.title}
+        </Title>
+        <p className="page-description">{note.summary}</p>
+        <p className="mt-5 font-mono text-xs text-blue-50">
+          {text.published} {formatDate(note.published, lang, { day: "numeric", month: "long", year: "numeric" })} ·{" "}
+          {format(text.minutes, { n: readingMinutes(note) })}
+        </p>
+        <div className="mt-4">
+          <ProjectTags tags={note.tags} />
         </div>
-      </section>
+
+        <nav className="jump-nav mt-8 lg:mt-6" aria-label={common.onThisPage}>
+          {note.sections.map((section, index) => (
+            <button key={section.id} type="button" className="jump-chip" onClick={() => scrollToId(section.id)}>
+              <span className="font-mono text-accent-cyan">{String(index + 1).padStart(2, "0")}</span>
+              {section.title}
+            </button>
+          ))}
+        </nav>
+
+        {note.sections.map((section, index) => (
+          <section key={section.id} id={section.id} className="case-section" aria-labelledby={`${section.id}-title`}>
+            <p className="font-mono text-sm text-accent-cyan">{String(index + 1).padStart(2, "0")}</p>
+            <Heading id={`${section.id}-title`} className="mt-2 text-3xl font-semibold text-balance md:text-4xl lg:text-2xl xl:text-3xl">
+              {section.title}
+            </Heading>
+            <div className="mt-8 flex flex-col gap-8 lg:mt-6">
+              {section.blocks.map((block, blockIndex) => (
+                <CaseStudyBlock key={`${section.id}-${blockIndex}`} block={block} />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <section className="mt-16 lg:mt-12" aria-labelledby={`${titleId}-related`}>
+          <Heading id={`${titleId}-related`} className="font-mono text-xs tracking-widest text-blue-50 uppercase">
+            {text.related}
+          </Heading>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {note.related.map((item) => (
+              <Link key={item.to} to={item.to} className="project-link secondary">
+                {item.label}
+                <ArrowRightIcon className="size-4" />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="mt-12 grid grid-cols-1 gap-5 @2xl:grid-cols-2 lg:mt-10">
+          <Link to={routes.notes} className="next-card group lg:hidden">
+            <ArrowLeftIcon className="size-5 text-blue-50 transition-transform group-hover:-translate-x-1" />
+            <span>
+              <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.backTo}</span>
+              <span className="mt-1 block text-xl font-semibold">{text.allNotes}</span>
+            </span>
+          </Link>
+          {next.slug !== note.slug && (
+            <Link to={noteRoute(next.slug)} className="next-card group justify-between">
+              <span className="min-w-0">
+                <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.nextNote}</span>
+                <span className="mt-1 block text-xl font-semibold text-balance">{next.title}</span>
+              </span>
+              <ArrowRightIcon className="size-5 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
+            </Link>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+};
+
+/**
+ * `/notes` and `/notes/:slug`: the Engineering Notes (Catatan Teknis).
+ * From 1024px up this is a master-detail view: the note list on the left and
+ * the selected note (the first one on `/notes`) in a reading pane on the right
+ * that scrolls on its own. Below 1024px `/notes` is the list and
+ * `/notes/:slug` is the note as a normal scrolling page.
+ */
+const Notes = () => {
+  const { slug } = useParams();
+  const notes = useLocalized(engineeringNotes);
+  const { notes: text, meta } = useLocalized(ui);
+  const index = slug ? notes.findIndex((item) => item.slug === slug) : 0;
+  const note = notes[index];
+  usePageTitle(slug ? (note ? note.title : meta.notFound) : text.pageTitle);
+
+  if (!note) return <NotFound />;
+  const next = notes[(index + 1) % notes.length];
+
+  return (
+    <div className="page-shell page-enter">
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="page-frame">
+        <div className="notes-layout">
+          <aside className={`notes-sidebar scroll-pane ${slug ? "hidden lg:flex" : "flex"}`} aria-label={text.pageTitle}>
+            <PageHeader
+              eyebrow={text.eyebrow}
+              title={text.title}
+              description={text.description}
+              titleAs={slug ? "p" : "h1"}
+              className="notes-intro"
+            />
+            <ul className="notes-list">
+              {notes.map((item) => (
+                <li key={item.slug} className="min-w-0">
+                  <NoteCard note={item} headingLevel={slug ? "p" : "h2"} selected={item.slug === note.slug} current={item.slug === slug} />
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          {/* On phones the index shows only the list; the note opens as its own page. */}
+          <div className={`min-w-0 lg:flex lg:min-h-0 ${slug ? "" : "hidden"}`} key={note.slug}>
+            <NoteReader note={note} next={next} isPageTitle={Boolean(slug)} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

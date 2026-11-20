@@ -9,21 +9,24 @@ const NotFound = () => {
   usePageTitle(meta.notFound);
 
   return (
-    <div className="page-enter min-h-screen">
-      <PageHeader
-        eyebrow={text.eyebrow}
-        title={text.title}
-        description={text.description}
-      >
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link to={routes.home} className="project-link primary">
-            {text.home}
-          </Link>
-          <Link to={routes.journey} className="project-link secondary">
-            {text.journey}
-          </Link>
-        </div>
-      </PageHeader>
+    <div className="page-shell page-enter min-h-[70vh] lg:min-h-0">
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="page-frame lg:justify-center">
+        <PageHeader
+          eyebrow={text.eyebrow}
+          title={text.title}
+          description={text.description}
+        >
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to={routes.home} className="project-link primary">
+              {text.home}
+            </Link>
+            <Link to={routes.journey} className="project-link secondary">
+              {text.journey}
+            </Link>
+          </div>
+        </PageHeader>
+      </div>
     </div>
   );
 };
