@@ -117,53 +117,161 @@ export const createCodeTexture = ({ seed = 7, accent = "#6ee7ff" } = {}) => {
   return texture;
 };
 
-/** Wall poster for the hero room. */
-export const createPosterTexture = () => {
+/**
+ * Terminal screen with ops-style shell output. Like the code texture it holds
+ * two identical halves so it can scroll and loop seamlessly.
+ */
+const TERMINAL_LINES = [
+  ["$ ", "#6ee7ff", "systemctl status ticketing.service", "#e2e8f0"],
+  ["● ", "#34d399", "ticketing.service - Ticketing API", "#cbd5e1"],
+  ["  ", null, "Active: active (running) · 41d uptime", "#34d399"],
+  ["$ ", "#6ee7ff", "./deploy.sh counter-app --harbor all", "#e2e8f0"],
+  ["[OK] ", "#34d399", "harbor-node-01   counter-app   synced", "#cbd5e1"],
+  ["[OK] ", "#34d399", "harbor-node-02   counter-app   synced", "#cbd5e1"],
+  ["[OK] ", "#34d399", "cloud-edge       ticketing     healthy", "#cbd5e1"],
+  ["$ ", "#6ee7ff", "gatectl status --site surabaya", "#e2e8f0"],
+  ["  ", null, "plc: online   gates: 4/4   mode: auto", "#93c5fd"],
+  ["$ ", "#6ee7ff", "curl -s api/health | jq .status", "#e2e8f0"],
+  ["  ", null, '"ok"   p95 latency 120 ms', "#34d399"],
+  ["$ ", "#6ee7ff", "uptime", "#e2e8f0"],
+  ["  ", null, "load average: 0.42, 0.38, 0.35", "#94a3b8"],
+  ["$ ", "#6ee7ff", "_", "#e2e8f0"],
+];
+
+export const createTerminalTexture = ({ accent = "#6ee7ff" } = {}) => {
+  const width = 1024;
+  const half = 640;
+  const canvas = createCanvas(width, half * 2);
+  const ctx = canvas.getContext("2d");
+  const lineHeight = (half - 70) / TERMINAL_LINES.length;
+
+  ctx.fillStyle = "#070b14";
+  ctx.fillRect(0, 0, width, half);
+
+  // Title bar
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(0, 0, width, 48);
+  ["#334155", "#334155", "#334155"].forEach((color, index) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(28 + index * 26, 24, 7, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "22px monospace";
+  ctx.textBaseline = "middle";
+  ctx.fillText("ops@harbor-gw: ~", 120, 25);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.6;
+  ctx.fillRect(0, 47, width, 2);
+  ctx.globalAlpha = 1;
+
+  ctx.font = "26px monospace";
+  TERMINAL_LINES.forEach(([prefix, prefixColor, text, color], line) => {
+    const y = 70 + line * lineHeight + lineHeight / 2;
+    let x = 36;
+    if (prefixColor) {
+      ctx.fillStyle = prefixColor;
+      ctx.fillText(prefix, x, y);
+    }
+    x += ctx.measureText(prefix).width;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+  });
+
+  ctx.drawImage(canvas, 0, 0, width, half, 0, half, width, half);
+
+  const texture = toTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1, 0.5);
+  return texture;
+};
+
+/** Wall-mounted operations dashboard for the hero room (replaces the old poster). */
+export const createDashboardTexture = () => {
   const width = 1024;
   const height = 576;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
   const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, "#120a2e");
-  gradient.addColorStop(0.55, "#3b1670");
-  gradient.addColorStop(1, "#0b3b5c");
+  gradient.addColorStop(0, "#07111f");
+  gradient.addColorStop(1, "#0b1f3a");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  // Perspective grid
-  ctx.strokeStyle = "rgba(110, 231, 255, 0.35)";
-  ctx.lineWidth = 2;
-  for (let i = -10; i <= 10; i += 1) {
-    ctx.beginPath();
-    ctx.moveTo(width / 2, height * 0.58);
-    ctx.lineTo(width / 2 + i * 120, height);
-    ctx.stroke();
-  }
-  for (let i = 0; i < 6; i += 1) {
-    const y = height * 0.58 + (i * i + 1) * 9;
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(width, y);
-    ctx.stroke();
-  }
-
-  ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.shadowColor = "#f472b6";
-  ctx.shadowBlur = 30;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "900 150px Arial Black, Arial, sans-serif";
-  ctx.fillText("RECOMP", width / 2, height * 0.36);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "600 26px monospace";
+  ctx.fillText("PRODUCTION · SYSTEM STATUS", 48, 56);
+  ctx.fillStyle = "#34d399";
+  ctx.beginPath();
+  ctx.arc(width - 70, 56, 10, 0, Math.PI * 2);
+  ctx.fill();
 
-  ctx.shadowBlur = 0;
+  // Headline metric
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "700 112px Arial, Helvetica, sans-serif";
+  ctx.fillText("99.9%", 48, 160);
   ctx.fillStyle = "#6ee7ff";
-  ctx.font = "600 34px monospace";
-  ctx.fillText("NATIVE · 60 FPS · OPEN SOURCE", width / 2, height * 0.56);
+  ctx.font = "26px monospace";
+  ctx.fillText("ticketing availability", 52, 236);
 
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-  ctx.lineWidth = 6;
-  ctx.strokeRect(18, 18, width - 36, height - 36);
+  // Service list
+  const services = ["ticketing-api", "counter-apps", "harbor-sync", "gate-control"];
+  ctx.font = "26px monospace";
+  services.forEach((name, index) => {
+    const y = 300 + index * 58;
+    ctx.fillStyle = "#34d399";
+    ctx.beginPath();
+    ctx.arc(60, y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#cbd5e1";
+    ctx.fillText(name, 86, y);
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("OK", 400, y);
+  });
+
+  // Throughput chart
+  const chart = { x: 520, y: 120, w: 450, h: 380 };
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.15)";
+  ctx.lineWidth = 2;
+  for (let i = 0; i <= 4; i += 1) {
+    const y = chart.y + (chart.h / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(chart.x, y);
+    ctx.lineTo(chart.x + chart.w, y);
+    ctx.stroke();
+  }
+  const random = seeded(19);
+  const points = Array.from({ length: 24 }, (_, index) => {
+    const t = index / 23;
+    const value = 0.55 + 0.22 * Math.sin(t * Math.PI * 2.2) + (random() - 0.5) * 0.12;
+    return [chart.x + t * chart.w, chart.y + chart.h * (1 - value)];
+  });
+  const fill = ctx.createLinearGradient(0, chart.y, 0, chart.y + chart.h);
+  fill.addColorStop(0, "rgba(110, 231, 255, 0.35)");
+  fill.addColorStop(1, "rgba(110, 231, 255, 0)");
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], chart.y + chart.h);
+  points.forEach(([x, y]) => ctx.lineTo(x, y));
+  ctx.lineTo(points[points.length - 1][0], chart.y + chart.h);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.beginPath();
+  points.forEach(([x, y], index) => (index === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+  ctx.strokeStyle = "#6ee7ff";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.fillStyle = "#64748b";
+  ctx.font = "22px monospace";
+  ctx.fillText("transactions / min", chart.x, chart.y + chart.h + 34);
+
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(14, 14, width - 28, height - 28);
 
   return toTexture(canvas);
 };

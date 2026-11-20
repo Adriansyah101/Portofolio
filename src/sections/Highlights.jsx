@@ -4,24 +4,17 @@ import { ExternalIcon, Icon } from "../components/Icons.jsx";
 import { highlights } from "../constants/index.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
-const ICON_GRADIENTS = [
-  "from-cyan-400 to-violet-500",
-  "from-pink-400 to-orange-400",
-  "from-violet-400 to-sky-400",
-  "from-amber-300 to-pink-500",
-  "from-emerald-400 to-cyan-500",
-  "from-orange-400 to-rose-500",
-];
+const ICON_GRADIENTS = ["from-sky-400 to-blue-600", "from-emerald-400 to-cyan-500", "from-cyan-300 to-sky-500"];
 
-/** Masonry grid of verifiable release milestones, using the cursor-tracking GlowCard. */
+/** Operational impact cards on `/journey`, using the cursor-tracking GlowCard. */
 const Highlights = () => (
   <section id="highlights" className="section-padding flex-center w-full">
     <div className="h-full w-full max-w-[1600px] md:px-10">
-      <TitleHeader title="Production & Release Highlights" sub="What Shipped" />
+      <TitleHeader title="Operational Impact Highlights" sub="Production Outcomes" />
 
-      <div className="mt-16 columns-1 gap-6 md:columns-2 xl:columns-3">
+      <div className="impact-grid">
         {highlights.map((item, index) => (
-          <GlowCard key={item.title} rating={0}>
+          <GlowCard key={item.title} rating={0} className="mb-0! flex h-full flex-col">
             <div className="flex items-center gap-3">
               <div
                 className={`flex-center size-11 flex-none rounded-full bg-linear-to-br text-black-100 ${
@@ -37,7 +30,7 @@ const Highlights = () => (
 
             <p className="mt-3 leading-relaxed text-white-50/80">{renderInlineCode(item.summary)}</p>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 mb-6 flex flex-wrap gap-2">
               {item.tags.map((tag) => (
                 <span key={tag} className="tag-pill">
                   {tag}
@@ -45,7 +38,7 @@ const Highlights = () => (
               ))}
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-black-200 pt-4">
+            <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-black-200 pt-4">
               <p className="min-w-0 text-sm text-blue-50 wrap-break-word">{softBreak(item.project)}</p>
               {item.link?.href && (
                 <a

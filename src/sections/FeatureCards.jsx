@@ -2,8 +2,10 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
+import TitleHeader from "../components/TitleHeader.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { abilities } from "../constants/index.js";
+import { renderInlineCode } from "../utils/text.jsx";
 
 const FeatureCards = () => {
   const sectionRef = useRef(null);
@@ -27,17 +29,20 @@ const FeatureCards = () => {
   );
 
   return (
-    <section ref={sectionRef} className="padding-x-lg w-full" aria-label="Core engineering strengths">
-      <div className="grid-3-cols mx-auto max-w-[1600px]">
-        {abilities.map(({ icon, title, desc }) => (
-          <div key={title} className="feature-card card-border flex flex-col gap-4 rounded-xl p-8">
-            <div className="flex-center size-14 rounded-full bg-black-50 text-accent-cyan">
-              <Icon name={icon} className="size-7" />
+    <section ref={sectionRef} id="capabilities" className="padding-x-lg w-full">
+      <div className="mx-auto max-w-[1600px]">
+        <TitleHeader title="Core Capabilities" sub="Operations · Field Systems · Low-Level Code" />
+        <div className="grid-3-cols mt-14">
+          {abilities.map(({ icon, title, desc }) => (
+            <div key={title} className="feature-card card-border flex flex-col gap-4 rounded-xl p-8">
+              <div className="flex-center size-14 rounded-full bg-black-50 text-accent-cyan">
+                <Icon name={icon} className="size-7" />
+              </div>
+              <h3 className="text-2xl font-semibold text-white-50">{title}</h3>
+              <p className="text-lg leading-relaxed text-white-50/70">{renderInlineCode(desc)}</p>
             </div>
-            <h3 className="text-2xl font-semibold text-white-50">{title}</h3>
-            <p className="text-lg leading-relaxed text-white-50/70">{desc}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

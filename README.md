@@ -1,23 +1,22 @@
-# Adriansyah Prasetya Nugraha: 32-Bit Game Preservation Portfolio
+# Adriansyah Prasetya Nugraha: Systems & Application Operations Portfolio
 
 Multi-page 3D portfolio of **Adriansyah Prasetya Nugraha** ([`adriansyah101`](https://github.com/adriansyah101)),
-a 32-bit game preservation and static recompilation engineer based in Semarang, Indonesia.
-It documents how delisted 32-bit classics, which stopped working when Apple dropped 32-bit apps
-in iOS 11 and macOS Catalina, were rescued as native PC ports:
+a Systems & Application Operations Engineer based in Semarang, Indonesia.
 
-- **GTRacingMotorAcademyRecomp**: GT Racing: Motor Academy, from 32-bit iPad (ARMv7 / PowerVR) to a native Windows release (`v1.0.0`).
-- **Gangstar: Miami Vindication**: from a 32-bit x86 Mac binary to native Windows x86 and Linux (`V1.0.0`).
-
-The Journey page pairs this with professional experience as Business Application Operational
-Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026): ferry ticketing
-infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise harbor deployments and Omron
-barrier gate integration.
+- **Home (`/`)** presents the engineering identity: high-availability national ticketing
+  infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments, industrial
+  hardware integration and low-level binary recompilation. It has no game titles or game artwork.
+- **Journey (`/journey`)** is professional work experience only: Business Application Operational
+  Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026).
+- **Preservation (`/projects`)** holds the open-source 32-bit game preservation work:
+  - **GTRacingMotorAcademyRecomp**: GT Racing: Motor Academy, from 32-bit iPad (ARMv7 / PowerVR) to a native Windows release (`v1.0.0`).
+  - **Gangstar: Miami Vindication**: from a 32-bit x86 Mac binary to native Windows x86 and Linux (`V1.0.0`).
 
 **Stack:** React 19 + Vite · React Router (`HashRouter`) · Three.js via `@react-three/fiber`,
 `@react-three/drei` and `@react-three/postprocessing` · GSAP + ScrollTrigger · Tailwind CSS v4 ·
 react-countup · react-responsive · EmailJS.
 
-The 3D scenes (hero developer room, tech-stack emblems, contact desk) and the project previews
+The 3D scenes (hero systems workstation, tech-stack emblems, contact desk) and the project previews
 are drawn in code. The site needs no image or model files to render, and it makes no runtime
 requests to third-party CDNs for assets: the tech-card reflections come from a procedural
 `<Lightformer>` environment rather than a downloaded HDRI. The only external requests are
@@ -27,11 +26,11 @@ Google Fonts (with system-font fallbacks) and EmailJS when the contact form is s
 
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
-| `#/`                  | Home                     | 3D hero room, preservation counters, featured project bento, tech marquee, strengths, contact teaser |
-| `#/projects`          | Preservation Archive     | Filterable catalog (`All`, `32-Bit iPad`, `32-Bit Mac`, `OpenGL ES`) and "Original 32-Bit Target vs. Modern Native Port" tables |
+| `#/`                  | Home                     | 3D systems workstation hero, operations metrics, featured work (PT ASDP + preservation archive summary), tech marquee, core capabilities, contact teaser |
+| `#/projects`          | Preservation             | Filterable catalog (`All`, `32-Bit iPad`, `32-Bit Mac`, `OpenGL ES`) and "Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port" tables |
 | `#/projects/gt-racing`| GT Racing case study     | Why it was lost, recompilation & graphics pipeline, leaderboard architecture, controls & release info |
 | `#/projects/gangstar` | Gangstar case study      | Why it was lost, Windows & Linux porting, V1.0.0 release packaging and checksum verification |
-| `#/journey`           | Journey                  | Enterprise + open-source overview, career timeline (PT ASDP first), five interactive 3D tech-stack cards, highlights |
+| `#/journey`           | Journey                  | Work experience at PT ASDP, six interactive 3D enterprise & systems tech-stack cards, operational impact highlights |
 | `#/contact`           | Contact & Community      | EmailJS form, warm 3D desk scene, GitHub links                           |
 
 Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
@@ -69,8 +68,7 @@ npm run dev
 
 \* If the EmailJS keys are missing, the form shows a friendly "not configured" message.
 
-Without `VITE_GANGSTAR_REPO`, Gangstar links open
-`https://github.com/adriansyah101?tab=repositories&q=gangstar`, a filtered list of your repositories.
+Without `VITE_GANGSTAR_REPO`, Gangstar links open your GitHub profile (`https://github.com/adriansyah101`).
 
 ## Deploying to GitHub Pages
 
@@ -95,8 +93,10 @@ All copy lives in [`src/constants/index.js`](src/constants/index.js):
 - `caseStudies`: the two deep-dive pages. Each section is a list of typed blocks (`timeline`,
   `cards`, `flow`, `architecture`, `table`, `checklist`, `code`, `links`, `prose`).
 - `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
-- `careerTracks`, `expCards`, `techStackIcons` and `highlights`: the Journey page. Set `logo` on an
-  `expCards` entry to use an inline SVG emblem from `src/components/CompanyEmblems.jsx`.
+- `heroContent`, `words`, `counterItems`, `featuredWork`, `logoItems` and `abilities`: the Home page.
+  A counter item with `text` (e.g. `"Dozens"`) shows that word instead of an animated number.
+- `expCards`, `techStackIcons` and `highlights`: the Journey page (work experience only). Set `logo`
+  on an `expCards` entry to use an inline SVG emblem from `src/components/CompanyEmblems.jsx`.
 
 ## Adding your own screenshots and models
 
@@ -148,7 +148,7 @@ src/
 │   ├── Button.jsx, AnimatedCounter.jsx, TitleHeader.jsx, GlowCard.jsx, Icons.jsx, ProjectPreview.jsx
 │   ├── HeroModels/           # Hero canvas, lights, particles, procedural room
 │   └── Models/               # Desk parts, contact scene, glTF loader, studio env, emblems
-├── sections/                 # Hero, Showcase, Logos, Features, ContactPreview, Experience,
+├── sections/                 # Hero, FeaturedWork, Logos, Features, ContactPreview, Experience,
 │                             # TechStack, Highlights, Contact, Footer
 ├── utils/                    # Asset URL, inline-code and page-title helpers
 └── index.css                 # Tailwind v4 theme, custom utilities and keyframes

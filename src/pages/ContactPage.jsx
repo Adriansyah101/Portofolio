@@ -6,14 +6,14 @@ import { usePageTitle } from "../utils/hooks.js";
 
 /** `/contact`: EmailJS form, the warm 3D desk scene and direct GitHub links. */
 const ContactPage = () => {
-  usePageTitle("Contact & Community");
+  usePageTitle("Contact");
 
   return (
     <div className="page-enter">
       <PageHeader
-        eyebrow="Contact & Community"
-        title="Know a 32-bit classic worth saving?"
-        description="Questions about a port, a preservation lead, or a recompilation or graphics project in mind: send a message, or find every release and its source on GitHub."
+        eyebrow="Contact"
+        title="Let's talk about systems that need to stay up"
+        description="Systems operations, infrastructure and application support roles, or a C/C++ and low-level porting question: send a message, or find my source code and releases on GitHub."
       />
 
       <Contact compact />
@@ -21,7 +21,7 @@ const ContactPage = () => {
       <section className="padding-x-lg mt-16 md:mt-24" aria-labelledby="community-title">
         <div className="mx-auto w-full max-w-[1600px]">
           <h2 id="community-title" className="text-2xl font-semibold md:text-3xl">
-            Follow the work on GitHub
+            Source code & releases on GitHub
           </h2>
           <ul className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
             {communityLinks.map((item) => (

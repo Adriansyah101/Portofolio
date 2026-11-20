@@ -69,7 +69,7 @@ const ExperienceSection = () => {
   return (
     <section id="experience" ref={sectionRef} className="section-padding flex-center w-full xl:px-0">
       <div className="h-full w-full max-w-[1600px] px-5 md:px-20">
-        <TitleHeader title="Career & Engineering Timeline" sub="Enterprise Ops + Open-Source Preservation" />
+        <TitleHeader title="Professional Experience" sub="Enterprise Application Operations" />
 
         <div className="relative mt-20 md:mt-32">
           <div className="relative z-50 space-y-16 xl:space-y-32">

@@ -9,13 +9,13 @@ const ContactPreview = () => (
       <div className="hero-bg" aria-hidden="true" />
       <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
         <div className="max-w-3xl">
-          <p className="page-eyebrow">Contact & Community</p>
+          <p className="page-eyebrow">Contact</p>
           <h2 id="contact-preview-title" className="mt-5 text-3xl font-semibold md:text-5xl">
-            Know a 32-bit classic worth saving?
+            Need critical systems that stay online?
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-white-50/75">
-            I&apos;m always interested in preservation leads, recompilation challenges and legacy graphics work.
-            Send a message, or follow the releases on GitHub.
+            I&apos;m open to systems operations, infrastructure and application support roles, plus low-level
+            C/C++ engineering work. Send a message, or browse my source code on GitHub.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -25,7 +25,7 @@ const ContactPreview = () => (
           </Link>
           <a href={links.githubProfile} target="_blank" rel="noopener noreferrer" className="project-link secondary">
             <GitHubIcon className="size-4" />
-            Follow on GitHub
+            View GitHub
           </a>
         </div>
       </div>

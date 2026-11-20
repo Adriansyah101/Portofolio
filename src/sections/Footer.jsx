@@ -9,7 +9,7 @@ const Footer = () => (
         <Link to={routes.home} className="font-semibold tracking-[0.2em] transition-colors hover:text-accent-cyan">
           ADRIANSYAH
         </Link>
-        <p className="mt-1 text-sm text-blue-50">32-Bit Game Preservation & Static Recompilation</p>
+        <p className="mt-1 text-sm text-blue-50">Systems & Application Operations Engineer</p>
       </div>
 
       <div className="socials">

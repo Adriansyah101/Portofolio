@@ -233,7 +233,210 @@ export const GitEmblem = () => {
   );
 };
 
+/* ------------------------------ Server rack ------------------------------- */
+
+const STATUS_GREEN = [0.4, 2.4, 1.1];
+const STATUS_CYAN = [0.6, 2.2, 2.8];
+
+/** One rack-mount server: chassis, front vents and status LEDs. */
+const ServerUnit = ({ y, row, ledsRef }) => (
+  <group position={[0, y, 0]}>
+    <RoundedBox args={[1.9, 0.42, 1.2]} radius={0.04} smoothness={3}>
+      <meshStandardMaterial color="#1e293b" metalness={0.6} roughness={0.3} />
+    </RoundedBox>
+    {[-0.45, -0.25, -0.05, 0.15].map((x) => (
+      <mesh key={x} position={[x, 0, 0.605]}>
+        <boxGeometry args={[0.12, 0.22, 0.01]} />
+        <meshStandardMaterial color="#0f172a" roughness={0.8} />
+      </mesh>
+    ))}
+    {[0.45, 0.6, 0.75].map((x, index) => (
+      <mesh
+        key={x}
+        ref={(node) => {
+          ledsRef.current[row * 3 + index] = node;
+        }}
+        position={[x, 0.06, 0.61]}
+      >
+        <boxGeometry args={[0.07, 0.07, 0.01]} />
+        <meshBasicMaterial color={index === 0 ? STATUS_CYAN : STATUS_GREEN} toneMapped={false} />
+      </mesh>
+    ))}
+    <mesh position={[0.6, -0.09, 0.61]}>
+      <boxGeometry args={[0.38, 0.03, 0.01]} />
+      <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+    </mesh>
+  </group>
+);
+
+/** Three stacked servers whose activity LEDs flicker like live traffic. */
+export const ServersEmblem = () => {
+  const ledsRef = useRef([]);
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    ledsRef.current.forEach((led, index) => {
+      // The first LED of each unit is a steady power light.
+      if (led) led.visible = index % 3 === 0 || Math.sin(t * (3 + index * 0.7) + index) > -0.3;
+    });
+  });
+
+  return (
+    <group rotation={[0.15, -0.45, 0]}>
+      {[0.5, 0, -0.5].map((y, row) => (
+        <ServerUnit key={y} y={y} row={row} ledsRef={ledsRef} />
+      ))}
+      {/* Rack rails */}
+      {[-1.0, 1.0].map((x) => (
+        <mesh key={x} position={[x, 0, 0.55]}>
+          <boxGeometry args={[0.08, 1.6, 0.08]} />
+          <meshStandardMaterial color="#475569" metalness={0.8} roughness={0.25} />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+/* ------------------------------ Hybrid cloud ------------------------------ */
+
+const CLOUD_PUFFS = [
+  [-0.55, 0.55, 0, 0.38],
+  [-0.05, 0.78, 0, 0.5],
+  [0.5, 0.58, 0, 0.4],
+];
+
+/** Cloud above an on-prem server, linked by two data lines with travelling packets. */
+export const HybridCloudEmblem = () => {
+  const packetsRef = useRef([]);
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    packetsRef.current.forEach((packet, index) => {
+      if (!packet) return;
+      const progress = (t * 0.6 + index / 4) % 1;
+      // Even packets travel up, odd packets travel down: traffic both ways.
+      packet.position.y = index % 2 === 0 ? -0.55 + progress : 0.45 - progress;
+    });
+  });
+
+  return (
+    <group position={[0, 0.05, 0]} rotation={[0.1, -0.3, 0]}>
+      {CLOUD_PUFFS.map(([x, y, z, r]) => (
+        <mesh key={x} position={[x, y, z]}>
+          <sphereGeometry args={[r, 32, 32]} />
+          <meshStandardMaterial color="#7dd3fc" roughness={0.3} metalness={0.1} />
+        </mesh>
+      ))}
+      <mesh position={[-0.02, 0.42, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <capsuleGeometry args={[0.26, 1.1, 8, 24]} />
+        <meshStandardMaterial color="#7dd3fc" roughness={0.3} metalness={0.1} />
+      </mesh>
+
+      {[-0.25, 0.25].map((x) => (
+        <mesh key={x} position={[x, -0.05, 0]}>
+          <cylinderGeometry args={[0.025, 0.025, 1.0, 12]} />
+          <meshStandardMaterial color="#38bdf8" emissive="#0ea5e9" emissiveIntensity={0.6} />
+        </mesh>
+      ))}
+      {[0, 1, 2, 3].map((index) => (
+        <mesh
+          key={index}
+          ref={(node) => {
+            packetsRef.current[index] = node;
+          }}
+          position={[index % 2 === 0 ? -0.25 : 0.25, 0, 0]}
+        >
+          <sphereGeometry args={[0.06, 16, 16]} />
+          <meshBasicMaterial color={STATUS_CYAN} toneMapped={false} />
+        </mesh>
+      ))}
+
+      <group position={[0, -0.85, 0]}>
+        <RoundedBox args={[1.5, 0.5, 0.9]} radius={0.05} smoothness={3}>
+          <meshStandardMaterial color="#1e293b" metalness={0.6} roughness={0.3} />
+        </RoundedBox>
+        {[0.35, 0.5].map((x) => (
+          <mesh key={x} position={[x, 0.05, 0.455]}>
+            <boxGeometry args={[0.07, 0.07, 0.01]} />
+            <meshBasicMaterial color={STATUS_GREEN} toneMapped={false} />
+          </mesh>
+        ))}
+        <mesh position={[-0.3, 0, 0.455]}>
+          <boxGeometry args={[0.6, 0.05, 0.01]} />
+          <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+/* --------------------------- Barrier gate (PLC) --------------------------- */
+
+const BOOM_LENGTH = 1.8;
+const BOOM_STRIPES = 6;
+const LAMP_STOP = [2.6, 0.5, 0.4];
+const LAMP_GO = [0.4, 2.4, 1.1];
+
+/** Automated barrier gate: PLC cabinet with a striped boom that lifts and lowers. */
+export const GateEmblem = () => {
+  const boomRef = useRef(null);
+  const lampRef = useRef(null);
+
+  useFrame(({ clock }) => {
+    // Smooth ~6 s cycle: hold closed, lift, hold open, lower.
+    const cycle = (Math.sin(clock.elapsedTime * 1.05) + 1) / 2;
+    const lift = Math.min(1, Math.max(0, (cycle - 0.2) / 0.6));
+    if (boomRef.current) boomRef.current.rotation.z = lift * (Math.PI / 3);
+    if (lampRef.current) lampRef.current.color.setRGB(...(lift > 0.5 ? LAMP_GO : LAMP_STOP));
+  });
+
+  return (
+    <group position={[-0.75, -0.35, 0]} rotation={[0.12, 0.35, 0]}>
+      {/* Cabinet with controller display and status lamp */}
+      <RoundedBox args={[0.6, 1.3, 0.5]} radius={0.05} smoothness={3} position={[0, -0.1, 0]}>
+        <meshStandardMaterial color="#e2e8f0" metalness={0.3} roughness={0.35} />
+      </RoundedBox>
+      <mesh position={[0, 0.12, 0.255]}>
+        <boxGeometry args={[0.36, 0.2, 0.01]} />
+        <meshStandardMaterial color="#0f172a" roughness={0.4} />
+      </mesh>
+      <mesh position={[0, -0.25, 0.255]}>
+        <boxGeometry args={[0.36, 0.04, 0.01]} />
+        <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0.6, 0]}>
+        <sphereGeometry args={[0.09, 16, 16]} />
+        <meshBasicMaterial ref={lampRef} color={LAMP_STOP} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, -0.78, 0]}>
+        <boxGeometry args={[0.8, 0.06, 0.7]} />
+        <meshStandardMaterial color="#475569" metalness={0.6} roughness={0.4} />
+      </mesh>
+
+      {/* Boom arm, pivoting at the top edge of the cabinet */}
+      <group ref={boomRef} position={[0.2, 0.32, 0.3]}>
+        {Array.from({ length: BOOM_STRIPES }, (_, index) => {
+          const segment = BOOM_LENGTH / BOOM_STRIPES;
+          return (
+            <mesh key={index} position={[segment * index + segment / 2, 0, 0]}>
+              <boxGeometry args={[segment, 0.12, 0.08]} />
+              <meshStandardMaterial color={index % 2 === 0 ? "#f8fafc" : "#ef4444"} roughness={0.4} />
+            </mesh>
+          );
+        })}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.14, 20]} />
+          <meshStandardMaterial color="#334155" metalness={0.7} roughness={0.3} />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
 export const emblemMap = {
+  servers: ServersEmblem,
+  hybrid: HybridCloudEmblem,
+  gate: GateEmblem,
   cpp: CppEmblem,
   opengl: OpenGLEmblem,
   platforms: PlatformsEmblem,

@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import Segment from "./Segment.jsx";
-import { createCodeTexture } from "./canvasTextures.js";
+import { createCodeTexture, createTerminalTexture } from "./canvasTextures.js";
 
 /**
  * Procedural developer-setup building blocks shared by the hero room and the
@@ -73,8 +73,12 @@ export const Desk = ({
 /*                                  Screens                                   */
 /* -------------------------------------------------------------------------- */
 
-const CodeScreen = ({ width, height, seed, accent }) => {
-  const texture = useMemo(() => createCodeTexture({ seed, accent }), [seed, accent]);
+/** Scrolling canvas screen: an IDE (`variant="code"`) or an ops shell (`"terminal"`). */
+const CodeScreen = ({ width, height, seed, accent, variant = "code" }) => {
+  const texture = useMemo(
+    () => (variant === "terminal" ? createTerminalTexture({ accent }) : createCodeTexture({ seed, accent })),
+    [variant, seed, accent],
+  );
 
   useEffect(() => () => texture.dispose(), [texture]);
 
@@ -90,7 +94,7 @@ const CodeScreen = ({ width, height, seed, accent }) => {
   );
 };
 
-const plasmaVertex = /* glsl */ `
+const screenVertex = /* glsl */ `
   varying vec2 vUv;
   void main() {
     vUv = uv;
@@ -98,29 +102,47 @@ const plasmaVertex = /* glsl */ `
   }
 `;
 
-const plasmaFragment = /* glsl */ `
+// Calm system-telemetry view: a fine grid, two live metric curves and a
+// slowly rotating hexagon outline. Low saturation, no scanlines.
+const telemetryFragment = /* glsl */ `
   uniform float uTime;
   varying vec2 vUv;
 
-  void main() {
-    vec2 p = vUv * 4.0;
-    float t = uTime * 0.6;
-    float v = sin(p.x + t)
-            + sin(p.y * 1.3 + t * 0.7)
-            + sin((p.x + p.y) * 0.8 + t * 1.3)
-            + sin(length(p - vec2(2.0)) * 2.2 - t * 1.6);
-    vec3 color = 0.5 + 0.5 * cos(v + uTime * 0.15 + vec3(0.0, 2.1, 4.2));
-    color = mix(color, vec3(0.43, 0.9, 1.0), 0.12);
+  float lineMask(float distance, float width) {
+    return smoothstep(width, 0.0, abs(distance));
+  }
 
-    // CRT-style scanlines and vignette
-    float scan = 0.9 + 0.1 * sin(vUv.y * 420.0);
-    float vignette = smoothstep(0.85, 0.25, length(vUv - 0.5));
-    gl_FragColor = vec4(color * scan * vignette * 0.95, 1.0);
+  float hexagon(vec2 p, float radius) {
+    p = abs(p);
+    return max(dot(p, normalize(vec2(1.0, 1.732))), p.x) - radius;
+  }
+
+  void main() {
+    vec2 uv = vUv;
+    vec3 color = mix(vec3(0.016, 0.03, 0.07), vec3(0.03, 0.07, 0.13), uv.y);
+
+    vec2 cell = abs(fract(uv * vec2(14.0, 8.0)) - 0.5);
+    color += smoothstep(0.47, 0.5, max(cell.x, cell.y)) * vec3(0.03, 0.08, 0.12);
+
+    float x = uv.x * 6.2831 + uTime * 0.45;
+    float primary = 0.6 + 0.09 * sin(x) + 0.03 * sin(x * 2.7 + 1.3);
+    float secondary = 0.3 + 0.05 * sin(x * 0.8 + 2.0) + 0.02 * sin(x * 3.1);
+    color += smoothstep(0.0, primary, uv.y) * step(uv.y, primary) * 0.05 * vec3(0.43, 0.9, 1.0);
+    color += lineMask(uv.y - primary, 0.007) * vec3(0.43, 0.9, 1.0) * 0.9;
+    color += lineMask(uv.y - secondary, 0.006) * vec3(0.22, 0.74, 0.97) * 0.7;
+
+    vec2 p = (uv - vec2(0.84, 0.8)) * vec2(1.75, 1.0);
+    float angle = uTime * 0.2;
+    p = mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * p;
+    color += lineMask(hexagon(p, 0.09), 0.004) * vec3(0.43, 0.9, 1.0) * 0.6;
+
+    float vignette = smoothstep(1.05, 0.35, length(uv - 0.5));
+    gl_FragColor = vec4(color * mix(0.8, 1.0, vignette), 1.0);
   }
 `;
 
-/** Live GLSL plasma — a real fragment shader running on the second monitor. */
-const ShaderScreen = ({ width, height }) => {
+/** Live GLSL telemetry view: a real fragment shader running on the second monitor. */
+const TelemetryScreen = ({ width, height }) => {
   const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
   useFrame((_, delta) => {
@@ -132,8 +154,8 @@ const ShaderScreen = ({ width, height }) => {
       <planeGeometry args={[width, height]} />
       <shaderMaterial
         uniforms={uniforms}
-        vertexShader={plasmaVertex}
-        fragmentShader={plasmaFragment}
+        vertexShader={screenVertex}
+        fragmentShader={telemetryFragment}
         toneMapped={false}
       />
     </mesh>
@@ -149,7 +171,7 @@ export const Monitor = ({
   ...props
 }) => {
   const screenY = 0.55 + height / 2;
-  const accent = screen === "shader" ? "#a78bfa" : "#6ee7ff";
+  const accent = screen === "telemetry" ? "#38bdf8" : "#6ee7ff";
 
   return (
     <group {...props}>
@@ -176,10 +198,10 @@ export const Monitor = ({
 
       {/* Display */}
       <group position={[0, screenY + 0.01, -0.034]}>
-        {screen === "shader" ? (
-          <ShaderScreen width={width - 0.06} height={height - 0.08} />
+        {screen === "telemetry" ? (
+          <TelemetryScreen width={width - 0.06} height={height - 0.08} />
         ) : (
-          <CodeScreen width={width - 0.06} height={height - 0.08} seed={seed} accent={accent} />
+          <CodeScreen width={width - 0.06} height={height - 0.08} seed={seed} accent={accent} variant={screen} />
         )}
       </group>
 
@@ -199,8 +221,12 @@ const KEY_ROWS = 5;
 const KEY_PITCH = 0.07;
 const KEY_COUNT = KEY_COLS * KEY_ROWS;
 
-/** Mechanical keyboard with animated per-key RGB underglow. */
-export const Keyboard = ({ rgb = true, ...props }) => {
+/**
+ * Mechanical keyboard with per-key underglow: an animated RGB wave by default,
+ * or one steady colour when `glow` is set.
+ */
+export const Keyboard = ({ glow = null, ...props }) => {
+  const rgb = !glow;
   const capsRef = useRef(null);
   const glowRef = useRef(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -220,14 +246,14 @@ export const Keyboard = ({ rgb = true, ...props }) => {
         dummy.position.set(x, 0.05, z);
         dummy.updateMatrix();
         glowRef.current.setMatrixAt(index, dummy.matrix);
-        glowRef.current.setColorAt(index, color.setHSL(col / KEY_COLS, 0.9, 0.55));
+        glowRef.current.setColorAt(index, glow ? color.set(glow) : color.setHSL(col / KEY_COLS, 0.9, 0.55));
         index += 1;
       }
     }
     capsRef.current.instanceMatrix.needsUpdate = true;
     glowRef.current.instanceMatrix.needsUpdate = true;
     glowRef.current.instanceColor.needsUpdate = true;
-  }, [dummy, color]);
+  }, [dummy, color, glow]);
 
   useFrame(({ clock }) => {
     if (!rgb || !glowRef.current) return;
@@ -339,8 +365,11 @@ export const Mug = ({ color = "#e8e1d6", ...props }) => (
 
 const TOWER = { width: 0.45, height: 0.95, depth: 0.9 };
 
-/** Glass-panel PC case (glass faces +X, front faces +Z) with spinning fans. */
-export const PCTower = ({ accent = "#6ee7ff", ...props }) => {
+/**
+ * Glass-panel PC case (glass faces +X, front faces +Z) with spinning fans.
+ * `trim` recolours the GPU strip and cooler ring (multi-colour RGB by default).
+ */
+export const PCTower = ({ accent = "#6ee7ff", trim = null, ...props }) => {
   const fansRef = useRef([]);
   const { width: W, height: H, depth: D } = TOWER;
 
@@ -392,14 +421,14 @@ export const PCTower = ({ accent = "#6ee7ff", ...props }) => {
         </mesh>
         <mesh position={[0.121, 0, 0]}>
           <boxGeometry args={[0.002, 0.012, 0.5]} />
-          <meshBasicMaterial color="#a78bfa" toneMapped={false} />
+          <meshBasicMaterial color={trim ?? "#a78bfa"} toneMapped={false} />
         </mesh>
       </group>
 
       {/* CPU cooler ring */}
       <mesh position={[-0.12, H * 0.72, -0.1]} rotation={[0, Math.PI / 2, 0]}>
         <torusGeometry args={[0.07, 0.01, 10, 32]} />
-        <meshBasicMaterial color="#f472b6" toneMapped={false} />
+        <meshBasicMaterial color={trim ?? "#f472b6"} toneMapped={false} />
       </mesh>
 
       {/* Front intake fans */}

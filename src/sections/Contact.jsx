@@ -54,7 +54,7 @@ const Contact = ({ compact = false }) => {
     <section id="contact" className={`flex-center ${compact ? "padding-x-lg mt-12" : "section-padding"}`}>
       <div className={`h-full w-full max-w-[1600px] ${compact ? "" : "md:px-10"}`}>
         {!compact && (
-          <TitleHeader title="Get in Touch – Let's Connect" sub="Have a preservation or porting project in mind?" />
+          <TitleHeader title="Get in Touch – Let's Connect" sub="Have a systems or engineering role in mind?" />
         )}
 
         <div className={`${compact ? "" : "mt-16"} grid grid-cols-1 gap-10 xl:grid-cols-12`}>

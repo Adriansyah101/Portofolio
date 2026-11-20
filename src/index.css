@@ -209,7 +209,7 @@
   }
 
   .navbar-desktop {
-    @apply hidden items-center xl:flex;
+    @apply hidden items-center lg:flex;
   }
 
   .navbar-desktop ul {
@@ -233,7 +233,7 @@
   }
 
   .contact-btn {
-    @apply hidden xl:flex;
+    @apply hidden lg:flex;
   }
 
   .contact-btn-inner {
@@ -241,12 +241,12 @@
   }
 
   .menu-toggle {
-    @apply flex-center size-11 rounded-lg border border-white/10 bg-black-100/70 text-white-50 transition-colors hover:border-white/25 xl:hidden;
+    @apply flex-center size-11 rounded-lg border border-white/10 bg-black-100/70 text-white-50 transition-colors hover:border-white/25 lg:hidden;
   }
 
   /* Slide-down mobile menu: animates grid rows from 0fr to 1fr. */
   .mobile-menu {
-    @apply grid opacity-0 xl:hidden;
+    @apply grid opacity-0 lg:hidden;
     grid-template-rows: 0fr;
     transition:
       grid-template-rows 0.35s ease,
@@ -272,7 +272,7 @@
   }
 
   .menu-backdrop {
-    @apply fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm xl:hidden;
+    @apply fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm lg:hidden;
   }
 
   .contact-btn-inner span {
@@ -289,7 +289,7 @@
     z-index: 0;
     pointer-events: none;
     background:
-      radial-gradient(55% 45% at 72% 42%, rgb(124 58 237 / 0.2), transparent 70%),
+      radial-gradient(55% 45% at 72% 42%, rgb(14 76 146 / 0.28), transparent 70%),
       radial-gradient(35% 35% at 18% 22%, rgb(76 201 240 / 0.1), transparent 70%);
   }
 
@@ -323,15 +323,16 @@
   }
 
   .hero-text {
-    @apply flex flex-col;
+    @apply flex flex-col gap-4 md:gap-5;
   }
 
   .hero-text h1 {
-    @apply text-[28px] leading-[1.25] font-semibold sm:text-[30px] md:text-[54px] xl:text-[50px] 2xl:text-[60px];
+    @apply max-w-[20ch] text-[30px] leading-[1.15] font-semibold tracking-tight text-balance md:text-[52px] xl:text-[48px] 2xl:text-[58px];
   }
 
-  .hero-text h1:first-child {
-    white-space: nowrap;
+  /* "Focused on [rotating word]" line under the headline. */
+  .hero-focus {
+    @apply text-xl leading-[1.25] font-medium whitespace-nowrap text-white-50/70 md:text-3xl xl:text-[28px] 2xl:text-[32px];
   }
 
   .hero-bio {
@@ -373,7 +374,7 @@
   }
 
   .slide-text {
-    background: linear-gradient(90deg, #d9ecff, #6ee7ff 45%, #a78bfa);
+    background: linear-gradient(90deg, #d9ecff, #6ee7ff 55%, #38bdf8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -443,26 +444,57 @@
   /*                              Project showcase                            */
   /* ------------------------------------------------------------------------ */
 
-  .showcase-layout {
-    @apply mt-16 grid grid-cols-1 gap-10 xl:grid-cols-5;
+  /* Home "Featured Work" cards. */
+  .work-card {
+    @apply relative flex h-full flex-col gap-6 overflow-hidden rounded-2xl border border-black-50 bg-black-100 p-6 md:p-8;
   }
 
-  .project-card {
-    @apply flex min-w-0 flex-col gap-5;
+  .work-card.is-pro {
+    background: radial-gradient(120% 80% at 100% 0%, rgb(14 76 146 / 0.35), transparent 60%), var(--color-black-100);
   }
 
-  .project-preview {
-    @apply relative w-full overflow-hidden rounded-xl border border-white/5 bg-black-100;
+  .work-card.is-sys {
+    background: radial-gradient(120% 80% at 100% 0%, rgb(56 189 248 / 0.12), transparent 60%), var(--color-black-100);
   }
 
-  .project-preview img,
-  .project-preview svg {
-    @apply h-full w-full object-cover transition-transform duration-700;
+  /* Cloud -> harbor servers -> gates, joined by a connector line on wide screens. */
+  .topology {
+    @apply relative grid gap-3 md:grid-cols-3 md:gap-4;
   }
 
-  .project-card:hover .project-preview img,
-  .project-card:hover .project-preview svg {
-    transform: scale(1.03);
+  .topology-node {
+    @apply relative flex gap-3 rounded-xl border border-white/10 bg-black/40 p-4 md:flex-col;
+  }
+
+  .topology-node + .topology-node::before {
+    content: "";
+    @apply absolute -top-3 left-8 h-3 w-px bg-accent-cyan/40 md:top-9 md:-left-4 md:h-px md:w-4;
+  }
+
+  .topology-icon {
+    @apply flex-center size-10 flex-none rounded-lg border border-accent-cyan/25 bg-accent-cyan/10 text-accent-cyan;
+  }
+
+  /* Key numbers on the enterprise card. <dt> precedes <dd> in the DOM;
+     flex-col-reverse shows the value above its label. */
+  .work-stats {
+    @apply grid grid-cols-1 gap-3 sm:grid-cols-3;
+  }
+
+  .work-stat {
+    @apply flex min-w-0 flex-col-reverse gap-1 rounded-xl border border-white/10 bg-black/40 px-4 py-3;
+  }
+
+  .pipeline {
+    @apply grid gap-2;
+  }
+
+  .pipeline-step {
+    @apply relative flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 px-4 py-3;
+  }
+
+  .pipeline-index {
+    @apply w-6 flex-none font-mono text-xs text-blue-50;
   }
 
   .project-link {
@@ -604,59 +636,38 @@
     @apply text-sky-300;
   }
 
-  /* Two-track summary at the top of /journey. */
-  .track-card {
-    @apply relative flex h-full flex-col gap-5 overflow-hidden rounded-2xl border border-black-50 bg-black-100 p-6 md:p-8;
-  }
-
-  .track-card.is-pro {
-    background: radial-gradient(120% 80% at 100% 0%, rgb(14 76 146 / 0.35), transparent 60%), var(--color-black-100);
-  }
-
-  .track-card.is-oss {
-    background: radial-gradient(120% 80% at 100% 0%, rgb(167 139 250 / 0.2), transparent 60%), var(--color-black-100);
-  }
-
-  .track-points {
-    @apply grid gap-3 text-white-50/80;
-  }
-
-  .track-points li {
-    @apply flex gap-3 leading-relaxed;
-  }
-
-  .track-points li::before {
-    content: "";
-    @apply mt-2.5 size-1.5 flex-none rounded-full bg-accent-cyan;
-  }
-
-  .track-thesis {
-    @apply mx-auto mt-10 max-w-3xl text-center text-lg leading-relaxed text-white-50/70 md:text-xl;
-  }
-
   .timeline-track {
     @apply mt-3 w-[3px] flex-1 overflow-hidden rounded-full bg-white/5;
   }
 
   .timeline-progress {
-    @apply h-full w-full origin-top rounded-full bg-linear-to-b from-accent-cyan via-accent-violet to-accent-pink;
+    @apply h-full w-full origin-top rounded-full bg-linear-to-b from-accent-cyan via-sky-400 to-blue-600;
+  }
+
+  /* Operational impact cards: 1 / 2 / 3 columns; a lone last card spans the row on tablets. */
+  .impact-grid {
+    @apply mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .impact-grid > :last-child:nth-child(odd) {
+    @apply md:col-span-2 xl:col-span-1;
   }
 
   /* ------------------------------------------------------------------------ */
   /*                                 Tech stack                               */
   /* ------------------------------------------------------------------------ */
 
-  /* Flex + wrap keeps a short last row centred (3 + 2 on tablets). */
+  /* Flex + wrap keeps rows centred: 2 + 2 + 2 on tablets, 3 + 3 on desktop. */
   .tech-grid {
     @apply mt-16 flex flex-wrap justify-center gap-6;
   }
 
   .tech-card {
-    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/10 md:w-[calc((100%-3rem)/3)] xl:w-[calc((100%-6rem)/5)];
+    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/10 md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)];
   }
 
   .tech-card-animated-bg {
-    @apply absolute -bottom-full left-0 h-full w-full bg-linear-to-t from-accent-violet/25 via-accent-cyan/10 to-transparent transition-all duration-700 group-hover:bottom-0;
+    @apply absolute -bottom-full left-0 h-full w-full bg-linear-to-t from-sky-500/20 via-accent-cyan/10 to-transparent transition-all duration-700 group-hover:bottom-0;
   }
 
   .tech-card-content {

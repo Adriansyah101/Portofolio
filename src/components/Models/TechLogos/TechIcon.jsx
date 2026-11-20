@@ -21,7 +21,7 @@ const TechIcon = ({ model }) => {
     <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
       <ambientLight intensity={0.3} />
       <directionalLight position={[5, 5, 5]} intensity={1.6} />
-      <directionalLight position={[-4, -2, 3]} intensity={0.5} color="#a78bfa" />
+      <directionalLight position={[-4, -2, 3]} intensity={0.5} color="#93c5fd" />
       <pointLight position={[-3, 2, -2]} intensity={6} decay={2} color="#4cc9f0" />
       <StudioEnvironment resolution={256} />
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const SITE_NAME = "Adriansyah Prasetya Nugraha";
-const DEFAULT_TITLE = `${SITE_NAME} | 32-Bit Game Preservation & Static Recompilation`;
+const DEFAULT_TITLE = `${SITE_NAME} | Systems & Application Operations Engineer`;
 
 /** Sets `document.title` for the current page. */
 export const usePageTitle = (title) => {

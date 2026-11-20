@@ -7,6 +7,7 @@ import AnimatedCounter from "../components/AnimatedCounter.jsx";
 import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
 import { Icon } from "../components/Icons.jsx";
 import { heroContent, words } from "../constants/index.js";
+import { renderInlineCode } from "../utils/text.jsx";
 
 const Hero = () => {
   const sectionRef = useRef(null);
@@ -14,7 +15,7 @@ const Hero = () => {
   useGSAP(
     () => {
       gsap.fromTo(
-        ".hero-text h1",
+        ".hero-text > *",
         { y: 50, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" },
       );
@@ -37,16 +38,20 @@ const Hero = () => {
       <div className="hero-layout">
         <header className="hero-header">
           <p className="hero-eyebrow hero-reveal">
-            <span className="size-2 flex-none rounded-full bg-accent-cyan shadow-[0_0_12px_#6ee7ff]" aria-hidden="true" />
+            <span className="size-2 flex-none rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399]" aria-hidden="true" />
             {heroContent.eyebrow}
           </p>
           <div className="hero-text">
-            <h1>
-              Rescuing{" "}
-              <span className="slide">
+            <h1>{heroContent.headline}</h1>
+            <p className="hero-focus">
+              <span className="sr-only">
+                {heroContent.focusLabel} {words.map((word) => word.text).join(", ")}
+              </span>
+              <span aria-hidden="true">{heroContent.focusLabel} </span>
+              <span className="slide" aria-hidden="true">
                 <span className="slide-wrapper">
                   {sliderWords.map((word, index) => (
-                    <span key={`${word.text}-${index}`} className="slide-item" aria-hidden={index >= words.length}>
+                    <span key={`${word.text}-${index}`} className="slide-item">
                       <span className="slide-icon">
                         <Icon name={word.icon} className="size-full" strokeWidth={2.4} />
                       </span>
@@ -55,20 +60,17 @@ const Hero = () => {
                   ))}
                 </span>
               </span>
-            </h1>
-            {heroContent.headlineLines.map((line) => (
-              <h1 key={line}>{line}</h1>
-            ))}
+            </p>
           </div>
 
-          <p className="hero-bio hero-reveal">{heroContent.bio}</p>
+          <p className="hero-bio hero-reveal">{renderInlineCode(heroContent.bio)}</p>
 
           <div className="hero-reveal">
             <Button text={heroContent.ctaText} className="h-12 w-64 md:h-16 md:w-80" id="button" targetId="work" />
           </div>
         </header>
 
-        <figure className="hero-3d-layout" aria-label="Interactive 3D developer workspace">
+        <figure className="hero-3d-layout" aria-label="Interactive 3D systems workstation">
           <HeroExperience />
         </figure>
       </div>

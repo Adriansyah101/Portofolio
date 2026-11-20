@@ -1,18 +1,18 @@
 import Hero from "../sections/Hero.jsx";
-import ShowcaseSection from "../sections/ShowcaseSection.jsx";
+import FeaturedWork from "../sections/FeaturedWork.jsx";
 import LogoSection from "../sections/LogoSection.jsx";
 import FeatureCards from "../sections/FeatureCards.jsx";
 import ContactPreview from "../sections/ContactPreview.jsx";
 import { usePageTitle } from "../utils/hooks.js";
 
-/** `/`: overview with the 3D hero, featured preservation work and a contact teaser. */
+/** `/`: systems-engineering overview: 3D hero, metrics, featured work, capabilities and a contact teaser. */
 const Home = () => {
   usePageTitle(null);
 
   return (
     <div className="page-enter">
       <Hero />
-      <ShowcaseSection />
+      <FeaturedWork />
       <LogoSection />
       <FeatureCards />
       <ContactPreview />

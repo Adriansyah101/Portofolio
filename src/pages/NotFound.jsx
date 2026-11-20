@@ -9,16 +9,16 @@ const NotFound = () => {
   return (
     <div className="page-enter min-h-screen">
       <PageHeader
-        eyebrow="404 · Lost Route"
-        title="This page didn't survive the 64-bit transition"
-        description="The link may be old or mistyped. Everything that was preserved is still in the archive."
+        eyebrow="404 · Route Not Found"
+        title="This page could not be found"
+        description="The link may be old or mistyped. Head back home, or see my work experience."
       >
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link to={routes.projects} className="project-link primary">
-            Open the Preservation Archive
-          </Link>
-          <Link to={routes.home} className="project-link secondary">
+          <Link to={routes.home} className="project-link primary">
             Back to Home
+          </Link>
+          <Link to={routes.journey} className="project-link secondary">
+            View Work Experience
           </Link>
         </div>
       </PageHeader>

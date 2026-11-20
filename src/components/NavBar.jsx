@@ -22,7 +22,7 @@ const NavBar = () => {
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (event) => event.key === "Escape" && setOpen(false);
-    const onResize = () => window.innerWidth >= 1280 && setOpen(false);
+    const onResize = () => window.innerWidth >= 1024 && setOpen(false);
     window.addEventListener("keydown", onKey);
     window.addEventListener("resize", onResize);
     return () => {
@@ -79,7 +79,12 @@ const NavBar = () => {
               <ul className="flex flex-col gap-1 pt-4">
                 {navLinks.map(({ name, to, end }) => (
                   <li key={name}>
-                    <NavLink to={to} end={end} className={({ isActive }) => `mobile-link ${isActive ? "active" : ""}`}>
+                    <NavLink
+                      to={to}
+                      end={end}
+                      onClick={() => setOpen(false)}
+                      className={({ isActive }) => `mobile-link ${isActive ? "active" : ""}`}
+                    >
                       {name}
                     </NavLink>
                   </li>

@@ -40,7 +40,7 @@ const ComparisonTable = ({ project }) => (
       )}
     </div>
     <table className="compare-table">
-      <caption className="sr-only">{`${project.shortTitle}: original 32-bit target compared with the modern native port`}</caption>
+      <caption className="sr-only">{`${project.shortTitle}: legacy 32-bit target compared with the native Windows/Linux port`}</caption>
       <thead>
         <tr>
           <th scope="col" className="w-[24%]">
@@ -49,13 +49,13 @@ const ComparisonTable = ({ project }) => (
           <th scope="col">
             <span className="inline-flex items-center gap-1.5 text-rose-300">
               <Icon name="broken" className="size-4 flex-none" />
-              Original 32-bit target
+              Legacy 32-bit target
             </span>
           </th>
           <th scope="col">
             <span className="inline-flex items-center gap-1.5 text-emerald-300">
               <Icon name="shield" className="size-4 flex-none" />
-              Modern native port
+              Native Windows/Linux port
             </span>
           </th>
         </tr>
@@ -89,7 +89,7 @@ const Projects = () => {
   return (
     <div className="page-enter">
       <PageHeader
-        eyebrow="Preservation Archive"
+        eyebrow="Preservation · 32-Bit Software Archive"
         title="32-bit classics, rescued and documented"
         description="Every project here started as a game that modern iOS or macOS can no longer run. Filter by origin platform, compare the original target with the native port, and open each case study for the full technical breakdown."
       />
@@ -131,7 +131,7 @@ const Projects = () => {
           <div className="mx-auto w-full max-w-[1600px]">
             <p className="font-mono text-xs tracking-widest text-accent-cyan uppercase">Architecture comparison</p>
             <h2 id="compare-title" className="mt-3 text-3xl font-semibold md:text-4xl">
-              Original 32-Bit Target vs. Modern Native Port
+              Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port
             </h2>
             <p className="mt-4 max-w-3xl text-lg text-white-50/70">
               What each game was built for, and what it runs on now.

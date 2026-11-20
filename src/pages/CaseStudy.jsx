@@ -32,7 +32,7 @@ const CaseStudy = () => {
               <ol className="flex flex-wrap items-center gap-2 text-sm text-blue-50">
                 <li>
                   <Link to={routes.projects} className="hover:text-white">
-                    Preservation Archive
+                    Preservation
                   </Link>
                 </li>
                 <li aria-hidden="true">/</li>
