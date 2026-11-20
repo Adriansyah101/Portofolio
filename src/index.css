@@ -830,7 +830,7 @@
   }
 
   .contact-canvas {
-    @apply h-full min-h-96 w-full overflow-hidden rounded-3xl border border-black-50 hover:cursor-grab active:cursor-grabbing;
+    @apply relative h-full min-h-96 w-full overflow-hidden rounded-3xl border border-black-50 hover:cursor-grab active:cursor-grabbing;
     /* Must match `stage` in contactPalettes (scenePalettes.js), the fog colour. */
     background: var(--contact-stage);
     transition: background-color 0.5s ease;
@@ -1266,7 +1266,8 @@
     text-align: center;
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
     opacity: 0;
-    transform: translate(-50%, calc(-100% + 6px)) scale(0.96);
+    /* --anchor-shift (set by ScreenAnchor) keeps the bubble inside the canvas. */
+    transform: translate(calc(-50% + var(--anchor-shift, 0px)), calc(-100% + 6px)) scale(0.96);
     transform-origin: 50% 100%;
     transition:
       opacity 0.35s ease,
@@ -1275,13 +1276,14 @@
 
   .avatar-bubble.is-visible {
     opacity: 1;
-    transform: translate(-50%, calc(-100% - 6px)) scale(1);
+    transform: translate(calc(-50% + var(--anchor-shift, 0px)), calc(-100% - 6px)) scale(1);
   }
 
   .avatar-bubble::after {
     content: "";
     position: absolute;
-    left: 50%;
+    /* Undo the shift so the tail still points at the head. */
+    left: clamp(18px, calc(50% - var(--anchor-shift, 0px)), calc(100% - 18px));
     bottom: -6px;
     width: 10px;
     height: 10px;

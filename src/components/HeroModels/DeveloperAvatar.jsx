@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
-import { MathUtils } from "three";
+import { MathUtils, Vector3 } from "three";
 import ScreenAnchor from "./ScreenAnchor.jsx";
 
 /**
@@ -45,6 +45,13 @@ const INTRO_LENGTH = 4.2;
 const IDLE_GAP = 11;
 const IDLE_LENGTH = 2.6;
 const RESPONSE_LENGTH = 3.2;
+/** Seconds of the screen ↔ visitor glance cycle (desk mode), and how much of it goes to the visitor. */
+const GLANCE_CYCLE = 9;
+const GLANCE_VISITOR = 3.2;
+/** Desk mode: share of the turn toward the visitor done by swivelling the seat while waving, and the head's yaw limit. */
+const SWIVEL_SHARE = 0.55;
+const HEAD_YAW_LIMIT = 1.05;
+const cameraLocal = new Vector3();
 
 const prefersReducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -171,8 +178,17 @@ const Head = ({ headRef }) => (
  * (`waveSignal` increments). `onGreet` fires with the first wave and with
  * every response, so the parent can show the greeting bubble; `bubbleRef`
  * is that bubble's DOM element, kept pinned above the avatar's head.
+ *
+ * Desk mode (Contact page): set `screenYaw`, the head yaw (radians) that
+ * looks at the screen on the desk. The head then glances between that screen
+ * and the visitor (the camera, tracked live so orbiting works), and while
+ * waving the seat swivels part of the way toward the visitor. `children` (the
+ * chair) swivel with the figure. Every mesh casts and receives shadows, which
+ * matters only in a canvas with `shadows` enabled.
  */
-const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
+const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null, children, ...props }) => {
+  const root = useRef(null);
+  const seat = useRef(null);
   const torso = useRef(null);
   const head = useRef(null);
   const rightShoulder = useRef(null);
@@ -184,7 +200,16 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
 
   // Times are seconds since the avatar's first rendered frame, so a slow first
   // frame (shader compilation) can't make it miss its greeting.
-  const motion = useRef({ start: null, raise: 0, wave: null, introDone: false, nodStart: -10, nextIdle: Infinity });
+  const motion = useRef({
+    start: null,
+    raise: 0,
+    wave: null,
+    introDone: false,
+    nodStart: -10,
+    nextIdle: Infinity,
+    headYaw: 0,
+    turn: 0,
+  });
   const reduced = useRef(prefersReducedMotion());
   const now = useRef(0);
   const greetRef = useRef(onGreet);
@@ -211,7 +236,15 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
 
   useEffect(() => () => (gl.domElement.style.cursor = ""), [gl]);
 
-  useFrame(({ clock }, delta) => {
+  useEffect(() => {
+    seat.current?.traverse((object) => {
+      if (!object.isMesh || object.userData.hitVolume) return;
+      object.castShadow = true;
+      object.receiveShadow = true;
+    });
+  }, []);
+
+  useFrame(({ clock, camera }, delta) => {
     const state = motion.current;
     state.start ??= clock.elapsedTime;
     const t = clock.elapsedTime - state.start;
@@ -233,7 +266,8 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
 
     const waving = Boolean(state.wave);
     const lively = waving && state.wave.lively;
-    state.raise = MathUtils.damp(state.raise, waving ? 1 : 0, waving ? 5 : 3.5, Math.min(delta, 0.1));
+    const step = Math.min(delta, 0.1);
+    state.raise = MathUtils.damp(state.raise, waving ? 1 : 0, waving ? 5 : 3.5, step);
     const raise = state.raise;
     const ease = raise * raise * (3 - 2 * raise);
 
@@ -244,12 +278,33 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
       torso.current.rotation.x = 0.04 + (lively ? 0.05 * ease : 0);
     }
 
-    // Head: slow idle sway, a nod when responding, a friendly tilt while waving.
+    // Desk mode: where the visitor is, as a yaw in the avatar's own frame (it faces +Z).
+    let visitorYaw = 0;
+    if (screenYaw !== null && root.current) {
+      root.current.worldToLocal(cameraLocal.copy(camera.position));
+      visitorYaw = Math.atan2(cameraLocal.x, cameraLocal.z);
+    }
+    // Seat swivel toward the visitor while waving.
+    state.turn = MathUtils.damp(state.turn, waving && screenYaw !== null ? visitorYaw * SWIVEL_SHARE : 0, 2.6, step);
+    if (seat.current) seat.current.rotation.y = state.turn;
+
+    // Head: slow idle sway (or monitor ↔ visitor glances), a nod when
+    // responding, a friendly tilt while waving.
     const nodAge = t - state.nodStart;
     const nod = nodAge >= 0 && nodAge < 1.6 ? Math.sin(nodAge * 8) * 0.13 * (1 - nodAge / 1.6) : 0;
+    let lookDown = 0;
+    if (screenYaw === null) {
+      state.headYaw = Math.sin(t * 0.35) * 0.14 * (1 - ease * 0.6);
+    } else {
+      const atVisitor = waving || t % GLANCE_CYCLE > GLANCE_CYCLE - GLANCE_VISITOR;
+      // The swivel already turns part of the way, so the head adds only the rest.
+      const goal = MathUtils.clamp((atVisitor ? visitorYaw : screenYaw) - state.turn, -HEAD_YAW_LIMIT, HEAD_YAW_LIMIT);
+      state.headYaw = MathUtils.damp(state.headYaw, goal, calm ? 2 : 3.2, step);
+      lookDown = atVisitor ? 0 : 0.07;
+    }
     if (head.current) {
-      head.current.rotation.y = Math.sin(t * 0.35) * 0.14 * (1 - ease * 0.6);
-      head.current.rotation.x = Math.sin(t * 0.9) * 0.02 + nod;
+      head.current.rotation.y = state.headYaw;
+      head.current.rotation.x = Math.sin(t * 0.9) * 0.02 + nod + lookDown;
       head.current.rotation.z = -0.1 * ease + Math.sin(t * 0.5) * 0.015;
     }
 
@@ -284,104 +339,109 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
   };
 
   return (
-    <group {...props}>
-      {/* Invisible hit volume: one cheap raycast target for the whole figure. */}
-      <mesh
-        position={[0, 1.55, 0.2]}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setCursor("pointer");
-          respond();
-        }}
-        onPointerOut={() => setCursor("")}
-        onClick={(event) => {
-          event.stopPropagation();
-          respond();
-        }}
-      >
-        <capsuleGeometry args={[0.55, 1.5, 4, 8]} />
-        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-      </mesh>
-
-      <Leg side={1} />
-      <Leg side={-1} />
-
-      {/* Hips */}
-      <mesh position={[0, 0.98, 0.02]} scale={[1, 0.7, 0.85]} castShadow>
-        <sphereGeometry args={[0.3, 20, 16]} />
-        <meshStandardMaterial color={COLORS.pants} {...MATTE} />
-      </mesh>
-
-      <group ref={torso} position={[0, 0.98, -0.02]}>
-        {/* Varsity jacket body */}
-        <mesh position={[0, 0.5, 0]} scale={[1.08, 1, 0.72]} castShadow>
-          <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
-          <meshStandardMaterial color={COLORS.jacket} {...MATTE} />
+    <group ref={root} {...props}>
+      <group ref={seat}>
+        {/* Invisible hit volume: one cheap raycast target for the whole figure. */}
+        <mesh
+          userData={{ hitVolume: true }}
+          position={[0, 1.55, 0.2]}
+          onPointerOver={(event) => {
+            event.stopPropagation();
+            setCursor("pointer");
+            respond();
+          }}
+          onPointerOut={() => setCursor("")}
+          onClick={(event) => {
+            event.stopPropagation();
+            respond();
+          }}
+        >
+          <capsuleGeometry args={[0.55, 1.5, 4, 8]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
-        {/* White tee showing where the jacket hangs open */}
-        {/* (a slightly deeper, narrower body, so it only breaks the surface down the open front) */}
-        <mesh position={[0, 0.5, 0]} scale={[0.9, 1, 0.735]}>
-          <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
-          <meshStandardMaterial color={COLORS.tee} {...MATTE} />
+
+        <Leg side={1} />
+        <Leg side={-1} />
+
+        {/* Hips */}
+        <mesh position={[0, 0.98, 0.02]} scale={[1, 0.7, 0.85]} castShadow>
+          <sphereGeometry args={[0.3, 20, 16]} />
+          <meshStandardMaterial color={COLORS.pants} {...MATTE} />
         </mesh>
-        <mesh position={[0, 0.955, 0.03]} rotation={[Math.PI / 2 - 0.2, 0, 0]}>
-          <torusGeometry args={[0.1, 0.018, 8, 24]} />
-          <meshStandardMaterial color={COLORS.tee} {...MATTE} />
-        </mesh>
-        {/* Snap buttons: light on one placket, yellow on the other */}
-        {[0.36, 0.5, 0.64, 0.78].map((y) => (
-          <group key={y}>
-            <mesh position={[-0.112, y, 0.205]}>
-              <sphereGeometry args={[0.011, 8, 6]} />
-              <meshStandardMaterial color={COLORS.snapLight} roughness={0.4} metalness={0.2} />
-            </mesh>
-            <mesh position={[0.112, y, 0.205]}>
-              <sphereGeometry args={[0.012, 8, 6]} />
+
+        <group ref={torso} position={[0, 0.98, -0.02]}>
+          {/* Varsity jacket body */}
+          <mesh position={[0, 0.5, 0]} scale={[1.08, 1, 0.72]} castShadow>
+            <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
+            <meshStandardMaterial color={COLORS.jacket} {...MATTE} />
+          </mesh>
+          {/* White tee showing where the jacket hangs open */}
+          {/* (a slightly deeper, narrower body, so it only breaks the surface down the open front) */}
+          <mesh position={[0, 0.5, 0]} scale={[0.9, 1, 0.735]}>
+            <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
+            <meshStandardMaterial color={COLORS.tee} {...MATTE} />
+          </mesh>
+          <mesh position={[0, 0.955, 0.03]} rotation={[Math.PI / 2 - 0.2, 0, 0]}>
+            <torusGeometry args={[0.1, 0.018, 8, 24]} />
+            <meshStandardMaterial color={COLORS.tee} {...MATTE} />
+          </mesh>
+          {/* Snap buttons: light on one placket, yellow on the other */}
+          {[0.36, 0.5, 0.64, 0.78].map((y) => (
+            <group key={y}>
+              <mesh position={[-0.112, y, 0.205]}>
+                <sphereGeometry args={[0.011, 8, 6]} />
+                <meshStandardMaterial color={COLORS.snapLight} roughness={0.4} metalness={0.2} />
+              </mesh>
+              <mesh position={[0.112, y, 0.205]}>
+                <sphereGeometry args={[0.012, 8, 6]} />
+                <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+              </mesh>
+            </group>
+          ))}
+          {/* Yellow welt pockets */}
+          {[-1, 1].map((side) => (
+            <mesh key={side} position={[0.2 * side, 0.36, 0.172]} rotation={[0, 0.62 * side, 0.12 * side]}>
+              <boxGeometry args={[0.03, 0.13, 0.008]} />
               <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
             </mesh>
-          </group>
-        ))}
-        {/* Yellow welt pockets */}
-        {[-1, 1].map((side) => (
-          <mesh key={side} position={[0.2 * side, 0.36, 0.172]} rotation={[0, 0.62 * side, 0.12 * side]}>
-            <boxGeometry args={[0.03, 0.13, 0.008]} />
-            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+          ))}
+          {/* Striped rib hem */}
+          <mesh position={[0, 0.2, 0]} scale={[1.08, 1, 0.72]}>
+            <cylinderGeometry args={[0.29, 0.29, 0.07, 28]} />
+            <meshStandardMaterial color={COLORS.rib} {...MATTE} />
           </mesh>
-        ))}
-        {/* Striped rib hem */}
-        <mesh position={[0, 0.2, 0]} scale={[1.08, 1, 0.72]}>
-          <cylinderGeometry args={[0.29, 0.29, 0.07, 28]} />
-          <meshStandardMaterial color={COLORS.rib} {...MATTE} />
-        </mesh>
-        {[0.215, 0.188].map((y) => (
-          <mesh key={y} position={[0, y, 0]} scale={[1.08, 1, 0.72]}>
-            <cylinderGeometry args={[0.292, 0.292, 0.01, 28]} />
-            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+          {[0.215, 0.188].map((y) => (
+            <mesh key={y} position={[0, y, 0]} scale={[1.08, 1, 0.72]}>
+              <cylinderGeometry args={[0.292, 0.292, 0.01, 28]} />
+              <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+            </mesh>
+          ))}
+          {/* Striped rib baseball collar */}
+          <mesh position={[0, 0.975, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
+            <torusGeometry args={[0.13, 0.034, 10, 28]} />
+            <meshStandardMaterial color={COLORS.rib} {...MATTE} />
           </mesh>
-        ))}
-        {/* Striped rib baseball collar */}
-        <mesh position={[0, 0.975, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
-          <torusGeometry args={[0.13, 0.034, 10, 28]} />
-          <meshStandardMaterial color={COLORS.rib} {...MATTE} />
-        </mesh>
-        {[0.992, 0.962].map((y) => (
-          <mesh key={y} position={[0, y, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
-            <torusGeometry args={[0.135, 0.008, 6, 28]} />
-            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+          {[0.992, 0.962].map((y) => (
+            <mesh key={y} position={[0, y, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
+              <torusGeometry args={[0.135, 0.008, 6, 28]} />
+              <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+            </mesh>
+          ))}
+          {/* Neck */}
+          <mesh position={[0, 1.04, 0]}>
+            <cylinderGeometry args={[0.085, 0.095, 0.12, 16]} />
+            <meshStandardMaterial color={COLORS.skinShade} roughness={0.7} />
           </mesh>
-        ))}
-        {/* Neck */}
-        <mesh position={[0, 1.04, 0]}>
-          <cylinderGeometry args={[0.085, 0.095, 0.12, 16]} />
-          <meshStandardMaterial color={COLORS.skinShade} roughness={0.7} />
-        </mesh>
-        <Head headRef={head} />
-        <Arm side={-1} shoulderRef={rightShoulder} elbowRef={rightElbow} handRef={rightHand} />
-        <Arm side={1} shoulderRef={leftShoulder} elbowRef={leftElbow} handRef={leftHand} />
-      </group>
+          <Head headRef={head} />
+          <Arm side={-1} shoulderRef={rightShoulder} elbowRef={rightElbow} handRef={rightHand} />
+          <Arm side={1} shoulderRef={leftShoulder} elbowRef={leftElbow} handRef={leftHand} />
+        </group>
 
-      {/* Keeps the greeting bubble (HTML overlay) just above the head. */}
-      <ScreenAnchor targetRef={bubbleRef} position={[0, 2.85, 0.1]} />
+        {children}
+
+        {/* Keeps the greeting bubble (HTML overlay) just above the head. */}
+        <ScreenAnchor targetRef={bubbleRef} position={[0, 2.85, 0.1]} keepInside={8} />
+      </group>
     </group>
   );
 };

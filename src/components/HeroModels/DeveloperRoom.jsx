@@ -11,7 +11,11 @@ import {
   PCTower,
   Plant,
 } from "../Models/DeskParts.jsx";
-import { createDashboardTexture } from "../Models/canvasTextures.js";
+import {
+  createJourneyDashboardTexture,
+  createNotesScreenTexture,
+  createProjectsScreenTexture,
+} from "../Models/canvasTextures.js";
 import { useThemeTween } from "../Models/useThemeTween.js";
 import { heroPalettes } from "../Models/scenePalettes.js";
 
@@ -25,17 +29,20 @@ const DESK_Z = -HALF + 0.75;
 /**
  * Where things sit in the room (room-local units, before the hero's -45° turn).
  * HeroExperience reads this to seat the developer avatar, place the clickable
- * monitor hotspots and aim the camera presets, so they stay aligned with the
- * meshes below. `seat.rotation` swivels the chair to face the visitor.
+ * screens and the contact tablet, and aim the camera presets, so they stay
+ * aligned with the meshes below. Each screen's `route` names the page it
+ * previews. `seat.rotation` swivels the chair to face the visitor.
  */
 export const ROOM_LAYOUT = {
   deskTop: DESK_TOP,
   monitors: [
-    { id: "terminal", position: [-1.15, DESK_TOP, DESK_Z - 0.3], rotation: [0, 0.22, 0], width: 1.5, height: 0.85 },
-    { id: "telemetry", position: [0.45, DESK_TOP, DESK_Z - 0.3], rotation: [0, -0.22, 0], width: 1.5, height: 0.85 },
+    { id: "projects", route: "projects", position: [-1.15, DESK_TOP, DESK_Z - 0.3], rotation: [0, 0.22, 0], width: 1.5, height: 0.85 },
+    { id: "notes", route: "notes", position: [0.45, DESK_TOP, DESK_Z - 0.3], rotation: [0, -0.22, 0], width: 1.5, height: 0.85 },
   ],
-  /** Centre of the wall-mounted status dashboard. */
-  dashboard: { position: [-0.4, 3.85, -HALF + 0.02], width: 2.02, height: 1.16 },
+  /** Centre of the wall-mounted operations dashboard. */
+  dashboard: { route: "journey", position: [-0.4, 3.85, -HALF + 0.02], width: 2.02, height: 1.16 },
+  /** The contact tablet on its stand, at the right end of the desk, turned toward the visitor. */
+  tablet: { route: "contact", position: [1.32, DESK_TOP, DESK_Z + 0.12], rotation: [0, 0.45, 0] },
   seat: { position: [-1.05, 0, -1.0], rotation: [0, -2.35, 0] },
 };
 
@@ -71,24 +78,29 @@ const NetworkSwitch = (props) => (
 
 /**
  * Minimalist systems workstation styled like a calm architectural studio
- * render: dual monitors (ops terminal and a live GLSL telemetry view), a
- * wall-mounted status dashboard, a shelf with binders and a network switch,
+ * render: dual monitors previewing the Projects and Engineering Notes pages, a
+ * wall-mounted operations dashboard previewing the Journey page, a shelf with binders and a network switch,
  * neutral surfaces with a walnut desk, and one dim cove light. Built entirely
  * from procedural meshes. `palette` is a `heroPalettes` entry.
  */
 const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
-  const dashboard = useMemo(() => createDashboardTexture(), []);
+  const dashboard = useMemo(() => createJourneyDashboardTexture(), []);
+  const projectsScreen = useMemo(() => createProjectsScreenTexture(), []);
+  const notesScreen = useMemo(() => createNotesScreenTexture(), []);
   const floor = useThemeTween({ color: palette.floor });
   const wallBack = useThemeTween({ color: palette.wallBack });
   const wallSide = useThemeTween({ color: palette.wallSide });
   const cove = useThemeTween({ color: palette.cove });
   const rug = useThemeTween({ color: palette.rug });
 
-  useEffect(() => () => dashboard.dispose(), [dashboard]);
+  useEffect(
+    () => () => [dashboard, projectsScreen, notesScreen].forEach((texture) => texture.dispose()),
+    [dashboard, projectsScreen, notesScreen],
+  );
 
   const deskTop = DESK_TOP;
   const deskZ = DESK_Z;
-  const [terminal, telemetry] = ROOM_LAYOUT.monitors;
+  const [projects, notes] = ROOM_LAYOUT.monitors;
 
   return (
     <group {...props}>
@@ -150,13 +162,13 @@ const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
       {/* ----------------------------- Setup ----------------------------- */}
       <Desk position={[-0.4, 0, deskZ]} width={4.2} depth={1.4} height={deskTop} topColor="#5c4838" frameColor="#27272a" />
 
-      <Monitor position={terminal.position} rotation={terminal.rotation} screen="terminal" accent={ACCENT} />
-      <Monitor position={telemetry.position} rotation={telemetry.rotation} screen="telemetry" accent="#7c98b6" />
+      <Monitor position={projects.position} rotation={projects.rotation} screenTexture={projectsScreen} accent={ACCENT} />
+      <Monitor position={notes.position} rotation={notes.rotation} screenTexture={notesScreen} accent="#7c98b6" />
 
       <DeskMat position={[-0.25, deskTop, deskZ + 0.3]} width={2.1} depth={0.62} color="#1c1c1f" edge="#3f3f46" />
       <Keyboard position={[-0.4, deskTop + 0.008, deskZ + 0.3]} glow="#3a3d44" />
       <Mouse position={[0.42, deskTop + 0.008, deskZ + 0.34]} accent={ACCENT} />
-      <Mug position={[1.4, deskTop, deskZ + 0.35]} />
+      <Mug position={[-1.62, deskTop, deskZ + 0.36]} />
       <DeskLamp position={[-2.2, deskTop, deskZ - 0.3]} rotation={[0, -0.45, 0]} color="#f3dcc0" intensity={3.5} />
 
       <PCTower position={[2.45, 0, deskZ - 0.05]} accent={ACCENT} trim={TRIM} />

@@ -162,10 +162,24 @@ const TelemetryScreen = ({ width, height }) => {
   );
 };
 
+/** Static canvas screen (a page preview in the hero room). */
+const TextureScreen = ({ width, height, texture }) => (
+  <mesh>
+    <planeGeometry args={[width, height]} />
+    <meshBasicMaterial map={texture} toneMapped={false} />
+  </mesh>
+);
+
+/**
+ * Desk monitor. `screen` picks a live screen ("code", "terminal",
+ * "telemetry"); a `screenTexture` (a CanvasTexture owned by the caller)
+ * replaces it with a static picture.
+ */
 export const Monitor = ({
   width = 1.5,
   height = 0.85,
   screen = "code",
+  screenTexture = null,
   seed = 7,
   glowLight = true,
   accent: accentColor = null,
@@ -199,7 +213,9 @@ export const Monitor = ({
 
       {/* Display */}
       <group position={[0, screenY + 0.01, -0.034]}>
-        {screen === "telemetry" ? (
+        {screenTexture ? (
+          <TextureScreen width={width - 0.06} height={height - 0.08} texture={screenTexture} />
+        ) : screen === "telemetry" ? (
           <TelemetryScreen width={width - 0.06} height={height - 0.08} />
         ) : (
           <CodeScreen width={width - 0.06} height={height - 0.08} seed={seed} accent={accent} variant={screen} />
@@ -514,6 +530,53 @@ export const DeskLamp = ({ intensity = 4, color = "#ffd6a0", castShadow = false,
           shadow-mapSize={[512, 512]}
           shadow-bias={-0.002}
         />
+      </group>
+    </group>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/*                                   Tablet                                   */
+/* -------------------------------------------------------------------------- */
+
+export const TABLET = { width: 0.62, height: 0.44, tilt: -0.42 };
+
+/**
+ * Tablet leaning back on a minimalist aluminium stand; the screen faces +Z.
+ * `screenMaterialRef` / `rimRef` let a parent animate the screen brightness
+ * and the edge highlight (hover feedback) without re-rendering.
+ */
+export const Tablet = ({ screenTexture = null, screenMaterialRef, rimRef, ...props }) => {
+  const { width, height, tilt } = TABLET;
+  return (
+    <group {...props}>
+      {/* Stand: base plate, hinge and a back strut */}
+      <RoundedBox args={[0.3, 0.018, 0.22]} radius={0.008} smoothness={2} position={[0, 0.009, 0]} castShadow receiveShadow>
+        <meshStandardMaterial color="#9ca3af" metalness={0.75} roughness={0.3} />
+      </RoundedBox>
+      <mesh position={[0, 0.109, -0.057]} rotation={[0.35, 0, 0]} castShadow>
+        <boxGeometry args={[0.07, 0.194, 0.012]} />
+        <meshStandardMaterial color="#9ca3af" metalness={0.75} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0.03, 0.065]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.012, 0.012, 0.26, 12]} />
+        <meshStandardMaterial color="#6b7280" metalness={0.75} roughness={0.3} />
+      </mesh>
+
+      {/* Body, resting on the hinge lip and leaning back */}
+      <group position={[0, 0.03 + (height / 2) * Math.cos(tilt), 0.065 + (height / 2) * Math.sin(tilt)]} rotation={[tilt, 0, 0]}>
+        <RoundedBox args={[width, height, 0.022]} radius={0.02} smoothness={3} castShadow>
+          <meshStandardMaterial color="#1a1b1f" metalness={0.45} roughness={0.35} />
+        </RoundedBox>
+        {/* Edge highlight, raised on hover */}
+        <mesh position={[0, 0, 0.0105]}>
+          <planeGeometry args={[width - 0.006, height - 0.006]} />
+          <meshBasicMaterial ref={rimRef} color="#94a3b8" transparent opacity={0} toneMapped={false} depthWrite={false} />
+        </mesh>
+        <mesh position={[0, 0, 0.0125]}>
+          <planeGeometry args={[width - 0.05, height - 0.05]} />
+          <meshBasicMaterial ref={screenMaterialRef} map={screenTexture} color="#d4d4d8" toneMapped={false} />
+        </mesh>
       </group>
     </group>
   );

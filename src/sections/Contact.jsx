@@ -31,6 +31,9 @@ const Contact = ({ compact = false }) => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: null, key: null, field: null });
+  // Bumped when the visitor starts on the form or submits it: the 3D developer waves.
+  const [waveSignal, setWaveSignal] = useState(0);
+  const wave = () => setWaveSignal((value) => value + 1);
   const { contact: text } = useLocalized(ui);
   const { theme } = useTheme();
 
@@ -41,6 +44,7 @@ const Contact = ({ compact = false }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    wave();
 
     const invalid = validate(form);
     if (invalid) {
@@ -89,7 +93,14 @@ const Contact = ({ compact = false }) => {
         <div className={`${compact ? "" : "mt-16"} grid grid-cols-1 gap-10 xl:grid-cols-12`}>
           <div className="xl:col-span-5">
             <div className="card-border rounded-xl p-6 md:p-10">
-              <form ref={formRef} onSubmit={handleSubmit} noValidate className="contact-form flex w-full flex-col gap-7">
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                // Wave once when focus enters the form, not on every field.
+                onFocus={(event) => !event.currentTarget.contains(event.relatedTarget) && wave()}
+                noValidate
+                className="contact-form flex w-full flex-col gap-7"
+              >
                 <div>
                   <label htmlFor="name">{text.form.nameLabel}</label>
                   <input type="text" placeholder={text.form.namePlaceholder} autoComplete="name" {...fieldProps("name")} />
@@ -137,7 +148,7 @@ const Contact = ({ compact = false }) => {
 
           <div className="min-h-96 xl:col-span-7">
             <div className="contact-canvas">
-              <ContactExperience theme={theme} />
+              <ContactExperience theme={theme} waveSignal={waveSignal} />
             </div>
           </div>
         </div>

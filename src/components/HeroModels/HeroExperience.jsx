@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -12,6 +12,7 @@ import DeveloperRoom, { ROOM_LAYOUT } from "./DeveloperRoom.jsx";
 import DeveloperAvatar from "./DeveloperAvatar.jsx";
 import WorkstationHotspots from "./WorkstationHotspots.jsx";
 import CameraRig, { OVERVIEW } from "./CameraRig.jsx";
+import { useGreetingBubble } from "./useGreetingBubble.js";
 import GltfModel from "../Models/GltfModel.jsx";
 import { Icon } from "../Icons.jsx";
 import { useLocalized } from "../../context/LanguageContext.jsx";
@@ -35,8 +36,6 @@ const SwayGroup = ({ children, ...props }) => {
   );
 };
 
-const BUBBLE_MS = 4800;
-
 const PRESETS = [
   { id: "overview", icon: "layers" },
   { id: "desk", icon: "monitor" },
@@ -45,8 +44,9 @@ const PRESETS = [
 
 /**
  * Hero 3D workstation: the procedural room (or an optional `.glb`), a seated
- * developer avatar who waves to visitors, clickable screens that open
- * `/projects` and `/journey`, and three camera presets. `theme` ("dark" |
+ * developer avatar who waves to visitors, screens previewing (and opening)
+ * `/journey`, `/projects` and `/notes`, a desk tablet that opens `/contact`,
+ * and three camera presets. `theme` ("dark" |
  * "light") selects the room shell and lighting palette.
  */
 const HeroExperience = ({ theme = "dark" }) => {
@@ -63,15 +63,7 @@ const HeroExperience = ({ theme = "dark" }) => {
   const [waveSignal, setWaveSignal] = useState(0);
 
   // Greeting bubble: shown whenever the avatar greets, hidden a few seconds later.
-  const bubbleRef = useRef(null);
-  const bubbleTimer = useRef(null);
-  const [greeting, setGreeting] = useState(false);
-  const greet = useCallback(() => {
-    setGreeting(true);
-    clearTimeout(bubbleTimer.current);
-    bubbleTimer.current = setTimeout(() => setGreeting(false), BUBBLE_MS);
-  }, []);
-  useEffect(() => () => clearTimeout(bubbleTimer.current), []);
+  const { bubbleRef, greeting, greet } = useGreetingBubble();
 
   // Hotspot tooltip, following the pointer.
   const tipRef = useRef(null);
@@ -86,7 +78,7 @@ const HeroExperience = ({ theme = "dark" }) => {
     rigRef.current?.goTo(id);
   };
 
-  const onNavigate = (where) => navigate(where === "journey" ? routes.journey : routes.projects);
+  const onNavigate = (route) => navigate(routes[route] ?? routes.home);
 
   return (
     <div className="hero-scene">

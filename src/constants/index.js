@@ -141,8 +141,10 @@ export const ui = {
       desk: tx("Developer & Desk", "Meja Kerja"),
       telemetry: tx("System Telemetry", "Telemetri Sistem"),
     },
-    openProjects: tx("Open Projects →", "Buka Proyek →"),
+    openProjects: tx("Explore Projects & Preservation →", "Jelajahi Proyek & Preservasi →"),
     openJourney: tx("View Work Experience →", "Lihat Pengalaman Kerja →"),
+    openNotes: tx("Read Engineering Notes →", "Baca Catatan Teknis →"),
+    openContact: tx("Open Contact Desk →", "Buka Halaman Kontak →"),
   },
   cv: {
     download: tx("Download CV", "Unduh CV"),
@@ -287,6 +289,11 @@ export const ui = {
   },
   contact: {
     pageTitle: tx("Contact", "Kontak"),
+    greeting: tx("Send me a message — I'm at my desk! 👋", "Kirim pesan saja — saya standby di meja kerja! 👋"),
+    sceneLabel: tx(
+      "3D desk scene: the developer avatar waves when you hover it or start writing a message",
+      "Adegan meja 3D: avatar developer melambai saat disorot atau saat Anda mulai menulis pesan",
+    ),
     eyebrow: tx("Contact", "Kontak"),
     title: tx("Let's talk about systems that need to stay up", "Mari bicara tentang sistem yang harus tetap berjalan"),
     description: tx(
