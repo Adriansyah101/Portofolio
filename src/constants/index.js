@@ -39,7 +39,6 @@ export const links = {
   warPlaneRepo: `${GITHUB}/War-Plane-1945`,
   gtRacingRepo: `${GITHUB}/${GT_RACING_REPO}`,
   gtRacingReleases: `${GITHUB}/${GT_RACING_REPO}/releases`,
-  gtRacingReleaseNotes: "http://tiny.cc/gtracingpc",
   gangstarRepo: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}` : GITHUB,
   gangstarReleases: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}/releases` : null,
   twitter: TWITTER_HANDLE ? `https://x.com/${TWITTER_HANDLE}` : null,
@@ -332,9 +331,9 @@ export const contactScene = {
 export const counterItems = [
   {
     id: "years",
-    value: 2,
-    suffix: tx("+ Years", "+ Tahun"),
-    label: tx("Enterprise Production Operations", "Operasional Produksi Enterprise"),
+    text: "2024 – 2026", // non-breaking spaces keep the range on one line
+    label: tx("Enterprise Operations Experience", "Pengalaman Operasional Enterprise"),
+    note: "PT ASDP Indonesia Ferry (Persero)",
   },
   {
     id: "ports",
@@ -342,18 +341,17 @@ export const counterItems = [
     label: tx("Harbor & Cloud Deployments", "Deployment Pelabuhan & Cloud"),
   },
   {
-    id: "stability",
-    value: 99.9,
-    decimals: 1,
-    suffix: "%",
-    label: tx("Ticketing System Stability (`trip.ferizy.com`)", "Stabilitas Sistem Tiket (`trip.ferizy.com`)"),
-  },
-  {
     id: "projects",
     value: 5,
     suffix: "",
-    label: tx("Total Engineering & Preservation Projects", "Total Proyek Rekayasa & Preservasi"),
+    label: tx("Total GitHub Projects", "Total Proyek GitHub"),
     note: tx("3 original · 2 preservation ports", "3 original · 2 port preservasi"),
+  },
+  {
+    id: "platforms",
+    text: "Windows & Linux",
+    label: tx("Supported Desktop Platforms", "Platform Desktop yang Didukung"),
+    note: tx("Native preservation port targets", "Target native port preservasi"),
   },
 ];
 
@@ -394,9 +392,9 @@ export const featuredWork = {
       },
     ],
     stats: [
-      { id: "years", value: tx("2+ yrs", "2+ thn"), label: tx("Production operations", "Operasional produksi") },
+      { id: "years", value: "2024 – 2026", label: tx("Production operations", "Operasional produksi") },
       { id: "ports", value: tx("Dozens", "Puluhan"), label: tx("Ferry ports deployed", "Pelabuhan ter-deploy") },
-      { id: "uptime", value: "99.9%", label: tx("Ticketing stability", "Stabilitas tiket") },
+      { id: "hybrid", value: "Hybrid", label: tx("Cloud & on-premise", "Cloud & on-premise") },
     ],
     tags: ["Hybrid Cloud", tx("Linux & Windows Servers", "Server Linux & Windows"), "Omron PLC", "Production Support"],
     cta: { label: tx("View Work Experience", "Lihat Pengalaman Kerja"), to: routes.journey },
@@ -571,7 +569,7 @@ export const preservationProjects = [
     image: null, // drop a 16:9 capture at public/images/gtracing-pc.png, then set "images/gtracing-pc.png"
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { label: tx("Release Notes", "Catatan Rilis"), href: links.gtRacingReleaseNotes, icon: "tag" },
+      { label: tx("Release Notes", "Catatan Rilis"), href: links.gtRacingReleases, icon: "tag" },
     ],
     comparison: [
       { id: "platform", aspect: "Platform", original: "32-bit iPad / iOS", modern: tx("Native Windows PC executable", "Executable PC Windows native") },
@@ -708,7 +706,7 @@ export const caseStudies = {
     ],
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { label: tx("v1.0.0 Release Notes", "Catatan Rilis v1.0.0"), href: links.gtRacingReleaseNotes, icon: "tag" },
+      { label: tx("v1.0.0 Release Notes", "Catatan Rilis v1.0.0"), href: links.gtRacingReleases, icon: "tag" },
     ],
     sections: [
       {
@@ -973,12 +971,11 @@ export const caseStudies = {
             items: [
               {
                 label: tx("Read the v1.0.0 release notes", "Baca catatan rilis v1.0.0"),
-                href: links.gtRacingReleaseNotes,
+                href: links.gtRacingReleases,
                 icon: "tag",
                 primary: true,
               },
               { label: BROWSE_SOURCE, href: links.gtRacingRepo, icon: "github" },
-              { label: tx("All GitHub releases", "Semua rilis GitHub"), href: links.gtRacingReleases, icon: "archive" },
             ],
           },
         ],
@@ -1471,7 +1468,7 @@ export const communityLinks = [
     name: tx("GT Racing Release Notes", "Catatan Rilis GT Racing"),
     handle: "v1.0.0",
     icon: "tag",
-    url: links.gtRacingReleaseNotes,
+    url: links.gtRacingReleases,
   },
 ];
 

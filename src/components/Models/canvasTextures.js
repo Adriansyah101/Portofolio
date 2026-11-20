@@ -130,7 +130,7 @@ const T_OUT = "#a1a1aa";
 const TERMINAL_LINES = [
   ["$ ", T_PROMPT, "systemctl status ticketing.service", T_CMD],
   ["● ", T_OK, "ticketing.service - Ticketing API", T_OUT],
-  ["  ", null, "Active: active (running) · 41d uptime", T_OK],
+  ["  ", null, "Active: active (running)", T_OK],
   ["$ ", T_PROMPT, "./deploy.sh counter-app --harbor all", T_CMD],
   ["[OK] ", T_OK, "harbor-node-01   counter-app   synced", T_OUT],
   ["[OK] ", T_OK, "harbor-node-02   counter-app   synced", T_OUT],
@@ -138,9 +138,9 @@ const TERMINAL_LINES = [
   ["$ ", T_PROMPT, "gatectl status --site surabaya", T_CMD],
   ["  ", null, "plc: online   gates: 4/4   mode: auto", T_OUT],
   ["$ ", T_PROMPT, "curl -s api/health | jq .status", T_CMD],
-  ["  ", null, '"ok"   p95 latency 120 ms', T_OK],
-  ["$ ", T_PROMPT, "uptime", T_CMD],
-  ["  ", null, "load average: 0.42, 0.38, 0.35", "#71717a"],
+  ["  ", null, '"ok"', T_OK],
+  ["$ ", T_PROMPT, "cat /proc/loadavg", T_CMD],
+  ["  ", null, "0.42 0.38 0.35 1/312", "#71717a"],
   ["$ ", T_PROMPT, "_", T_CMD],
 ];
 
@@ -210,19 +210,19 @@ export const createDashboardTexture = () => {
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#94a3b8";
   ctx.font = "600 26px monospace";
-  ctx.fillText("PRODUCTION · SYSTEM STATUS", 48, 56);
+  ctx.fillText("PRODUCTION · LIVE TELEMETRY", 48, 56);
   ctx.fillStyle = "#8fb3a0";
   ctx.beginPath();
   ctx.arc(width - 70, 56, 10, 0, Math.PI * 2);
   ctx.fill();
 
-  // Headline metric
+  // Headline label (neutral; no metric claims)
   ctx.fillStyle = "#e4e4e7";
-  ctx.font = "600 112px Arial, Helvetica, sans-serif";
-  ctx.fillText("99.9%", 48, 160);
+  ctx.font = "600 84px Arial, Helvetica, sans-serif";
+  ctx.fillText("SYSTEM STATUS", 48, 160);
   ctx.fillStyle = "#94a3b8";
   ctx.font = "26px monospace";
-  ctx.fillText("ticketing availability", 52, 236);
+  ctx.fillText("ticketing · harbor · gates", 52, 236);
 
   // Service list
   const services = ["ticketing-api", "counter-apps", "harbor-sync", "gate-control"];

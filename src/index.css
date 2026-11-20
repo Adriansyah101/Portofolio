@@ -530,6 +530,11 @@
     @apply mb-2 text-5xl font-semibold tracking-tight text-zinc-100;
   }
 
+  /* Word metrics ("Dozens", "2024 – 2026", "Windows & Linux"): smaller than numbers, wrap evenly in narrow cards. */
+  .counter-number.is-text {
+    @apply text-4xl leading-tight text-balance xl:text-[1.625rem] 2xl:text-[2rem];
+  }
+
   /* ------------------------------------------------------------------------ */
   /*                              Project showcase                            */
   /* ------------------------------------------------------------------------ */

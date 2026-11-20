@@ -11,7 +11,7 @@ const AnimatedCounter = () => {
       <div className="grid-4-cols mx-auto">
         {items.map((item) => (
           <div key={item.id} className="counter-card">
-            <div className="counter-number">
+            <div className={item.text ? "counter-number is-text" : "counter-number"}>
               {item.text ?? (
                 <CountUp
                   end={item.value}
