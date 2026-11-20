@@ -816,17 +816,22 @@
   /*                                  Contact                                 */
   /* ------------------------------------------------------------------------ */
 
-  .contact-form label {
-    @apply mb-2 block text-white-50;
+  .mail-badge {
+    @apply flex-center size-12 flex-none rounded-full border border-white/8 bg-white/[0.03] text-accent-cyan;
   }
 
-  .contact-form input,
-  .contact-form textarea {
-    @apply w-full rounded-md border border-transparent bg-blue-100 px-4 py-4 text-sm text-white-50 outline-none placeholder:text-blue-50 focus:border-white/25 focus:ring-2 focus:ring-white/5 md:text-base;
+  /* Long address: allowed to wrap after the user name (a <wbr>) or anywhere on narrow phones. */
+  .mail-address {
+    @apply mt-1 block font-mono text-sm text-white-50 transition-colors hover:text-accent-cyan md:text-base;
+    overflow-wrap: anywhere;
   }
 
-  .contact-form textarea {
-    @apply resize-none;
+  .mail-option {
+    @apply flex w-full items-center justify-center gap-2 rounded-lg border border-white/8 bg-blue-100 px-4 py-3 text-sm font-medium text-white-50 transition-colors hover:border-white/25 focus-visible:border-white/40 focus-visible:outline-none;
+  }
+
+  .mail-option.is-done {
+    @apply border-emerald-400/30 text-emerald-300;
   }
 
   .contact-canvas {
@@ -834,18 +839,6 @@
     /* Must match `stage` in contactPalettes (scenePalettes.js), the fog colour. */
     background: var(--contact-stage);
     transition: background-color 0.5s ease;
-  }
-
-  .form-status {
-    @apply rounded-md border px-4 py-3 text-sm;
-  }
-
-  .form-status.is-success {
-    @apply border-emerald-400/30 bg-emerald-400/10 text-emerald-300;
-  }
-
-  .form-status.is-error {
-    @apply border-rose-400/30 bg-rose-400/10 text-rose-300;
   }
 
   .contact-preview {

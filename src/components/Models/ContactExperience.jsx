@@ -94,8 +94,8 @@ const Studio = ({ palette }) => {
 
 /**
  * Contact desk with the seated developer avatar, who waves on load, when
- * hovered or clicked, and whenever `waveSignal` increments (the form is
- * focused or submitted), with a bilingual greeting bubble. `theme`
+ * hovered or clicked, and whenever `waveSignal` increments (the visitor
+ * reaches for one of the Gmail options), with a bilingual greeting bubble. `theme`
  * ("dark" | "light") selects the studio palette.
  */
 const ContactExperience = ({ theme = "dark", waveSignal = 0 }) => {

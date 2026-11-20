@@ -227,6 +227,26 @@ export const SendIcon = (props) => (
   </Stroke>
 );
 
+export const MailIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+  </Stroke>
+);
+
+export const CopyIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="9" y="9" width="11" height="11" rx="2" />
+    <path d="M5 15V5a1 1 0 0 1 1-1h10" />
+  </Stroke>
+);
+
+export const CheckIcon = (props) => (
+  <Stroke {...props}>
+    <path d="m5 12.5 4.5 4.5L19 7.5" />
+  </Stroke>
+);
+
 export const StarIcon = ({ className = "size-5", ...props }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className={className} {...props}>
     <path
@@ -294,6 +314,7 @@ export const iconMap = {
   lock: LockIcon,
   keyboard: KeyboardIcon,
   broken: BrokenIcon,
+  mail: MailIcon,
 };
 
 export const Icon = ({ name, ...props }) => {

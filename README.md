@@ -20,13 +20,14 @@ theme**. Both choices are remembered in `localStorage`.
 
 **Stack:** React 19 + Vite · React Router (`HashRouter`) · Three.js via `@react-three/fiber`,
 `@react-three/drei` and `@react-three/postprocessing` · GSAP + ScrollTrigger · Tailwind CSS v4 ·
-react-countup · react-responsive · EmailJS.
+react-countup · react-responsive.
 
 The 3D scenes (hero systems workstation, tech-stack emblems, contact desk) and the project previews
 are drawn in code. The site needs no image or model files to render, and it makes no runtime
 requests to third-party CDNs for assets: the tech-card reflections come from a procedural
 `<Lightformer>` environment rather than a downloaded HDRI. The only external requests are
-Google Fonts (with system-font fallbacks) and EmailJS when the contact form is submitted.
+Google Fonts (with system-font fallbacks). The contact page has no form: it links to Gmail's
+compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail service.
 
 ## Pages
 
@@ -37,7 +38,7 @@ Google Fonts (with system-font fallbacks) and EmailJS when the contact form is s
 | `#/projects/gt-racing`| GT Racing case study     | Why it was lost, recompilation & graphics pipeline, leaderboard architecture, controls & release info |
 | `#/projects/gangstar` | Gangstar case study      | Why it was lost, Windows & Linux porting, V1.0.0 release packaging and checksum verification |
 | `#/journey`           | Journey                  | Work experience at PT ASDP, six interactive 3D enterprise & systems tech-stack cards, operational impact highlights |
-| `#/contact`           | Contact & Community      | EmailJS form, warm 3D desk scene, GitHub links                           |
+| `#/contact`           | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
 Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
 Reloading or sharing any page always loads `index.html`, so GitHub Pages never returns a 404.
@@ -72,17 +73,15 @@ context. Every canvas caps its device pixel ratio at `dpr={[1, 1.5]}`.
   (`portfolio-theme`, `portfolio-lang`).
 - Semua teks ada di `src/constants/index.js` dalam bentuk `tx("English", "Bahasa Indonesia")`.
   Untuk mengubah atau menambah teks, edit kedua bahasa di tempat yang sama.
-- Teks antarmuka (tombol, label formulir, placeholder, pesan validasi dan status, judul halaman)
-  ada di objek `ui`.
-- Kunci EmailJS diatur lewat file `.env` (lokal) atau GitHub Secrets (deploy), seperti dijelaskan
-  di bawah. Tanpa kunci tersebut, formulir menampilkan pesan "belum dikonfigurasi" dalam bahasa
-  yang aktif.
+- Teks antarmuka (tombol, label, judul halaman) ada di objek `ui`.
+- Alamat email kontak ada di `contactEmail` (`src/constants/index.js`). Halaman Kontak dan footer
+  membuka jendela tulis Gmail ke alamat itu.
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env   # then add your EmailJS keys
+cp .env.example .env   # optional link settings
 npm run dev
 ```
 
@@ -96,14 +95,9 @@ npm run dev
 
 | Variable                       | Required | Description                                                   |
 | ------------------------------ | -------- | ------------------------------------------------------------- |
-| `VITE_APP_EMAILJS_SERVICE_ID`  | yes\*    | EmailJS service ID                                            |
-| `VITE_APP_EMAILJS_TEMPLATE_ID` | yes\*    | EmailJS template ID (variables: `{{name}}`, `{{email}}`, `{{message}}`) |
-| `VITE_APP_EMAILJS_PUBLIC_KEY`  | yes\*    | EmailJS public key                                            |
 | `VITE_GITHUB_USERNAME`         | no       | GitHub account for all links. Defaults to `adriansyah101`     |
 | `VITE_GANGSTAR_REPO`           | no       | Exact repo name of the Gangstar port, for direct repo and release links |
 | `VITE_TWITTER_HANDLE`          | no       | X/Twitter handle, without the `@`. The footer shows an X icon only when set |
-
-\* If the EmailJS keys are missing, the form shows a friendly "not configured" message.
 
 Without `VITE_GANGSTAR_REPO`, Gangstar links open your GitHub profile (`https://github.com/adriansyah101`).
 
@@ -111,11 +105,8 @@ Without `VITE_GANGSTAR_REPO`, Gangstar links open your GitHub profile (`https://
 
 1. Push this project to a GitHub repository on the `main` branch.
 2. In **Settings → Pages**, set **Source** to **GitHub Actions**.
-3. In **Settings → Secrets and variables → Actions**:
-   - Add **secrets** `VITE_APP_EMAILJS_SERVICE_ID`, `VITE_APP_EMAILJS_TEMPLATE_ID` and
-     `VITE_APP_EMAILJS_PUBLIC_KEY`.
-   - Optionally add **variables** `VITE_GANGSTAR_REPO`, `VITE_TWITTER_HANDLE` and
-     `VITE_GITHUB_USERNAME`.
+3. Optionally, in **Settings → Secrets and variables → Actions**, add the **variables**
+   `VITE_GANGSTAR_REPO`, `VITE_TWITTER_HANDLE` and `VITE_GITHUB_USERNAME`.
 4. Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
    which builds the site and publishes `dist/` to `https://<username>.github.io/<repo-name>/`.
 

@@ -5,7 +5,7 @@ import { communityLinks, ui } from "../constants/index.js";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { usePageTitle } from "../utils/hooks.js";
 
-/** `/contact`: EmailJS form, the warm 3D desk scene and direct GitHub links. */
+/** `/contact`: Gmail contact card, the warm 3D desk scene and direct GitHub links. */
 const ContactPage = () => {
   const { contact: text } = useLocalized(ui);
   const community = useLocalized(communityLinks);

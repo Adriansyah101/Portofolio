@@ -35,6 +35,14 @@ const GT_RACING_REPO = "GTRacingMotorAcademyRecomp";
 const GANGSTAR_REPO = env.VITE_GANGSTAR_REPO?.trim() || null;
 const TWITTER_HANDLE = env.VITE_TWITTER_HANDLE?.trim().replace(/^@/, "") || null;
 
+/** Public contact address. The contact page and the footer link to it. */
+export const contactEmail = "adriansyahprasetyanugraha1@gmail.com";
+
+/** Gmail's web compose window addressed to `contactEmail`, with an optional subject. */
+export const gmailComposeUrl = (subject = "") =>
+  `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contactEmail)}` +
+  (subject ? `&su=${encodeURIComponent(subject)}` : "");
+
 export const links = {
   githubProfile: GITHUB,
   sidafRepo: `${GITHUB}/sidaf`,
@@ -157,7 +165,7 @@ export const ui = {
     projects: tx("Selected Projects", "Proyek Pilihan"),
     skills: tx("Skills", "Keahlian"),
     links: tx("Links", "Tautan"),
-    contactNote: tx("Contact me through the form at", "Hubungi saya melalui formulir di"),
+    contactNote: tx("Contact", "Kontak"),
   },
   github: {
     label: tx("GitHub activity", "Aktivitas GitHub"),
@@ -291,44 +299,31 @@ export const ui = {
     pageTitle: tx("Contact", "Kontak"),
     greeting: tx("Send me a message — I'm at my desk! 👋", "Kirim pesan saja — saya standby di meja kerja! 👋"),
     sceneLabel: tx(
-      "3D desk scene: the developer avatar waves when you hover it or start writing a message",
-      "Adegan meja 3D: avatar developer melambai saat disorot atau saat Anda mulai menulis pesan",
+      "3D desk scene: the developer avatar waves when you hover it or open the email options",
+      "Adegan meja 3D: avatar developer melambai saat disorot atau saat Anda membuka opsi email",
     ),
     eyebrow: tx("Contact", "Kontak"),
     title: tx("Let's talk about systems that need to stay up", "Mari bicara tentang sistem yang harus tetap berjalan"),
     description: tx(
-      "Systems operations, infrastructure and application support roles, or a C/C++ and low-level porting question: send a message, or find my source code and releases on GitHub.",
-      "Peran operasional sistem, infrastruktur, dan dukungan aplikasi, atau pertanyaan seputar C/C++ dan porting tingkat rendah: kirim pesan, atau temukan source code dan rilis saya di GitHub.",
+      "Systems operations, infrastructure and application support roles, or a C/C++ and low-level porting question: email me on Gmail, or find my source code and releases on GitHub.",
+      "Peran operasional sistem, infrastruktur, dan dukungan aplikasi, atau pertanyaan seputar C/C++ dan porting tingkat rendah: kirim email lewat Gmail, atau temukan source code dan rilis saya di GitHub.",
     ),
     communityTitle: tx("Source code & releases on GitHub", "Source code & rilis di GitHub"),
     sectionTitle: tx("Get in Touch – Let's Connect", "Hubungi Saya – Mari Terhubung"),
     sectionSub: tx("Have a systems or engineering role in mind?", "Punya peran sistem atau engineering yang cocok?"),
-    form: {
-      nameLabel: tx("Your name", "Nama Anda"),
-      namePlaceholder: tx("What's your good name?", "Siapa nama Anda?"),
-      emailLabel: tx("Your email", "Email Anda"),
-      emailPlaceholder: tx("What's your email address?", "Apa alamat email Anda?"),
-      messageLabel: tx("Your message", "Pesan Anda"),
-      messagePlaceholder: tx("Tell me about the role, system or project...", "Ceritakan tentang peran, sistem, atau proyeknya..."),
-      send: tx("Send Message", "Kirim Pesan"),
-      sending: tx("Sending...", "Mengirim..."),
-    },
-    status: {
-      missingName: tx("Please enter your name.", "Mohon isi nama Anda."),
-      invalidEmail: tx("Please enter a valid email address.", "Mohon masukkan alamat email yang valid."),
-      missingMessage: tx("Please write a short message.", "Mohon tulis pesan singkat."),
-      notConfigured: tx(
-        "The contact form isn't configured yet. Please reach out via GitHub in the meantime.",
-        "Formulir kontak belum dikonfigurasi. Untuk sementara, silakan hubungi saya melalui GitHub.",
+    mail: {
+      label: "Gmail",
+      title: tx("Write to me on Gmail", "Kirim email lewat Gmail"),
+      body: tx(
+        "Tell me about the role, the system or the project. Gmail opens a new message already addressed to me.",
+        "Ceritakan peran, sistem, atau proyeknya. Gmail akan membuka pesan baru yang sudah berisi alamat saya.",
       ),
-      success: tx(
-        "Thanks! Your message is on its way — I'll get back to you soon.",
-        "Terima kasih! Pesan Anda sedang dikirim — saya akan segera membalasnya.",
-      ),
-      error: tx(
-        "Something went wrong while sending. Please try again in a moment.",
-        "Terjadi kesalahan saat mengirim. Silakan coba lagi sebentar lagi.",
-      ),
+      compose: tx("Write in Gmail", "Tulis di Gmail"),
+      composeLabel: tx("Write in Gmail (opens in a new tab)", "Tulis di Gmail (membuka tab baru)"),
+      subject: tx("Hello Adriansyah, from your portfolio", "Halo Adriansyah, dari portofolio Anda"),
+      copy: tx("Copy email", "Salin email"),
+      copied: tx("Email copied", "Email tersalin"),
+      otherApp: tx("Other mail app", "Aplikasi email lain"),
     },
   },
   footer: {
@@ -1557,22 +1552,9 @@ export const communityLinks = [
 
 export const socialLinks = [
   { name: "GitHub", icon: "github", url: links.githubProfile },
+  { name: "Gmail", icon: "mail", url: gmailComposeUrl() },
   links.twitter && { name: "X / Twitter", icon: "x", url: links.twitter },
 ].filter(Boolean);
-
-/* -------------------------------------------------------------------------- */
-/*                                   EmailJS                                  */
-/* -------------------------------------------------------------------------- */
-
-export const emailConfig = {
-  serviceId: env.VITE_APP_EMAILJS_SERVICE_ID,
-  templateId: env.VITE_APP_EMAILJS_TEMPLATE_ID,
-  publicKey: env.VITE_APP_EMAILJS_PUBLIC_KEY,
-};
-
-export const isEmailConfigured = Boolean(
-  emailConfig.serviceId && emailConfig.templateId && emailConfig.publicKey,
-);
 
 /* -------------------------------------------------------------------------- */
 /*                              Engineering notes                             */
@@ -1994,6 +1976,8 @@ export const githubSnapshot = {
  * profile and the skill groups live here. Contact is limited to public links.
  */
 export const resume = {
+  /** Shows the "Download CV" buttons (Home hero and Journey). `false` hides them everywhere. */
+  showButton: false,
   pdfPath: "cv-adriansyah.pdf",
   name: "Adriansyah Prasetya Nugraha",
   role: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),

@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 
 import { ArrowDownIcon, CloseIcon, GitHubIcon } from "./Icons.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
-import { expCards, githubUser, links, projects, resume, siteUrl, ui } from "../constants/index.js";
+import { contactEmail, expCards, githubUser, links, projects, resume, siteUrl, ui } from "../constants/index.js";
 import { assetUrl } from "../utils/assets.js";
 
 const PDF_URL = assetUrl(resume.pdfPath);
@@ -153,7 +153,7 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
         </section>
 
         <p className="resume-foot">
-          {text.contactNote} {siteUrl}#/contact · github.com/{githubUser}
+          {text.contactNote}: {contactEmail} · {siteUrl}#/contact · github.com/{githubUser}
         </p>
       </article>
     </dialog>,
@@ -165,7 +165,10 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
  * "Download CV": downloads `public/cv-adriansyah.pdf` when that file exists,
  * otherwise opens the printable résumé (which can be saved as a PDF).
  */
-export const CvButton = ({ className = "" }) => {
+/** "Download CV" button, or nothing while `resume.showButton` is off. */
+export const CvButton = (props) => (resume.showButton ? <CvButtonInner {...props} /> : null);
+
+const CvButtonInner = ({ className = "" }) => {
   const [open, setOpen] = useState(false);
   const pdfAvailable = usePdfAvailable();
   const { cv: text } = useLocalized(ui);
