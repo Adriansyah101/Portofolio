@@ -294,15 +294,16 @@
   }
 
   .navbar-logo {
-    @apply text-xl font-semibold tracking-[0.25em] text-white-50 transition-transform duration-300 hover:scale-105 md:text-2xl;
+    @apply text-xl font-semibold tracking-[0.25em] text-white-50 transition-transform duration-300 hover:scale-105 md:text-2xl lg:text-xl xl:text-2xl;
   }
 
   .navbar-desktop {
     @apply hidden items-center lg:flex;
   }
 
+  /* Five links plus the actions must fit at 1024px in both languages, so the lg range runs a little tighter. */
   .navbar-desktop ul {
-    @apply flex space-x-8;
+    @apply flex space-x-6 xl:space-x-8;
   }
 
   .navbar-desktop a {
@@ -356,7 +357,7 @@
   }
 
   .contact-btn-inner {
-    @apply flex items-center gap-2 rounded-lg bg-white-50 px-5 py-2 text-canvas transition-colors duration-300 group-hover:bg-black-200 group-hover:text-white;
+    @apply flex items-center gap-2 rounded-lg bg-white-50 px-5 py-2 text-canvas transition-colors duration-300 group-hover:bg-black-200 group-hover:text-white max-xl:px-3;
   }
 
   .menu-toggle {
@@ -394,8 +395,9 @@
     @apply fixed inset-0 z-[90] bg-canvas/70 backdrop-blur-sm lg:hidden;
   }
 
+  /* Icon-only GitHub button between lg and xl (the label stays for screen readers). */
   .contact-btn-inner span {
-    @apply transition-colors duration-300 group-hover:text-white;
+    @apply transition-colors duration-300 group-hover:text-white max-xl:sr-only;
   }
 
   /* ------------------------------------------------------------------------ */
@@ -447,7 +449,7 @@
   }
 
   .hero-3d-layout {
-    @apply relative h-[52vh] min-h-[360px] w-full xl:absolute xl:top-0 xl:right-0 xl:h-full xl:w-[58%];
+    @apply relative h-[calc(52vh+5.5rem)] min-h-[440px] w-full md:h-[52vh] md:min-h-[360px] xl:absolute xl:top-0 xl:right-0 xl:h-full xl:w-[58%];
   }
 
   /* Side by side, the scene's left edge fades into the page so the copy beside it stays readable. */
@@ -1218,4 +1220,302 @@
 :root[data-theme="light"]
   :is(.work-card, .counter-card, .archive-card, .tech-card, .timeline-card, .card-border, .contact-preview) {
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+/* -------------------------------------------------------------------------- */
+/*               Hero scene controls, avatar bubble & tooltips                */
+/* -------------------------------------------------------------------------- */
+
+@layer components {
+  /* Canvas on top, controls below it on phones (overlaid from md up). */
+  .hero-scene {
+    @apply relative flex h-full w-full flex-col;
+  }
+
+  .hero-canvas {
+    @apply relative min-h-0 flex-1;
+  }
+
+  /* Pills over the bottom of the canvas: centred on phones, bottom-right beside the copy. */
+  .scene-controls {
+    @apply pointer-events-none relative z-20 flex flex-wrap items-center justify-center gap-2 px-3 pt-3 md:absolute md:inset-x-3 md:bottom-5 md:p-0 xl:inset-x-auto xl:right-8 xl:bottom-8 xl:justify-end;
+  }
+
+  .scene-presets {
+    @apply flex flex-wrap justify-center gap-1.5;
+  }
+
+  .scene-pill {
+    @apply pointer-events-auto inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs font-medium whitespace-nowrap text-white-50/80 transition-colors duration-300 hover:border-white/25 hover:text-white;
+    background: color-mix(in oklab, var(--color-canvas) 62%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .scene-pill.active {
+    @apply border-transparent bg-white-50 text-canvas hover:text-canvas;
+  }
+
+  .scene-pill.is-wave {
+    @apply text-white-50;
+  }
+
+  /* drei <Html> puts the element's top-left corner on the 3D anchor, so the bubble lifts itself above it. */
+  .avatar-bubble {
+    @apply relative w-max rounded-2xl border border-white/10 bg-black-100 px-3.5 py-2 text-xs leading-snug font-medium text-white-50 md:text-sm;
+    max-width: min(16rem, 62vw);
+    text-align: center;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 6px)) scale(0.96);
+    transform-origin: 50% 100%;
+    transition:
+      opacity 0.35s ease,
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .avatar-bubble.is-visible {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 6px)) scale(1);
+  }
+
+  .avatar-bubble::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 10px;
+    height: 10px;
+    background: inherit;
+    border-right: inherit;
+    border-bottom: inherit;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  /* Zero-size point in the overlay that ScreenAnchor moves with translate3d(). */
+  .scene-anchor {
+    @apply pointer-events-none absolute top-0 left-0 z-10 size-0;
+  }
+
+  /* The tooltip sits just above and right of the pointer. */
+  .scene-anchor.is-tip .scene-tooltip {
+    transform: translate(12px, calc(-100% - 10px));
+  }
+
+  .scene-tooltip {
+    @apply block w-max rounded-full border border-white/10 px-3 py-1 text-xs font-medium whitespace-nowrap text-white-50;
+    background: color-mix(in oklab, var(--color-canvas) 85%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /*                           CV button & résumé                             */
+  /* ------------------------------------------------------------------------ */
+
+  .cv-button {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-white/12 px-4 py-2 text-sm font-medium text-white-50 transition-colors duration-300 hover:border-white/30 hover:text-white;
+  }
+
+  /* In the hero it matches the height and type of the main CTA beside it. */
+  .hero-header .cv-button {
+    @apply rounded-lg px-6 font-semibold tracking-wider uppercase md:text-base;
+  }
+
+  .resume-dialog {
+    @apply m-auto overflow-auto rounded-2xl border border-white/10 p-0 text-white-50;
+    width: min(56rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    background: var(--color-black-200);
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.35);
+  }
+
+  .resume-dialog::backdrop {
+    background: rgb(9 9 11 / 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .resume-toolbar {
+    @apply sticky top-0 z-[1] flex flex-wrap items-center justify-between gap-3 border-b border-black-50 px-4 py-3 md:px-6;
+    background: var(--color-black-200);
+  }
+
+  .resume-close {
+    @apply flex-center size-9 cursor-pointer rounded-full border border-white/12 text-white-50 transition-colors hover:border-white/30 hover:text-white;
+  }
+
+  /* The sheet is always paper-white, in both themes and in print. */
+  .resume-sheet {
+    @apply m-3 rounded-lg px-5 py-7 md:m-6 md:px-12 md:py-10;
+    background: #fff;
+    color: #1e293b;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .resume-sheet a {
+    @apply inline-flex items-center gap-1 underline-offset-2 hover:underline;
+    color: #1e293b;
+  }
+
+  .resume-head {
+    @apply flex flex-wrap items-end justify-between gap-4 pb-4;
+    border-bottom: 2px solid #0f172a;
+  }
+
+  .resume-head h2 {
+    @apply text-2xl font-bold tracking-tight md:text-3xl;
+    color: #0f172a;
+  }
+
+  .resume-role {
+    @apply mt-1 font-medium;
+    color: #334155;
+  }
+
+  .resume-meta {
+    color: #64748b;
+    font-size: 13px;
+  }
+
+  .resume-links {
+    @apply flex flex-col gap-1 text-[13px] md:items-end;
+  }
+
+  .resume-sheet section {
+    @apply mt-6;
+  }
+
+  .resume-sheet h3 {
+    @apply mb-2.5 pb-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .resume-entry-head {
+    @apply flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1;
+  }
+
+  .resume-entry ul {
+    @apply mt-2 grid list-disc gap-1.5 pl-5;
+  }
+
+  .resume-projects {
+    @apply grid gap-2.5;
+  }
+
+  .resume-skills {
+    @apply grid grid-cols-1 gap-x-8 gap-y-2 md:grid-cols-2;
+  }
+
+  .resume-skills dt {
+    @apply font-semibold;
+    color: #0f172a;
+  }
+
+  .resume-skills dd {
+    color: #334155;
+  }
+
+  .resume-sheet strong {
+    @apply font-semibold;
+    color: #0f172a;
+  }
+
+  .resume-foot {
+    @apply mt-8 pt-3 text-xs;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /*                         GitHub stats & notes                             */
+  /* ------------------------------------------------------------------------ */
+
+  .gh-stats {
+    @apply flex max-w-5xl flex-col gap-5 rounded-xl border border-black-50 bg-black-100 p-4 md:p-5 lg:flex-row lg:items-center lg:gap-8;
+  }
+
+  .gh-stats-profile {
+    @apply flex min-w-0 flex-none items-center gap-3 text-white-50 transition-colors hover:text-white lg:border-r lg:border-black-50 lg:pr-8;
+  }
+
+  .gh-stats-dot {
+    @apply inline-block size-1.5 flex-none rounded-full bg-blue-50/60;
+  }
+
+  .gh-stats-dot.is-live {
+    @apply bg-emerald-400/80;
+  }
+
+  .gh-stats-figures {
+    @apply grid min-w-0 flex-1 grid-cols-3 gap-x-4 gap-y-4 lg:flex lg:flex-wrap lg:items-start lg:gap-x-8;
+  }
+
+  .gh-stats-figures dt {
+    @apply font-mono text-[11px] tracking-widest text-blue-50 uppercase;
+  }
+
+  .gh-stats-figures dd {
+    @apply mt-1 font-semibold text-white-50 md:text-lg;
+  }
+
+  .gh-stats-languages {
+    @apply col-span-3;
+  }
+
+  .gh-stats-languages dd {
+    @apply mt-1.5 text-sm font-normal md:text-sm;
+  }
+
+  .note-card {
+    @apply flex min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* Printing with the résumé open prints only the résumé. */
+  body:has(.resume-dialog[open]) > :not(.resume-dialog) {
+    display: none !important;
+  }
+
+  body:has(.resume-dialog[open]) {
+    background: #fff !important;
+  }
+
+  .resume-dialog[open] {
+    position: static;
+    display: block;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .resume-dialog::backdrop {
+    display: none;
+  }
+
+  .resume-toolbar {
+    display: none !important;
+  }
+
+  .resume-sheet {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-bubble {
+    transition: opacity 0.2s ease;
+  }
 }

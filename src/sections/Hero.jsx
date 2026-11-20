@@ -6,6 +6,7 @@ import Button from "../components/Button.jsx";
 import AnimatedCounter from "../components/AnimatedCounter.jsx";
 import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
 import { Icon } from "../components/Icons.jsx";
+import { CvButton } from "../components/Resume.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { heroContent as heroSource, ui, words as wordSource } from "../constants/index.js";
@@ -71,8 +72,9 @@ const Hero = () => {
 
           <p className="hero-bio hero-reveal">{renderInlineCode(heroContent.bio)}</p>
 
-          <div className="hero-reveal">
+          <div className="hero-reveal flex flex-wrap items-center gap-3 md:gap-4">
             <Button text={heroContent.ctaText} className="h-12 w-64 md:h-16 md:w-80" id="button" targetId="work" />
+            <CvButton className="h-12 md:h-16" />
           </div>
         </header>
 

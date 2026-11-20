@@ -19,6 +19,25 @@ const ROOM = 7;
 const WALL_HEIGHT = 5;
 const WALL = 0.2;
 const HALF = ROOM / 2;
+const DESK_TOP = 1.5;
+const DESK_Z = -HALF + 0.75;
+
+/**
+ * Where things sit in the room (room-local units, before the hero's -45° turn).
+ * HeroExperience reads this to seat the developer avatar, place the clickable
+ * monitor hotspots and aim the camera presets, so they stay aligned with the
+ * meshes below. `seat.rotation` swivels the chair to face the visitor.
+ */
+export const ROOM_LAYOUT = {
+  deskTop: DESK_TOP,
+  monitors: [
+    { id: "terminal", position: [-1.15, DESK_TOP, DESK_Z - 0.3], rotation: [0, 0.22, 0], width: 1.5, height: 0.85 },
+    { id: "telemetry", position: [0.45, DESK_TOP, DESK_Z - 0.3], rotation: [0, -0.22, 0], width: 1.5, height: 0.85 },
+  ],
+  /** Centre of the wall-mounted status dashboard. */
+  dashboard: { position: [-0.4, 3.85, -HALF + 0.02], width: 2.02, height: 1.16 },
+  seat: { position: [-1.05, 0, -1.0], rotation: [0, -2.35, 0] },
+};
 
 // The room shell (floor, walls, cove light, rug) takes its colours from the
 // theme palette; the cove stays below the bloom threshold in both themes so
@@ -67,8 +86,9 @@ const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
 
   useEffect(() => () => dashboard.dispose(), [dashboard]);
 
-  const deskTop = 1.5;
-  const deskZ = -HALF + 0.75;
+  const deskTop = DESK_TOP;
+  const deskZ = DESK_Z;
+  const [terminal, telemetry] = ROOM_LAYOUT.monitors;
 
   return (
     <group {...props}>
@@ -101,7 +121,7 @@ const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
 
       {/* --------------------------- Wall decor --------------------------- */}
       {/* Wall-mounted status dashboard */}
-      <group position={[-0.4, 3.85, -HALF + 0.02]}>
+      <group position={ROOM_LAYOUT.dashboard.position}>
         <mesh position={[0, 0, -0.005]}>
           <boxGeometry args={[2.02, 1.16, 0.03]} />
           <meshStandardMaterial color="#111114" metalness={0.4} roughness={0.4} />
@@ -130,8 +150,8 @@ const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
       {/* ----------------------------- Setup ----------------------------- */}
       <Desk position={[-0.4, 0, deskZ]} width={4.2} depth={1.4} height={deskTop} topColor="#5c4838" frameColor="#27272a" />
 
-      <Monitor position={[-1.15, deskTop, deskZ - 0.3]} rotation={[0, 0.22, 0]} screen="terminal" accent={ACCENT} />
-      <Monitor position={[0.45, deskTop, deskZ - 0.3]} rotation={[0, -0.22, 0]} screen="telemetry" accent="#7c98b6" />
+      <Monitor position={terminal.position} rotation={terminal.rotation} screen="terminal" accent={ACCENT} />
+      <Monitor position={telemetry.position} rotation={telemetry.rotation} screen="telemetry" accent="#7c98b6" />
 
       <DeskMat position={[-0.25, deskTop, deskZ + 0.3]} width={2.1} depth={0.62} color="#1c1c1f" edge="#3f3f46" />
       <Keyboard position={[-0.4, deskTop + 0.008, deskZ + 0.3]} glow="#3a3d44" />
@@ -140,7 +160,8 @@ const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
       <DeskLamp position={[-2.2, deskTop, deskZ - 0.3]} rotation={[0, -0.45, 0]} color="#f3dcc0" intensity={3.5} />
 
       <PCTower position={[2.45, 0, deskZ - 0.05]} accent={ACCENT} trim={TRIM} />
-      <Chair position={[-0.35, 0, -1.4]} rotation={[0, 0.25, 0]} color="#26262b" accent={TRIM} />
+      {/* Swivelled round to face the visitor: the developer avatar sits here. */}
+      <Chair position={ROOM_LAYOUT.seat.position} rotation={ROOM_LAYOUT.seat.rotation} color="#26262b" accent={TRIM} />
       <Plant position={[2.75, 0, -0.9]} scale={1.1} />
     </group>
   );

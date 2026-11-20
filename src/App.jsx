@@ -18,6 +18,8 @@ const Home = lazy(() => import("./pages/Home.jsx"));
 const Projects = lazy(() => import("./pages/Projects.jsx"));
 const CaseStudy = lazy(() => import("./pages/CaseStudy.jsx"));
 const Journey = lazy(() => import("./pages/Journey.jsx"));
+const Notes = lazy(() => import("./pages/Notes.jsx"));
+const NoteArticle = lazy(() => import("./pages/NoteArticle.jsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
@@ -45,6 +47,8 @@ const App = () => (
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<CaseStudy />} />
           <Route path="/journey" element={<Journey />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/notes/:slug" element={<NoteArticle />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

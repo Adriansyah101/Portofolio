@@ -1,9 +1,14 @@
+import { Link } from "react-router-dom";
+
 import PageHeader from "../components/PageHeader.jsx";
+import { ArrowRightIcon } from "../components/Icons.jsx";
+import { NotesTeaser } from "../components/NoteBits.jsx";
+import { CvButton } from "../components/Resume.jsx";
 import ExperienceSection from "../sections/ExperienceSection.jsx";
 import TechStack from "../sections/TechStack.jsx";
 import Highlights from "../sections/Highlights.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
-import { ui } from "../constants/index.js";
+import { routes, ui } from "../constants/index.js";
 import { scrollToId, usePageTitle } from "../utils/hooks.js";
 
 /** `/journey`: professional work experience only (preservation work lives on `/projects`). */
@@ -18,7 +23,14 @@ const Journey = () => {
         title={text.title}
         description={text.description}
       >
-        <div className="jump-nav mt-8" role="navigation" aria-label={common.onThisPage}>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link to={routes.contact} className="project-link primary">
+            {text.contactCta}
+            <ArrowRightIcon className="size-4" />
+          </Link>
+          <CvButton />
+        </div>
+        <div className="jump-nav mt-6" role="navigation" aria-label={common.onThisPage}>
           {text.jumps.map((jump) => (
             <button key={jump.id} type="button" className="jump-chip" onClick={() => scrollToId(jump.id)}>
               {jump.label}
@@ -29,6 +41,7 @@ const Journey = () => {
       <ExperienceSection />
       <TechStack />
       <Highlights />
+      <NotesTeaser first="hybrid-harbor-cloud-ticketing" />
     </div>
   );
 };

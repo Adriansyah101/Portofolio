@@ -1,6 +1,8 @@
 import { Link, useSearchParams } from "react-router-dom";
 
 import PageHeader from "../components/PageHeader.jsx";
+import GitHubStats from "../components/GitHubStats.jsx";
+import { NotesTeaser } from "../components/NoteBits.jsx";
 import ProjectPreview from "../components/ProjectPreview.jsx";
 import { ArrowRightIcon, Icon } from "../components/Icons.jsx";
 import { KindBadge, OriginTarget, PlatformBadge, ProjectActions, ProjectTags } from "../components/ProjectBits.jsx";
@@ -153,7 +155,9 @@ const Projects = () => {
 
   return (
     <div className="page-enter">
-      <PageHeader eyebrow={text.eyebrow} title={text.title} description={text.description} />
+      <PageHeader eyebrow={text.eyebrow} title={text.title} description={text.description}>
+        <GitHubStats className="mt-8" />
+      </PageHeader>
 
       <div className="padding-x-lg mt-12">
         <div className="mx-auto w-full max-w-[1600px]">
@@ -208,6 +212,7 @@ const Projects = () => {
           </div>
         </div>
       </div>
+      <NotesTeaser first="gles-ipad-to-windows" />
     </div>
   );
 };

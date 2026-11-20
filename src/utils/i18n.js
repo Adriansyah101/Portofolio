@@ -40,3 +40,13 @@ export const localize = (value, lang) => {
 /** Fills `{name}` placeholders, e.g. `format("Showing {n}", { n: 3 })`. */
 export const format = (template, values) =>
   template.replace(/\{(\w+)\}/g, (match, key) => (key in values ? String(values[key]) : match));
+
+/** Localised calendar date for an ISO `YYYY-MM-DD` string (for example "20 Nov 2026"). */
+export const formatDate = (iso, lang, options = { day: "numeric", month: "short", year: "numeric" }) => {
+  if (!iso) return "—";
+  try {
+    return new Intl.DateTimeFormat(lang === "id" ? "id-ID" : "en-GB", options).format(new Date(`${iso}T00:00:00`));
+  } catch {
+    return iso;
+  }
+};
