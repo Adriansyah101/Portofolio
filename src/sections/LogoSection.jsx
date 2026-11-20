@@ -4,7 +4,8 @@ import { logoItems } from "../constants/index.js";
 const monogram = (name) =>
   name
     .replace(/[^A-Za-z0-9+ ]/g, "")
-    .split(" ")
+    .split(/\s+/)
+    .filter(Boolean)
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
@@ -21,7 +22,7 @@ const LogoSection = () => {
           {track.map((item, index) => (
             <div key={`${item.name}-${index}`} className="marquee-item" aria-hidden={index >= logoItems.length}>
               <span className="marquee-glyph" style={{ backgroundColor: item.color }}>
-                {item.name === "C++" ? "C++" : monogram(item.name)}
+                {item.glyph ?? monogram(item.name)}
               </span>
               {item.name}
             </div>

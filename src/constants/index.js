@@ -33,6 +33,7 @@ export const links = {
   gangstarRepo: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}` : `${GITHUB}?tab=repositories&q=gangstar`,
   gangstarReleases: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}/releases` : null,
   twitter: TWITTER_HANDLE ? `https://x.com/${TWITTER_HANDLE}` : null,
+  ferizy: "https://trip.ferizy.com",
 };
 
 /* -------------------------------------------------------------------------- */
@@ -72,7 +73,7 @@ export const words = [
 export const heroContent = {
   eyebrow: "32-Bit Game Preservation & Static Recompilation Engineer",
   headlineLines: ["Apple Left Behind", "as Native PC Ports"],
-  bio: "Hi, I'm Adriansyah Prasetya Nugraha (adriansyah101), based in Semarang, Indonesia. I rescue delisted 32-bit mobile and desktop classics that stopped working when Apple dropped 32-bit apps in iOS 11 and macOS Catalina. I use static binary recompilation and modern OpenGL ES rendering pipelines, not fragile emulation.",
+  bio: "Hi, I'm Adriansyah Prasetya Nugraha (adriansyah101) from Semarang, Indonesia. I kept nationwide ferry ticketing running in production at PT ASDP Indonesia Ferry (Persero), and I rescue delisted 32-bit classics that iOS 11 and macOS Catalina left unplayable, using static binary recompilation and modern OpenGL ES pipelines instead of fragile emulation.",
   ctaText: "Explore the Work",
 };
 
@@ -97,8 +98,8 @@ export const contactScene = {
 /* -------------------------------------------------------------------------- */
 
 export const counterItems = [
-  { value: 2, suffix: "", label: "32-Bit Classics Preserved" },
-  { value: 2, suffix: "", label: "Lost Apple Platforms Rescued (iPad & Mac)" },
+  { value: 2, suffix: "", label: "Years in Enterprise Production Ops (PT ASDP, 2024 – 2026)" },
+  { value: 2, suffix: "", label: "32-Bit Classics Preserved (iPad & Mac)" },
   { value: 2, suffix: "", label: "Modern Native Targets (Windows & Linux)" },
   { value: 100, suffix: "%", label: "Open-Source GitHub Releases" },
 ];
@@ -477,16 +478,24 @@ export const caseStudies = {
 /*                               Logo marquee                                 */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Preservation engineering and enterprise operations skills, interleaved.
+ * `glyph` overrides the auto-generated monogram in the coloured tile.
+ */
 export const logoItems = [
+  { name: "C/C++", glyph: "C++", color: "#82aaff" },
   { name: "Static Recompilation", color: "#6ee7ff" },
-  { name: "ARMv7", color: "#82aaff" },
-  { name: "x86", color: "#a78bfa" },
+  { name: "Linux Servers", glyph: "LX", color: "#facc15" },
   { name: "OpenGL ES", color: "#6ee7ff" },
+  { name: "Hybrid Cloud", color: "#38bdf8" },
+  { name: "ARMv7", color: "#82aaff" },
+  { name: "Omron PLC / Barrier Gate", glyph: "OP", color: "#34d399" },
   { name: "GLSL Shaders", color: "#c084fc" },
+  { name: "Production Ops", color: "#4ade80" },
+  { name: "x86", color: "#a78bfa" },
+  { name: "trip.ferizy.com", glyph: "TF", color: "#22d3ee" },
   { name: "ANGLE", color: "#f472b6" },
-  { name: "C++", color: "#82aaff" },
   { name: "Win32 API", color: "#38bdf8" },
-  { name: "Linux", color: "#facc15" },
   { name: "Cloudflare Workers", color: "#f38020" },
   { name: "D1 Database", color: "#fb923c" },
 ];
@@ -507,9 +516,9 @@ export const abilities = [
     desc: "Bringing OpenGL ES 1.1/2.0 renderers to desktop GPUs with PVRTC decoding, custom PostFX shaders, multi-pass MSAA depth resolves and VBO caching.",
   },
   {
-    icon: "shield",
-    title: "Preservation-Grade Releases",
-    desc: "Remappable keyboard and gamepad controls, restored online features on Cloudflare Workers + D1, and SHA-256 verified, telemetry-free builds.",
+    icon: "server",
+    title: "Production-Grade Operations",
+    desc: "Hybrid cloud and on-premise deployments across dozens of ferry harbors at PT ASDP, and the same discipline in every game release: restored online services on Cloudflare Workers + D1 and SHA-256 verified, telemetry-free builds.",
   },
 ];
 
@@ -517,8 +526,31 @@ export const abilities = [
 /*                          Experience / milestones                           */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Journey timeline, newest/primary first. `kind` labels the track
+ * (professional vs. open source); `logo` selects an inline SVG emblem from
+ * `components/CompanyEmblems.jsx` and falls back to `icon` when unset.
+ */
 export const expCards = [
   {
+    kind: "Professional Experience",
+    title: "Business Application Operational Support Staff",
+    project: "PT ASDP Indonesia Ferry (Persero)",
+    period: "2024 – 2026",
+    logo: "asdp",
+    icon: "server",
+    review:
+      "Managed mission-critical ferry ticketing infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments across dozens of harbors, and industrial Omron barrier gate hardware integration.",
+    platformsLabel: "Systems & Operations",
+    platforms: ["trip.ferizy.com", "Hybrid Cloud", "On-Prem Harbor Servers", "Omron Barrier Gates", "Production Ops"],
+    responsibilities: [
+      "Successfully deployed ticketing services and counter applications across both local harbor servers and cloud environments spanning dozens of ferry ports nationwide.",
+      "Installed, configured, and integrated Omron-based automated barrier gate systems at the Surabaya port.",
+      "Maintained high availability and operational stability for `trip.ferizy.com`, ensuring smooth, uninterrupted online ferry ticket transactions.",
+    ],
+  },
+  {
+    kind: "Open-Source Preservation",
     title: "Lead Recompilation & Graphics Engineer",
     project: "GTRacingMotorAcademyRecomp",
     period: "v1.0.0 · 32-Bit iPad → Windows",
@@ -534,6 +566,7 @@ export const expCards = [
     ],
   },
   {
+    kind: "Open-Source Preservation",
     title: "Lead Porting & Systems Engineer",
     project: "Gangstar: Miami Vindication PC Port",
     period: "V1.0.0 · 32-Bit Mac → Windows x86 & Linux",
@@ -549,6 +582,7 @@ export const expCards = [
     ],
   },
   {
+    kind: "Open-Source Research",
     title: "Graphics Pipeline & Input Systems Researcher",
     project: "32-Bit Game Preservation",
     period: "Shared Systems · Across Ports",
@@ -563,6 +597,46 @@ export const expCards = [
     ],
   },
 ];
+
+/** Two-track summary shown at the top of `/journey`. */
+export const careerTracks = [
+  {
+    id: "enterprise",
+    logo: "asdp",
+    icon: "server",
+    kind: "Enterprise Operations",
+    org: "PT ASDP Indonesia Ferry (Persero)",
+    period: "2024 – 2026",
+    summary:
+      "Kept a national ferry ticketing platform running in production, from cloud services down to the barrier gates at the harbor.",
+    points: [
+      "Ticketing and counter apps deployed to dozens of ferry ports",
+      "Hybrid cloud + on-premise harbor server environments",
+      "Omron barrier gate integration at the Surabaya port",
+      "High availability for `trip.ferizy.com` online ticket sales",
+    ],
+  },
+  {
+    id: "preservation",
+    logo: null,
+    icon: "chip",
+    kind: "Open-Source Preservation",
+    org: "GT Racing & Gangstar native PC ports",
+    period: "v1.0.0 / V1.0.0 releases",
+    summary:
+      "Rescues 32-bit iPad and Mac classics that Apple's platforms abandoned, as native Windows and Linux builds.",
+    points: [
+      "Static recompilation of 32-bit ARMv7 and x86 binaries",
+      "OpenGL ES shaders, PostFX, MSAA resolves and VBO caching",
+      "Leaderboard restored on Cloudflare Workers + D1",
+      "SHA-256 verified, telemetry-free release archives",
+    ],
+  },
+];
+
+/** One line that ties the two tracks together. */
+export const careerThesis =
+  "Both tracks share one discipline: software that has to keep working, whether it is a ticket gate at a busy harbor or a game whose platform disappeared years ago.";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Tech stack                                 */
@@ -620,10 +694,31 @@ export const techStackIcons = [
 /* -------------------------------------------------------------------------- */
 
 /**
- * Verifiable facts from the shipped releases. There are no third-party quotes;
- * each entry links to the public release or source it describes.
+ * Verifiable facts from production work and the shipped releases. There are
+ * no third-party quotes; each entry links to the public service, release or
+ * source it describes.
  */
 export const highlights = [
+  {
+    icon: "server",
+    title: "Nationwide ferry ticketing, kept online",
+    project: "PT ASDP Indonesia Ferry (Persero)",
+    release: "2024 – 2026 · Production Ops",
+    summary:
+      "Ticketing services and counter applications deployed to local harbor servers and the cloud across dozens of ferry ports, with `trip.ferizy.com` kept stable for uninterrupted online ticket sales.",
+    tags: ["Hybrid Cloud", "On-Prem Servers", "High Availability"],
+    link: { label: "trip.ferizy.com", href: links.ferizy },
+  },
+  {
+    icon: "lock",
+    title: "Automated barrier gates at the Surabaya port",
+    project: "PT ASDP Indonesia Ferry (Persero)",
+    release: "2024 – 2026 · Hardware Integration",
+    summary:
+      "Installed, configured and integrated Omron-based automated barrier gate systems on site, bringing industrial gate hardware into day-to-day port operations.",
+    tags: ["Omron PLC", "Barrier Gate", "Field Deployment"],
+    link: null,
+  },
   {
     icon: "flag",
     title: "A lost iPad racer, playable again on Windows",

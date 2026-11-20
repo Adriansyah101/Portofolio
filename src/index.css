@@ -179,20 +179,25 @@
   /*                                  Navbar                                  */
   /* ------------------------------------------------------------------------ */
 
+  /*
+   * The header box never changes position or padding; the resting offset at
+   * the top of the page is a transform. Transforms are not layout shifts, so
+   * toggling `scrolled` cannot move any content (CLS stays at 0).
+   */
   .navbar {
-    @apply fixed left-1/2 z-[100] w-full -translate-x-1/2 px-5 py-5 transition-all duration-300 ease-in-out md:px-20;
+    @apply fixed top-0 left-1/2 z-[100] w-full -translate-x-1/2 px-5 py-4 transition-all duration-300 ease-in-out md:px-20;
   }
 
   .navbar.scrolled {
-    @apply top-0 border-b border-white/5 bg-black/85 py-4 backdrop-blur-md;
+    @apply border-b border-white/5 bg-black/85 backdrop-blur-md;
   }
 
   .navbar.not-scrolled {
-    @apply top-0 bg-transparent md:top-10;
+    @apply translate-y-1 bg-transparent md:translate-y-11;
   }
 
   .navbar.menu-open {
-    @apply top-0 border-b border-white/5 bg-black/95 py-4 backdrop-blur-md;
+    @apply border-b border-white/5 bg-black/95 backdrop-blur-md;
   }
 
   .navbar-inner {
@@ -570,6 +575,63 @@
   .timeline-logo {
     @apply flex size-12 flex-none items-center justify-center rounded-full border border-white/10 bg-black-100 text-accent-cyan md:size-16;
     box-shadow: 0 0 0 6px #000, 0 0 30px rgb(110 231 255 / 0.15);
+  }
+
+  /* Company emblem fills the round marker edge to edge. */
+  .timeline-logo.has-emblem {
+    @apply overflow-hidden border-accent-cyan/40 bg-transparent p-0;
+    box-shadow: 0 0 0 6px #000, 0 0 30px rgb(56 189 248 / 0.35);
+  }
+
+  .exp-card-head {
+    @apply mb-5 flex items-center gap-4 border-b border-black-50 pb-5;
+  }
+
+  .exp-card-icon {
+    @apply flex-center size-12 flex-none rounded-2xl border border-white/10 bg-black-50 text-accent-cyan;
+  }
+
+  .exp-kind {
+    @apply inline-flex w-fit items-center gap-2 font-mono text-[11px] tracking-widest text-accent-violet uppercase;
+  }
+
+  .exp-kind::before {
+    content: "";
+    @apply size-1.5 flex-none rounded-full bg-current;
+  }
+
+  .exp-kind.is-pro {
+    @apply text-sky-300;
+  }
+
+  /* Two-track summary at the top of /journey. */
+  .track-card {
+    @apply relative flex h-full flex-col gap-5 overflow-hidden rounded-2xl border border-black-50 bg-black-100 p-6 md:p-8;
+  }
+
+  .track-card.is-pro {
+    background: radial-gradient(120% 80% at 100% 0%, rgb(14 76 146 / 0.35), transparent 60%), var(--color-black-100);
+  }
+
+  .track-card.is-oss {
+    background: radial-gradient(120% 80% at 100% 0%, rgb(167 139 250 / 0.2), transparent 60%), var(--color-black-100);
+  }
+
+  .track-points {
+    @apply grid gap-3 text-white-50/80;
+  }
+
+  .track-points li {
+    @apply flex gap-3 leading-relaxed;
+  }
+
+  .track-points li::before {
+    content: "";
+    @apply mt-2.5 size-1.5 flex-none rounded-full bg-accent-cyan;
+  }
+
+  .track-thesis {
+    @apply mx-auto mt-10 max-w-3xl text-center text-lg leading-relaxed text-white-50/70 md:text-xl;
   }
 
   .timeline-track {

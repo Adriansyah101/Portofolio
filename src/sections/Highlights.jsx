@@ -17,7 +17,7 @@ const ICON_GRADIENTS = [
 const Highlights = () => (
   <section id="highlights" className="section-padding flex-center w-full">
     <div className="h-full w-full max-w-[1600px] md:px-10">
-      <TitleHeader title="Release & Technical Highlights" sub="What Shipped" />
+      <TitleHeader title="Production & Release Highlights" sub="What Shipped" />
 
       <div className="mt-16 columns-1 gap-6 md:columns-2 xl:columns-3">
         {highlights.map((item, index) => (
@@ -47,15 +47,17 @@ const Highlights = () => (
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-black-200 pt-4">
               <p className="min-w-0 text-sm text-blue-50 wrap-break-word">{softBreak(item.project)}</p>
-              <a
-                href={item.link.href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-white-50 transition-colors hover:text-cyan-300"
-              >
-                {item.link.label}
-                <ExternalIcon className="size-4" />
-              </a>
+              {item.link?.href && (
+                <a
+                  href={item.link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-white-50 transition-colors hover:text-cyan-300"
+                >
+                  {item.link.label}
+                  <ExternalIcon className="size-4" />
+                </a>
+              )}
             </div>
           </GlowCard>
         ))}

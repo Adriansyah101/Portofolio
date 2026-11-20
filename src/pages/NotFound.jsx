@@ -7,7 +7,7 @@ const NotFound = () => {
   usePageTitle("Page not found");
 
   return (
-    <div className="page-enter min-h-[60vh]">
+    <div className="page-enter min-h-screen">
       <PageHeader
         eyebrow="404 · Lost Route"
         title="This page didn't survive the 64-bit transition"

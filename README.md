@@ -8,6 +8,11 @@ in iOS 11 and macOS Catalina, were rescued as native PC ports:
 - **GTRacingMotorAcademyRecomp**: GT Racing: Motor Academy, from 32-bit iPad (ARMv7 / PowerVR) to a native Windows release (`v1.0.0`).
 - **Gangstar: Miami Vindication**: from a 32-bit x86 Mac binary to native Windows x86 and Linux (`V1.0.0`).
 
+The Journey page pairs this with professional experience as Business Application Operational
+Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026): ferry ticketing
+infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise harbor deployments and Omron
+barrier gate integration.
+
 **Stack:** React 19 + Vite · React Router (`HashRouter`) · Three.js via `@react-three/fiber`,
 `@react-three/drei` and `@react-three/postprocessing` · GSAP + ScrollTrigger · Tailwind CSS v4 ·
 react-countup · react-responsive · EmailJS.
@@ -26,7 +31,7 @@ Google Fonts (with system-font fallbacks) and EmailJS when the contact form is s
 | `#/projects`          | Preservation Archive     | Filterable catalog (`All`, `32-Bit iPad`, `32-Bit Mac`, `OpenGL ES`) and "Original 32-Bit Target vs. Modern Native Port" tables |
 | `#/projects/gt-racing`| GT Racing case study     | Why it was lost, recompilation & graphics pipeline, leaderboard architecture, controls & release info |
 | `#/projects/gangstar` | Gangstar case study      | Why it was lost, Windows & Linux porting, V1.0.0 release packaging and checksum verification |
-| `#/journey`           | Journey                  | Experience timeline, five interactive 3D tech-stack cards, release highlights |
+| `#/journey`           | Journey                  | Enterprise + open-source overview, career timeline (PT ASDP first), five interactive 3D tech-stack cards, highlights |
 | `#/contact`           | Contact & Community      | EmailJS form, warm 3D desk scene, GitHub links                           |
 
 Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
@@ -90,7 +95,8 @@ All copy lives in [`src/constants/index.js`](src/constants/index.js):
 - `caseStudies`: the two deep-dive pages. Each section is a list of typed blocks (`timeline`,
   `cards`, `flow`, `architecture`, `table`, `checklist`, `code`, `links`, `prose`).
 - `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
-- `expCards`, `techStackIcons` and `highlights`: the Journey page.
+- `careerTracks`, `expCards`, `techStackIcons` and `highlights`: the Journey page. Set `logo` on an
+  `expCards` entry to use an inline SVG emblem from `src/components/CompanyEmblems.jsx`.
 
 ## Adding your own screenshots and models
 
