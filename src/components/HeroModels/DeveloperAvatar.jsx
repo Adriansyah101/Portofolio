@@ -5,23 +5,26 @@ import { MathUtils } from "three";
 import ScreenAnchor from "./ScreenAnchor.jsx";
 
 /**
- * Matte, low-saturation materials so the avatar sits calmly in both the dark
- * graphite and the pale daylit studio (the lighting, not the avatar, changes
- * with the theme).
+ * Smart-casual look: a black varsity jacket with yellow sleeves, striped rib
+ * collar, cuffs and hem, yellow snaps and welt pockets, worn open over a white
+ * crew-neck tee, with dark trousers and thick black side-swept hair. No
+ * glasses, no jewellery, no company branding. Off-white and a slightly muted
+ * yellow keep the bloom pass from flaring; the lighting, not the avatar,
+ * changes with the theme.
  */
 const COLORS = {
-  hoodie: "#4b5563",
-  hoodieTrim: "#3f4651",
+  jacket: "#1b1c20",
+  sleeve: "#dcb815",
+  rib: "#16171a",
+  ribStripe: "#dcb815",
+  snapLight: "#e5e7eb",
+  tee: "#e4e7eb",
   pants: "#2a2b30",
   skin: "#c8946e",
   skinShade: "#b98562",
-  hair: "#1f1b18",
-  frames: "#18181b",
-  shoe: "#e7e5e4",
-  sole: "#3f3f46",
-  headphones: "#26272c",
-  headphonesAccent: "#94a3b8",
-  cord: "#d4d4d8",
+  hair: "#15110e",
+  shoe: "#2b2b2f",
+  sole: "#52525b",
 };
 
 const MATTE = { roughness: 0.82, metalness: 0 };
@@ -51,18 +54,24 @@ const Arm = ({ side, shoulderRef, elbowRef, handRef }) => (
   <group ref={shoulderRef} position={[0.36 * side, 0.9, 0]}>
     <mesh position={[0, -0.2, 0]} castShadow>
       <capsuleGeometry args={[0.1, 0.3, 6, 14]} />
-      <meshStandardMaterial color={COLORS.hoodie} {...MATTE} />
+      <meshStandardMaterial color={COLORS.sleeve} {...MATTE} />
     </mesh>
     <group ref={elbowRef} position={[0, -0.42, 0]}>
       <mesh position={[0, -0.17, 0]} castShadow>
         <capsuleGeometry args={[0.088, 0.26, 6, 14]} />
-        <meshStandardMaterial color={COLORS.hoodie} {...MATTE} />
+        <meshStandardMaterial color={COLORS.sleeve} {...MATTE} />
       </mesh>
-      {/* Ribbed cuff */}
+      {/* Striped rib cuff */}
       <mesh position={[0, -0.33, 0]}>
-        <cylinderGeometry args={[0.082, 0.082, 0.05, 16]} />
-        <meshStandardMaterial color={COLORS.hoodieTrim} {...MATTE} />
+        <cylinderGeometry args={[0.084, 0.084, 0.075, 16]} />
+        <meshStandardMaterial color={COLORS.rib} {...MATTE} />
       </mesh>
+      {[-0.315, -0.345].map((y) => (
+        <mesh key={y} position={[0, y, 0]}>
+          <cylinderGeometry args={[0.0855, 0.0855, 0.009, 16]} />
+          <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+        </mesh>
+      ))}
       <group ref={handRef} position={[0, -0.42, 0]}>
         <mesh scale={[0.85, 1.15, 0.55]} castShadow>
           <sphereGeometry args={[0.085, 18, 14]} />
@@ -90,7 +99,7 @@ const Leg = ({ side }) => (
       <capsuleGeometry args={[0.11, 0.62, 6, 14]} />
       <meshStandardMaterial color={COLORS.pants} {...MATTE} />
     </mesh>
-    {/* Sneaker */}
+    {/* Shoe */}
     <RoundedBox args={[0.22, 0.13, 0.4]} radius={0.05} smoothness={3} position={[0, 0.1, 0.72]} castShadow>
       <meshStandardMaterial color={COLORS.shoe} roughness={0.75} />
     </RoundedBox>
@@ -101,59 +110,23 @@ const Leg = ({ side }) => (
   </group>
 );
 
-/** Two round lenses, a bridge and temple arms, sitting just in front of the eyes. */
-const Glasses = () => (
-  <group position={[0, 0.27, 0.235]}>
-    {[-1, 1].map((side) => (
-      <group key={side}>
-        <mesh position={[0.095 * side, 0, 0.02]}>
-          <torusGeometry args={[0.062, 0.011, 8, 28]} />
-          <meshStandardMaterial color={COLORS.frames} roughness={0.4} metalness={0.3} />
-        </mesh>
-        <mesh position={[0.205 * side, 0.01, -0.12]} rotation={[0, Math.PI / 2, 0]}>
-          <boxGeometry args={[0.24, 0.014, 0.012]} />
-          <meshStandardMaterial color={COLORS.frames} roughness={0.4} />
-        </mesh>
-      </group>
-    ))}
-    <mesh position={[0, 0.012, 0.03]}>
-      <boxGeometry args={[0.07, 0.012, 0.012]} />
-      <meshStandardMaterial color={COLORS.frames} roughness={0.4} />
-    </mesh>
-  </group>
-);
-
-/** Closed-back headphones resting around the neck. */
-const NeckHeadphones = () => (
-  <group position={[0, 1.02, -0.02]}>
-    <mesh rotation={[Math.PI / 2 - 0.25, 0, 0]}>
-      <torusGeometry args={[0.235, 0.024, 10, 36, Math.PI]} />
-      <meshStandardMaterial color={COLORS.headphones} roughness={0.5} />
-    </mesh>
-    {[-1, 1].map((side) => (
-      <group key={side} position={[0.25 * side, -0.02, 0.07]} rotation={[0.3, 0.5 * side, Math.PI / 2]}>
-        <mesh>
-          <cylinderGeometry args={[0.085, 0.085, 0.06, 24]} />
-          <meshStandardMaterial color={COLORS.headphones} roughness={0.45} />
-        </mesh>
-        <mesh position={[0, 0.032 * side, 0]}>
-          <torusGeometry args={[0.06, 0.008, 6, 24]} />
-          <meshStandardMaterial color={COLORS.headphonesAccent} roughness={0.5} />
-        </mesh>
-      </group>
-    ))}
-  </group>
-);
-
 const Head = ({ headRef }) => (
-  <group ref={headRef} position={[0, 1.14, 0]}>
+  <group ref={headRef} position={[0, 1.09, 0]}>
     <mesh position={[0, 0.27, 0]} scale={[1, 1.08, 1]} castShadow>
       <sphereGeometry args={[0.25, 32, 24]} />
       <meshStandardMaterial color={COLORS.skin} roughness={0.68} />
     </mesh>
-    {/* Short hair: a cap over the crown and back of the head */}
-    <mesh position={[0, 0.3, -0.025]} rotation={[-0.42, 0, 0]} scale={[1.05, 1.06, 1.06]}>
+    {/* Thick black hair: a cap over the crown and back, volume on top, and a fringe swept to his left */}
+    <mesh position={[0, 0.3, -0.02]} rotation={[-0.3, 0, 0]} scale={[1.05, 1.06, 1.06]}>
       <sphereGeometry args={[0.25, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.52]} />
+      <meshStandardMaterial color={COLORS.hair} roughness={0.9} />
+    </mesh>
+    <mesh position={[0.01, 0.455, -0.005]} rotation={[0.1, 0, -0.08]} scale={[1.1, 0.42, 1.1]}>
+      <sphereGeometry args={[0.2, 28, 16]} />
+      <meshStandardMaterial color={COLORS.hair} roughness={0.9} />
+    </mesh>
+    <mesh position={[0.035, 0.425, 0.15]} rotation={[0.5, 0, -0.2]} scale={[1.55, 0.36, 0.6]}>
+      <sphereGeometry args={[0.12, 20, 12]} />
       <meshStandardMaterial color={COLORS.hair} roughness={0.9} />
     </mesh>
     {/* Ears */}
@@ -163,7 +136,13 @@ const Head = ({ headRef }) => (
         <meshStandardMaterial color={COLORS.skinShade} roughness={0.7} />
       </mesh>
     ))}
-    {/* Eyes, nose and a small smile */}
+    {/* Eyebrows, eyes, nose and a small smile */}
+    {[-1, 1].map((side) => (
+      <mesh key={`brow${side}`} position={[0.095 * side, 0.318, 0.232]} rotation={[-0.1, 0, 0]}>
+        <boxGeometry args={[0.08, 0.016, 0.014]} />
+        <meshStandardMaterial color={COLORS.hair} roughness={0.9} />
+      </mesh>
+    ))}
     {[-1, 1].map((side) => (
       <mesh key={side} position={[0.095 * side, 0.265, 0.228]}>
         <sphereGeometry args={[0.022, 12, 10]} />
@@ -175,10 +154,9 @@ const Head = ({ headRef }) => (
       <meshStandardMaterial color={COLORS.skinShade} roughness={0.7} />
     </mesh>
     <mesh position={[0, 0.155, 0.226]} rotation={[0.25, 0, -Math.PI / 2 - Math.PI * 0.26]}>
-      <torusGeometry args={[0.055, 0.009, 6, 20, Math.PI * 0.52]} />
+      <torusGeometry args={[0.05, 0.008, 6, 20, Math.PI * 0.5]} />
       <meshStandardMaterial color="#6b3f2e" roughness={0.6} />
     </mesh>
-    <Glasses />
   </group>
 );
 
@@ -335,34 +313,68 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, ...props }) => {
       </mesh>
 
       <group ref={torso} position={[0, 0.98, -0.02]}>
-        {/* Hoodie */}
+        {/* Varsity jacket body */}
         <mesh position={[0, 0.5, 0]} scale={[1.08, 1, 0.72]} castShadow>
           <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
-          <meshStandardMaterial color={COLORS.hoodie} {...MATTE} />
+          <meshStandardMaterial color={COLORS.jacket} {...MATTE} />
         </mesh>
-        {/* Front pocket */}
-        <mesh position={[0, 0.3, 0.205]} rotation={[-0.12, 0, 0]}>
-          <boxGeometry args={[0.36, 0.16, 0.02]} />
-          <meshStandardMaterial color={COLORS.hoodieTrim} {...MATTE} />
+        {/* White tee showing where the jacket hangs open */}
+        {/* (a slightly deeper, narrower body, so it only breaks the surface down the open front) */}
+        <mesh position={[0, 0.5, 0]} scale={[0.9, 1, 0.735]}>
+          <capsuleGeometry args={[0.3, 0.42, 8, 20]} />
+          <meshStandardMaterial color={COLORS.tee} {...MATTE} />
         </mesh>
-        {/* Hood folded behind the neck */}
-        <mesh position={[0, 0.98, -0.1]} rotation={[Math.PI / 2 + 0.35, 0, 0]}>
-          <torusGeometry args={[0.17, 0.075, 10, 28]} />
-          <meshStandardMaterial color={COLORS.hoodie} {...MATTE} />
+        <mesh position={[0, 0.955, 0.03]} rotation={[Math.PI / 2 - 0.2, 0, 0]}>
+          <torusGeometry args={[0.1, 0.018, 8, 24]} />
+          <meshStandardMaterial color={COLORS.tee} {...MATTE} />
         </mesh>
-        {/* Drawstrings */}
+        {/* Snap buttons: light on one placket, yellow on the other */}
+        {[0.36, 0.5, 0.64, 0.78].map((y) => (
+          <group key={y}>
+            <mesh position={[-0.112, y, 0.205]}>
+              <sphereGeometry args={[0.011, 8, 6]} />
+              <meshStandardMaterial color={COLORS.snapLight} roughness={0.4} metalness={0.2} />
+            </mesh>
+            <mesh position={[0.112, y, 0.205]}>
+              <sphereGeometry args={[0.012, 8, 6]} />
+              <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+            </mesh>
+          </group>
+        ))}
+        {/* Yellow welt pockets */}
         {[-1, 1].map((side) => (
-          <mesh key={side} position={[0.06 * side, 0.8, 0.2]} rotation={[-0.1, 0, 0]}>
-            <cylinderGeometry args={[0.008, 0.008, 0.2, 6]} />
-            <meshStandardMaterial color={COLORS.cord} roughness={0.8} />
+          <mesh key={side} position={[0.2 * side, 0.36, 0.172]} rotation={[0, 0.62 * side, 0.12 * side]}>
+            <boxGeometry args={[0.03, 0.13, 0.008]} />
+            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+          </mesh>
+        ))}
+        {/* Striped rib hem */}
+        <mesh position={[0, 0.2, 0]} scale={[1.08, 1, 0.72]}>
+          <cylinderGeometry args={[0.29, 0.29, 0.07, 28]} />
+          <meshStandardMaterial color={COLORS.rib} {...MATTE} />
+        </mesh>
+        {[0.215, 0.188].map((y) => (
+          <mesh key={y} position={[0, y, 0]} scale={[1.08, 1, 0.72]}>
+            <cylinderGeometry args={[0.292, 0.292, 0.01, 28]} />
+            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
+          </mesh>
+        ))}
+        {/* Striped rib baseball collar */}
+        <mesh position={[0, 0.975, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
+          <torusGeometry args={[0.13, 0.034, 10, 28]} />
+          <meshStandardMaterial color={COLORS.rib} {...MATTE} />
+        </mesh>
+        {[0.992, 0.962].map((y) => (
+          <mesh key={y} position={[0, y, -0.01]} rotation={[Math.PI / 2 - 0.15, 0, 0]}>
+            <torusGeometry args={[0.135, 0.008, 6, 28]} />
+            <meshStandardMaterial color={COLORS.ribStripe} {...MATTE} />
           </mesh>
         ))}
         {/* Neck */}
-        <mesh position={[0, 1.07, 0]}>
-          <cylinderGeometry args={[0.085, 0.095, 0.16, 16]} />
+        <mesh position={[0, 1.04, 0]}>
+          <cylinderGeometry args={[0.085, 0.095, 0.12, 16]} />
           <meshStandardMaterial color={COLORS.skinShade} roughness={0.7} />
         </mesh>
-        <NeckHeadphones />
         <Head headRef={head} />
         <Arm side={-1} shoulderRef={rightShoulder} elbowRef={rightElbow} handRef={rightHand} />
         <Arm side={1} shoulderRef={leftShoulder} elbowRef={leftElbow} handRef={leftHand} />
