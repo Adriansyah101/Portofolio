@@ -37,6 +37,7 @@ export const links = {
   sidafRepo: `${GITHUB}/sidaf`,
   vrAirportRepo: `${GITHUB}/VR-Simulation-Airport`,
   warPlaneRepo: `${GITHUB}/War-Plane-1945`,
+  warPlanePlay: "https://gx.games/games/t2k4q0/war-plane-1945/tracks/b60326ee-2d4f-4321-91a8-59299f6f4831",
   gtRacingRepo: `${GITHUB}/${GT_RACING_REPO}`,
   gtRacingReleases: `${GITHUB}/${GT_RACING_REPO}/releases`,
   gangstarRepo: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}` : GITHUB,
@@ -522,7 +523,8 @@ export const originalProjects = [
     ),
     tags: ["Unity", "C#", "Oculus Quest 2", "PCVR"],
     art: "airport",
-    image: null, // e.g. "images/vr-airport.png" (16:9)
+    image: "images/vr-airport.jpg", // thumbnail of the demo video below
+    video: { youtubeId: "oLm0qSSHeiM", title: "Demo Aplikasi Simulasi Prosedur Bandara Menggunakan Virtual Reality", kind: "demo" },
     links: [{ label: VIEW_SOURCE, href: links.vrAirportRepo, icon: "github", arrow: true }],
     comparison: null,
   },
@@ -541,8 +543,12 @@ export const originalProjects = [
     ),
     tags: ["GameMaker", "GML", "2D", "Windows"],
     art: "warplane",
-    image: null, // e.g. "images/war-plane-1945.png" (16:9)
-    links: [{ label: VIEW_SOURCE, href: links.warPlaneRepo, icon: "github", arrow: true }],
+    image: "images/war-plane-1945.jpg", // thumbnail of the gameplay video below
+    video: { youtubeId: "LXDtVyzX5zQ", title: "War Plane 1945 - Gameplay" },
+    links: [
+      { label: tx("Play on GX.games", "Mainkan di GX.games"), href: links.warPlanePlay, icon: "gamepad", arrow: true },
+      { label: VIEW_SOURCE, href: links.warPlaneRepo, icon: "github" },
+    ],
     comparison: null,
   },
 ];

@@ -544,14 +544,15 @@ const artMap = {
 
 const videoText = {
   play: tx("Play video: {title}", "Putar video: {title}"),
-  watch: tx("Watch gameplay", "Tonton gameplay"),
+  gameplay: tx("Watch gameplay", "Tonton gameplay"),
+  demo: tx("Watch demo", "Tonton demo"),
 };
 
 /**
  * Shows the project's screenshot when `image` is set and loads correctly;
  * otherwise renders the matching built-in SVG artwork.
  *
- * With `video` ({ youtubeId, title }) the preview becomes a click-to-play
+ * With `video` ({ youtubeId, title, kind?: "gameplay" | "demo" }) the preview becomes a click-to-play
  * facade: the YouTube player (privacy-enhanced, no cookies until played) only
  * loads after the visitor presses play. `overlay` (for example a badge) is
  * shown on top of the poster and hidden while the video plays.
@@ -611,7 +612,7 @@ const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null,
               </svg>
             </span>
             <span className="video-chip" aria-hidden="true">
-              {videoText.watch[lang]}
+              {(videoText[video.kind] ?? videoText.gameplay)[lang]}
             </span>
           </button>
           {overlay}
