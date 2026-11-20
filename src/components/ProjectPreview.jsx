@@ -542,23 +542,80 @@ const artMap = {
   warplane: WarplaneArt,
 };
 
+const videoText = {
+  play: tx("Play video: {title}", "Putar video: {title}"),
+  watch: tx("Watch gameplay", "Tonton gameplay"),
+};
+
 /**
  * Shows the project's screenshot when `image` is set and loads correctly;
  * otherwise renders the matching built-in SVG artwork.
+ *
+ * With `video` ({ youtubeId, title }) the preview becomes a click-to-play
+ * facade: the YouTube player (privacy-enhanced, no cookies until played) only
+ * loads after the visitor presses play. `overlay` (for example a badge) is
+ * shown on top of the poster and hidden while the video plays.
  */
-const ProjectPreview = ({ art, image, alt, className = "" }) => {
+const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null, className = "" }) => {
   const [failed, setFailed] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const { lang } = useLanguage();
   const Art = artMap[art] ?? PipelineArt;
   const label = (artLabels[art] ?? artLabels.pipeline)[lang];
   const src = assetUrl(image);
 
+  const poster =
+    src && !failed ? (
+      <img
+        src={src}
+        alt={video ? "" : alt}
+        loading="lazy"
+        style={imagePosition ? { objectPosition: imagePosition } : undefined}
+        onError={() => setFailed(true)}
+      />
+    ) : (
+      <Art label={label} />
+    );
+
+  if (!video) {
+    return (
+      <div className={`project-preview ${className}`}>
+        {poster}
+        {overlay}
+      </div>
+    );
+  }
+
   return (
-    <div className={`project-preview ${className}`}>
-      {src && !failed ? (
-        <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+    <div className={`project-preview is-video ${className}`}>
+      {playing ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+          title={video.title}
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
       ) : (
-        <Art label={label} />
+        <>
+          <button
+            type="button"
+            className="video-facade"
+            onClick={() => setPlaying(true)}
+            aria-label={videoText.play[lang].replace("{title}", video.title)}
+          >
+            {poster}
+            <span className="video-play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l10.6-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14Z" />
+              </svg>
+            </span>
+            <span className="video-chip" aria-hidden="true">
+              {videoText.watch[lang]}
+            </span>
+          </button>
+          {overlay}
+        </>
       )}
     </div>
   );

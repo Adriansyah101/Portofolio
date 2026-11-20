@@ -67,8 +67,21 @@ const CaseStudy = () => {
           </div>
 
           <div className="relative min-w-0">
-            <ProjectPreview art={study.art} image={study.image} alt={format(projectText.previewAlt, { title: study.title })} className="aspect-8/5" />
-            <PlatformBadge project={project} className="absolute top-3 left-3" />
+            <ProjectPreview
+              art={study.art}
+              image={study.image}
+              imagePosition={project.imagePosition}
+              video={project.video}
+              alt={format(projectText.previewAlt, { title: study.title })}
+              className="aspect-8/5 rounded-2xl"
+              overlay={
+                // Screenshots carry their own title text up top, so the badge moves to the open bottom corner.
+                <PlatformBadge
+                  project={project}
+                  className={`pointer-events-none absolute left-3 z-10 ${study.image ? "bottom-3" : "top-3"}`}
+                />
+              }
+            />
           </div>
         </div>
       </header>

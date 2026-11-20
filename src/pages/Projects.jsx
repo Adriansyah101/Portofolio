@@ -21,6 +21,8 @@ const ArchiveCard = ({ project, text }) => (
     <ProjectPreview
       art={project.art}
       image={project.image}
+      imagePosition={project.imagePosition}
+      video={project.video}
       alt={format(text.previewAlt, { title: project.shortTitle })}
       className="aspect-8/5"
     />

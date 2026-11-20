@@ -875,6 +875,66 @@
     @apply flex min-w-0 flex-col overflow-hidden rounded-2xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/15;
   }
 
+  /* Screenshots fill the 8:5 frame like the SVG artwork does (16:9 captures crop slightly at the sides). */
+  .project-preview {
+    @apply relative overflow-hidden;
+  }
+
+  .project-preview > img,
+  .video-facade > img {
+    @apply block size-full object-cover;
+  }
+
+  /* Click-to-play video: poster + play button; swapped for the YouTube player on click. */
+  /* Literal colors: the theme tokens `white`/`black` swap in light mode, but video chrome stays dark. */
+  .project-preview.is-video {
+    background: #000;
+  }
+
+  .project-preview > iframe {
+    @apply absolute inset-0 size-full border-0;
+  }
+
+  .video-facade {
+    @apply absolute inset-0 block size-full cursor-pointer;
+  }
+
+  .video-facade::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300;
+  }
+
+  .video-facade:hover::after {
+    background: rgb(0 0 0 / 0.15);
+  }
+
+  .video-play {
+    @apply absolute top-1/2 left-1/2 z-10 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full shadow-lg backdrop-blur-sm transition duration-300 md:size-20;
+    background: rgb(0 0 0 / 0.72);
+    color: #fff;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.25), 0 10px 25px rgb(0 0 0 / 0.35);
+  }
+
+  .video-facade:is(:hover, :focus-visible) .video-play {
+    @apply scale-110;
+    background: rgb(0 0 0 / 0.88);
+  }
+
+  .video-play svg {
+    @apply ml-1 size-7 md:size-9;
+  }
+
+  .video-chip {
+    @apply absolute right-3 bottom-3 z-10 rounded-full px-3 py-1 font-mono text-[0.6875rem] tracking-widest uppercase backdrop-blur-sm;
+    background: rgb(0 0 0 / 0.72);
+    color: #fff;
+  }
+
+  .video-facade:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+  }
+
   .archive-card .project-preview {
     @apply rounded-none border-0 border-b border-black-50;
   }

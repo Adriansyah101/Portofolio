@@ -566,7 +566,9 @@ export const preservationProjects = [
     ),
     tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7", "OpenGL ES", "PVRTC", "Cloudflare D1"],
     art: "racing",
-    image: null, // drop a 16:9 capture at public/images/gtracing-pc.png, then set "images/gtracing-pc.png"
+    image: "images/gtracing-pc.jpg", // thumbnail of the "GT Racing Motor Academy PC Port - Ferrari 288 GTO Gameplay" video
+    imagePosition: "left center", // keeps the title text whole when the 16:9 thumbnail is cropped to 8:5
+    video: { youtubeId: "cn-nsNnlO7E", title: "GT Racing Motor Academy PC Port - Ferrari 288 GTO Gameplay" }, // click-to-play on the card & case study
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
       { label: tx("Release Notes", "Catatan Rilis"), href: links.gtRacingReleases, icon: "tag" },
@@ -697,7 +699,7 @@ export const caseStudies = {
       "Bagaimana game balap simulasi iPad 32-bit yang tak lagi bisa dijalankan iOS modern direkompilasi secara statis menjadi rilis Windows native, dengan grafis yang dimodernisasi dan leaderboard online yang dibangun ulang dari nol.",
     ),
     art: "racing",
-    image: null,
+    image: "images/gtracing-pc.jpg",
     facts: [
       { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit iPad · iOS" },
       { id: "era", label: tx("Hardware era", "Era perangkat keras"), value: "ARMv7 · PowerVR" },
