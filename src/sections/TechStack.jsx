@@ -30,7 +30,7 @@ const TechStack = () => {
   return (
     <section id="skills" ref={sectionRef} className="section-padding flex-center w-full">
       <div className="w-full max-w-[1600px] md:px-10">
-        <TitleHeader title="My Preferred Tech Stack" sub="The Skills I Bring to the Table" />
+        <TitleHeader title="The Preservation Toolchain" sub="The Skills I Bring to the Table" />
 
         <div className="tech-grid">
           {techStackIcons.map((model) => (

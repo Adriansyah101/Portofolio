@@ -14,6 +14,10 @@ export default defineConfig({
       output: {
         // Split heavy vendors into long-term cacheable chunks.
         manualChunks(id) {
+          // Keep Vite's tiny dynamic-import helper in an always-loaded chunk;
+          // left alone, Rollup can place it in the Three.js chunk and force
+          // every page (even ones without 3D) to download Three.js up front.
+          if (id.includes("vite/preload-helper") || id.includes("commonjsHelpers")) return "react";
           if (!id.includes("node_modules")) return undefined;
           if (
             id.includes("three") ||

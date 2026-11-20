@@ -1,20 +1,15 @@
+import { Link } from "react-router-dom";
 import { Icon } from "../components/Icons.jsx";
-import { links, socialLinks } from "../constants/index.js";
+import { navLinks, routes, socialLinks } from "../constants/index.js";
 
 const Footer = () => (
   <footer className="footer">
     <div className="footer-container">
       <div className="flex flex-col justify-center text-center md:text-start">
-        <a
-          href={links.githubProfile}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 font-semibold tracking-[0.2em] transition-colors hover:text-accent-cyan md:justify-start"
-        >
-          <Icon name="github" className="size-5" />
+        <Link to={routes.home} className="font-semibold tracking-[0.2em] transition-colors hover:text-accent-cyan">
           ADRIANSYAH
-        </a>
-        <p className="mt-1 text-sm text-blue-50">Systems, Graphics & Reverse Engineering</p>
+        </Link>
+        <p className="mt-1 text-sm text-blue-50">32-Bit Game Preservation & Static Recompilation</p>
       </div>
 
       <div className="socials">
@@ -39,6 +34,18 @@ const Footer = () => (
         </p>
       </div>
     </div>
+
+    <nav aria-label="Footer" className="mt-8">
+      <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-50">
+        {navLinks.map(({ name, to }) => (
+          <li key={name}>
+            <Link to={to} className="transition-colors hover:text-white">
+              {name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   </footer>
 );
 

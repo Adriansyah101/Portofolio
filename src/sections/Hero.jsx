@@ -36,9 +36,13 @@ const Hero = () => {
 
       <div className="hero-layout">
         <header className="hero-header">
+          <p className="hero-eyebrow hero-reveal">
+            <span className="size-2 flex-none rounded-full bg-accent-cyan shadow-[0_0_12px_#6ee7ff]" aria-hidden="true" />
+            {heroContent.eyebrow}
+          </p>
           <div className="hero-text">
             <h1>
-              Shaping{" "}
+              Rescuing{" "}
               <span className="slide">
                 <span className="slide-wrapper">
                   {sliderWords.map((word, index) => (
@@ -60,7 +64,7 @@ const Hero = () => {
           <p className="hero-bio hero-reveal">{heroContent.bio}</p>
 
           <div className="hero-reveal">
-            <Button text={heroContent.ctaText} className="h-12 w-60 md:h-16 md:w-80" id="button" />
+            <Button text={heroContent.ctaText} className="h-12 w-64 md:h-16 md:w-80" id="button" targetId="work" />
           </div>
         </header>
 

@@ -99,6 +99,112 @@ export const ArrowDownIcon = (props) => (
   </Stroke>
 );
 
+export const ArrowRightIcon = (props) => (
+  <Stroke strokeWidth={2} {...props}>
+    <path d="M4 12h16" />
+    <path d="m14 6 6 6-6 6" />
+  </Stroke>
+);
+
+export const ArrowLeftIcon = (props) => (
+  <Stroke strokeWidth={2} {...props}>
+    <path d="M20 12H4" />
+    <path d="m10 6-6 6 6 6" />
+  </Stroke>
+);
+
+export const MenuIcon = (props) => (
+  <Stroke strokeWidth={2} {...props}>
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </Stroke>
+);
+
+export const CloseIcon = (props) => (
+  <Stroke strokeWidth={2} {...props}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Stroke>
+);
+
+export const TabletIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="4" y="2.5" width="16" height="19" rx="2.5" />
+    <path d="M11 18.5h2" />
+  </Stroke>
+);
+
+export const LaptopIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="4" y="4.5" width="16" height="11" rx="1.5" />
+    <path d="M2 19.5h20" />
+  </Stroke>
+);
+
+export const MonitorIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="2.5" y="3.5" width="19" height="13" rx="2" />
+    <path d="M8 21h8M12 16.5V21" />
+  </Stroke>
+);
+
+export const ShieldIcon = (props) => (
+  <Stroke {...props}>
+    <path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6l-8-3Z" />
+    <path d="m8.5 12 2.5 2.5 4.5-5" />
+  </Stroke>
+);
+
+export const ArchiveIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="2.5" y="3.5" width="19" height="5" rx="1" />
+    <path d="M4.5 8.5v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-10" />
+    <path d="M10 12.5h4" />
+  </Stroke>
+);
+
+export const TerminalIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="2.5" y="3.5" width="19" height="17" rx="2" />
+    <path d="m7 9 3 3-3 3M12.5 15H17" />
+  </Stroke>
+);
+
+export const ServerIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="3" y="3.5" width="18" height="7" rx="1.5" />
+    <rect x="3" y="13.5" width="18" height="7" rx="1.5" />
+    <path d="M7 7h.01M7 17h.01" strokeWidth={2.6} />
+  </Stroke>
+);
+
+export const DatabaseIcon = (props) => (
+  <Stroke {...props}>
+    <ellipse cx="12" cy="5.5" rx="8" ry="3" />
+    <path d="M4 5.5v13c0 1.66 3.58 3 8 3s8-1.34 8-3v-13" />
+    <path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" />
+  </Stroke>
+);
+
+export const LockIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="4.5" y="10.5" width="15" height="10.5" rx="2" />
+    <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+  </Stroke>
+);
+
+export const KeyboardIcon = (props) => (
+  <Stroke {...props}>
+    <rect x="2" y="5.5" width="20" height="13" rx="2" />
+    <path d="M6 9.5h.01M10 9.5h.01M14 9.5h.01M18 9.5h.01M6 13h.01M18 13h.01M9 15.5h6" strokeWidth={2.2} />
+  </Stroke>
+);
+
+export const BrokenIcon = (props) => (
+  <Stroke {...props}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m5.6 5.6 12.8 12.8" />
+  </Stroke>
+);
+
 export const ExternalIcon = (props) => (
   <Stroke {...props}>
     <path d="M14 4h6v6" />
@@ -163,6 +269,18 @@ export const iconMap = {
   x: XIcon,
   tag: TagIcon,
   external: ExternalIcon,
+  arrowRight: ArrowRightIcon,
+  tablet: TabletIcon,
+  laptop: LaptopIcon,
+  monitor: MonitorIcon,
+  shield: ShieldIcon,
+  archive: ArchiveIcon,
+  terminal: TerminalIcon,
+  server: ServerIcon,
+  database: DatabaseIcon,
+  lock: LockIcon,
+  keyboard: KeyboardIcon,
+  broken: BrokenIcon,
 };
 
 export const Icon = ({ name, ...props }) => {

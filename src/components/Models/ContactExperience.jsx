@@ -43,7 +43,7 @@ const ContactExperience = () => {
 
   return (
     // `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly.
-    <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.75]}>
+    <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]}>
       <fog attach="fog" args={[WARM_BACKGROUND, 9, 22]} />
 
       <ambientLight intensity={0.55} color="#fff4e6" />

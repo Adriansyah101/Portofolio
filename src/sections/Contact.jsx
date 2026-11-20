@@ -8,7 +8,11 @@ import { emailConfig, isEmailConfigured } from "../constants/index.js";
 
 const EMPTY_FORM = { name: "", email: "", message: "" };
 
-const Contact = () => {
+/**
+ * EmailJS form beside the warm 3D desk. `compact` drops the section title and
+ * the large top margin for use under a page header.
+ */
+const Contact = ({ compact = false }) => {
   const formRef = useRef(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
@@ -47,11 +51,13 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-padding flex-center">
-      <div className="h-full w-full max-w-[1600px] md:px-10">
-        <TitleHeader title="Get in Touch – Let's Connect" sub="Have a porting or graphics project in mind?" />
+    <section id="contact" className={`flex-center ${compact ? "padding-x-lg mt-12" : "section-padding"}`}>
+      <div className={`h-full w-full max-w-[1600px] ${compact ? "" : "md:px-10"}`}>
+        {!compact && (
+          <TitleHeader title="Get in Touch – Let's Connect" sub="Have a preservation or porting project in mind?" />
+        )}
 
-        <div className="mt-16 grid grid-cols-1 gap-10 xl:grid-cols-12">
+        <div className={`${compact ? "" : "mt-16"} grid grid-cols-1 gap-10 xl:grid-cols-12`}>
           <div className="xl:col-span-5">
             <div className="card-border rounded-xl p-6 md:p-10">
               <form ref={formRef} onSubmit={handleSubmit} className="contact-form flex w-full flex-col gap-7">
@@ -90,7 +96,7 @@ const Contact = () => {
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Tell me about your port, engine or graphics project..."
+                    placeholder="Tell me about the game, port or graphics project..."
                     rows={5}
                     required
                   />

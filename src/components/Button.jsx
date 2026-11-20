@@ -2,12 +2,12 @@ import { ArrowDownIcon } from "./Icons.jsx";
 
 /**
  * Animated call-to-action. A circle behind the arrow expands to fill the
- * button on hover; clicking smooth-scrolls to the metrics counter with a
- * 15% viewport offset so the section isn't hidden under the navbar.
+ * button on hover; clicking smooth-scrolls to `targetId` with a 15% viewport
+ * offset so the section isn't hidden under the navbar. It is a <button>
+ * rather than an "#anchor" link because HashRouter owns the URL hash.
  */
 const Button = ({ text, className = "", id, targetId = "counter" }) => {
-  const handleClick = (event) => {
-    event.preventDefault();
+  const handleClick = () => {
     const target = document.getElementById(targetId);
     if (!target) return;
 
@@ -17,12 +17,7 @@ const Button = ({ text, className = "", id, targetId = "counter" }) => {
   };
 
   return (
-    <a
-      href={`#${targetId}`}
-      id={id}
-      onClick={handleClick}
-      className={`cta-wrapper ${className}`}
-    >
+    <button type="button" id={id} onClick={handleClick} className={`cta-wrapper ${className}`}>
       <div className="cta-button group">
         <div className="bg-circle" />
         <p className="cta-text">{text}</p>
@@ -30,7 +25,7 @@ const Button = ({ text, className = "", id, targetId = "counter" }) => {
           <ArrowDownIcon className="size-5" />
         </div>
       </div>
-    </a>
+    </button>
   );
 };
 

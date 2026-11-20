@@ -35,7 +35,7 @@ const HeroExperience = () => {
   return (
     <Canvas
       camera={{ position: [0, 5.5, 13], fov: 45 }}
-      dpr={[1, 1.75]}
+      dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
       <HeroLights />
