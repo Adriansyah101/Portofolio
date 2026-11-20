@@ -7,6 +7,8 @@ import { useGSAP } from "@gsap/react";
 import NavBar from "./components/NavBar.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Footer from "./sections/Footer.jsx";
+import { useLocalized } from "./context/LanguageContext.jsx";
+import { ui } from "./constants/index.js";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -19,11 +21,14 @@ const Journey = lazy(() => import("./pages/Journey.jsx"));
 const ContactPage = lazy(() => import("./pages/ContactPage.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
-const PageFallback = () => (
-  <div className="flex-center min-h-screen" role="status" aria-label="Loading page">
-    <span className="size-8 animate-spin rounded-full border-2 border-white/10 border-t-accent-cyan" />
-  </div>
-);
+const PageFallback = () => {
+  const { common } = useLocalized(ui);
+  return (
+    <div className="flex-center min-h-screen" role="status" aria-label={common.loading}>
+      <span className="size-8 animate-spin rounded-full border-2 border-white/10 border-t-accent-cyan" />
+    </div>
+  );
+};
 
 /**
  * HashRouter keeps every route under `#/…`, so reloading any page on GitHub

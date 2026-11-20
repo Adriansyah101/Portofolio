@@ -6,11 +6,17 @@ import Button from "../components/Button.jsx";
 import AnimatedCounter from "../components/AnimatedCounter.jsx";
 import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
 import { Icon } from "../components/Icons.jsx";
-import { heroContent, words } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { useTheme } from "../context/ThemeContext.jsx";
+import { heroContent as heroSource, ui, words as wordSource } from "../constants/index.js";
 import { renderInlineCode } from "../utils/text.jsx";
 
 const Hero = () => {
   const sectionRef = useRef(null);
+  const heroContent = useLocalized(heroSource);
+  const words = useLocalized(wordSource);
+  const { hero } = useLocalized(ui);
+  const { theme } = useTheme();
 
   useGSAP(
     () => {
@@ -51,7 +57,7 @@ const Hero = () => {
               <span className="slide" aria-hidden="true">
                 <span className="slide-wrapper">
                   {sliderWords.map((word, index) => (
-                    <span key={`${word.text}-${index}`} className="slide-item">
+                    <span key={`${word.id}-${index}`} className="slide-item">
                       <span className="slide-icon">
                         <Icon name={word.icon} className="size-full" strokeWidth={2.4} />
                       </span>
@@ -70,8 +76,8 @@ const Hero = () => {
           </div>
         </header>
 
-        <figure className="hero-3d-layout" aria-label="Interactive 3D systems workstation">
-          <HeroExperience />
+        <figure className="hero-3d-layout" aria-label={hero.sceneLabel}>
+          <HeroExperience theme={theme} />
         </figure>
       </div>
 

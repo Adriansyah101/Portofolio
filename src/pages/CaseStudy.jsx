@@ -5,21 +5,26 @@ import { ArrowLeftIcon, ArrowRightIcon, Icon } from "../components/Icons.jsx";
 import { PlatformBadge, ProjectTags } from "../components/ProjectBits.jsx";
 import { CaseStudyBlock } from "../components/CaseStudyBlocks.jsx";
 import NotFound from "./NotFound.jsx";
-import { caseStudies, projects, routes } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { caseStudies, projects, routes, ui } from "../constants/index.js";
+import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 import { scrollToId, usePageTitle } from "../utils/hooks.js";
 
 /** `/projects/:slug`: deep-dive technical breakdown of one preservation port. */
 const CaseStudy = () => {
   const { slug } = useParams();
-  const study = caseStudies[slug];
-  usePageTitle(study ? `${study.title} Case Study` : "Page not found");
+  const studies = useLocalized(caseStudies);
+  const allProjects = useLocalized(projects);
+  const { caseStudy: text, projects: projectText, meta, common } = useLocalized(ui);
+  const study = studies[slug];
+  usePageTitle(study ? format(text.pageTitle, { title: study.title }) : meta.notFound);
 
   if (!study) return <NotFound />;
 
-  const project = projects.find((item) => item.id === study.projectId);
-  const [nextSlug, next] = Object.entries(caseStudies).find(([key]) => key !== slug);
-  const nextProject = projects.find((item) => item.id === next.projectId);
+  const project = allProjects.find((item) => item.id === study.projectId);
+  const [nextSlug, next] = Object.entries(studies).find(([key]) => key !== slug);
+  const nextProject = allProjects.find((item) => item.id === next.projectId);
 
   return (
     <article className="page-enter" key={slug}>
@@ -28,11 +33,11 @@ const CaseStudy = () => {
         <div className="hero-bg" aria-hidden="true" />
         <div className="relative z-10 mx-auto grid w-full max-w-[1600px] grid-cols-1 items-center gap-10 xl:grid-cols-2 xl:gap-16">
           <div className="min-w-0">
-            <nav aria-label="Breadcrumb" className="mb-6">
+            <nav aria-label={text.breadcrumb} className="mb-6">
               <ol className="flex flex-wrap items-center gap-2 text-sm text-blue-50">
                 <li>
                   <Link to={routes.projects} className="hover:text-white">
-                    Preservation
+                    {projectText.pageTitle}
                   </Link>
                 </li>
                 <li aria-hidden="true">/</li>
@@ -48,7 +53,7 @@ const CaseStudy = () => {
             <div className="mt-8 flex flex-wrap gap-3">
               {study.links.map((link, index) => (
                 <a
-                  key={link.href + link.label}
+                  key={link.href}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -62,17 +67,17 @@ const CaseStudy = () => {
           </div>
 
           <div className="relative min-w-0">
-            <ProjectPreview art={study.art} image={study.image} alt={`${study.title} preview`} className="aspect-8/5" />
+            <ProjectPreview art={study.art} image={study.image} alt={format(projectText.previewAlt, { title: study.title })} className="aspect-8/5" />
             <PlatformBadge project={project} className="absolute top-3 left-3" />
           </div>
         </div>
       </header>
 
       {/* At a glance */}
-      <section className="padding-x-lg mt-12" aria-label="At a glance">
+      <section className="padding-x-lg mt-12" aria-label={text.atAGlance}>
         <dl className="mx-auto grid w-full max-w-[1600px] grid-cols-2 gap-4 xl:grid-cols-4">
           {study.facts.map((fact) => (
-            <div key={fact.label} className="card-border min-w-0 rounded-xl p-5 md:p-6">
+            <div key={fact.id} className="card-border min-w-0 rounded-xl p-5 md:p-6">
               <dt className="font-mono text-[11px] tracking-widest text-blue-50 uppercase">{fact.label}</dt>
               <dd className="mt-2 font-semibold wrap-break-word text-white-50 md:text-lg">{fact.value}</dd>
             </div>
@@ -84,7 +89,7 @@ const CaseStudy = () => {
       </section>
 
       {/* On this page */}
-      <nav className="padding-x-lg mt-12" aria-label="On this page">
+      <nav className="padding-x-lg mt-12" aria-label={common.onThisPage}>
         <div className="jump-nav mx-auto w-full max-w-[1600px]">
           {study.sections.map((section, index) => (
             <button key={section.id} type="button" className="jump-chip" onClick={() => scrollToId(section.id)}>
@@ -116,19 +121,19 @@ const CaseStudy = () => {
       ))}
 
       {/* Next */}
-      <section className="padding-x-lg mt-20 md:mt-28" aria-label="More case studies">
+      <section className="padding-x-lg mt-20 md:mt-28" aria-label={text.more}>
         <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-5 md:grid-cols-2">
           <Link to={routes.projects} className="next-card group">
             <ArrowLeftIcon className="size-5 text-blue-50 transition-transform group-hover:-translate-x-1" />
             <span>
-              <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">Back to</span>
-              <span className="mt-1 block text-xl font-semibold">Preservation Archive</span>
+              <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.backTo}</span>
+              <span className="mt-1 block text-xl font-semibold">{text.allProjects}</span>
             </span>
           </Link>
           <Link to={`${routes.projects}/${nextSlug}`} className="next-card group justify-between">
             <span className="min-w-0">
               <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">
-                Next case study · {nextProject.platform}
+                {text.next} · {nextProject.platform}
               </span>
               <span className="mt-1 block text-xl font-semibold wrap-break-word">{next.title}</span>
             </span>

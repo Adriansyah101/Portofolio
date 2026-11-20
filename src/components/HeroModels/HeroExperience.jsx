@@ -11,6 +11,7 @@ import DeveloperRoom from "./DeveloperRoom.jsx";
 import GltfModel from "../Models/GltfModel.jsx";
 import { heroScene } from "../../constants/index.js";
 import { assetUrl } from "../../utils/assets.js";
+import { heroPalettes, paletteFor } from "../Models/scenePalettes.js";
 
 /** Gentle idle sway so the diorama feels alive even without interaction. */
 const SwayGroup = ({ children, ...props }) => {
@@ -28,9 +29,11 @@ const SwayGroup = ({ children, ...props }) => {
   );
 };
 
-const HeroExperience = () => {
+/** `theme` ("dark" | "light") selects the room shell and lighting palette. */
+const HeroExperience = ({ theme = "dark" }) => {
   const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const palette = paletteFor(heroPalettes, theme);
 
   return (
     <Canvas
@@ -38,8 +41,8 @@ const HeroExperience = () => {
       dpr={[1, 1.5]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
-      <HeroLights />
-      <Particles count={isMobile ? 18 : 36} />
+      <HeroLights palette={palette} />
+      <Particles count={isMobile ? 18 : 36} tone={palette.particles} />
 
       {/* On phones the canvas stays non-interactive so page scrolling works. */}
       {!isMobile && (
@@ -62,7 +65,7 @@ const HeroExperience = () => {
               scale={heroScene.scale}
               position={heroScene.position}
               rotation={heroScene.rotation}
-              fallback={<DeveloperRoom />}
+              fallback={<DeveloperRoom palette={palette} />}
             />
           </group>
         </SwayGroup>

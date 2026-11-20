@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowRightIcon, Icon } from "./Icons.jsx";
 import { renderInlineCode } from "../utils/text.jsx";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { ui } from "../constants/index.js";
 
 /* -------------------------------------------------------------------------- */
 /*                         Case-study content blocks                          */
@@ -71,44 +73,47 @@ const Flow = ({ steps, caption }) => (
 );
 
 /** Legacy service (offline) replaced by a chain of new components. */
-const Architecture = ({ legacy, nodes }) => (
-  <figure className="arch-diagram" aria-label="Leaderboard architecture">
-    <div className="arch-legacy">
-      <div className="flex items-center justify-between gap-3">
-        <span className="flex-center size-10 rounded-lg bg-rose-400/10 text-rose-300">
-          <Icon name={legacy.icon} className="size-5" />
-        </span>
-        <span className="rounded-full border border-rose-400/30 px-2.5 py-0.5 font-mono text-[11px] text-rose-300 uppercase">
-          Offline
-        </span>
-      </div>
-      <h3 className="mt-4 font-semibold text-white-50/70 line-through decoration-rose-400/60">{legacy.title}</h3>
-      <p className="mt-1 text-sm text-white-50/55">{legacy.body}</p>
-    </div>
-
-    <div className="arch-replaced" aria-hidden="true">
-      <span>replaced by</span>
-      <ArrowRightIcon className="size-5 rotate-90 xl:rotate-0" />
-    </div>
-
-    <ol className="arch-chain">
-      {nodes.map((node, index) => (
-        <li key={node.title} className="arch-node">
-          <span className="flex-center size-10 rounded-lg bg-accent-cyan/10 text-accent-cyan">
-            <Icon name={node.icon} className="size-5" />
+const Architecture = ({ legacy, nodes }) => {
+  const { caseStudy: text } = useLocalized(ui);
+  return (
+    <figure className="arch-diagram" aria-label={text.architectureLabel}>
+      <div className="arch-legacy">
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex-center size-10 rounded-lg bg-rose-400/10 text-rose-300">
+            <Icon name={legacy.icon} className="size-5" />
           </span>
-          <h3 className="mt-4 font-semibold text-white-50">{node.title}</h3>
-          <p className="mt-1 text-sm leading-relaxed text-white-50/70">{renderInlineCode(node.body)}</p>
-          {index < nodes.length - 1 && (
-            <span className="arch-connector" aria-hidden="true">
-              <ArrowRightIcon className="size-4" />
+          <span className="rounded-full border border-rose-400/30 px-2.5 py-0.5 font-mono text-[11px] text-rose-300 uppercase">
+            {text.offline}
+          </span>
+        </div>
+        <h3 className="mt-4 font-semibold text-white-50/70 line-through decoration-rose-400/60">{legacy.title}</h3>
+        <p className="mt-1 text-sm text-white-50/70">{legacy.body}</p>
+      </div>
+
+      <div className="arch-replaced" aria-hidden="true">
+        <span>{text.replacedBy}</span>
+        <ArrowRightIcon className="size-5 rotate-90 xl:rotate-0" />
+      </div>
+
+      <ol className="arch-chain">
+        {nodes.map((node, index) => (
+          <li key={node.title} className="arch-node">
+            <span className="flex-center size-10 rounded-lg bg-accent-cyan/10 text-accent-cyan">
+              <Icon name={node.icon} className="size-5" />
             </span>
-          )}
-        </li>
-      ))}
-    </ol>
-  </figure>
-);
+            <h3 className="mt-4 font-semibold text-white-50">{node.title}</h3>
+            <p className="mt-1 text-sm leading-relaxed text-white-50/70">{renderInlineCode(node.body)}</p>
+            {index < nodes.length - 1 && (
+              <span className="arch-connector" aria-hidden="true">
+                <ArrowRightIcon className="size-4" />
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </figure>
+  );
+};
 
 export const DataTable = ({ caption, columns, rows }) => (
   <div className="data-table-wrap">
@@ -160,6 +165,7 @@ const Checklist = ({ title, items }) => (
 
 const CopyButton = ({ text }) => {
   const [copied, setCopied] = useState(false);
+  const { caseStudy: labels } = useLocalized(ui);
 
   const copy = async () => {
     try {
@@ -173,7 +179,7 @@ const CopyButton = ({ text }) => {
 
   return (
     <button type="button" onClick={copy} className="copy-btn">
-      {copied ? "Copied" : "Copy"}
+      <span aria-live="polite">{copied ? labels.copied : labels.copy}</span>
     </button>
   );
 };
@@ -202,7 +208,7 @@ const Links = ({ items }) => (
   <div className="flex flex-wrap gap-3">
     {items.map((item) => (
       <a
-        key={item.href + item.label}
+        key={item.href}
         href={item.href}
         target="_blank"
         rel="noopener noreferrer"

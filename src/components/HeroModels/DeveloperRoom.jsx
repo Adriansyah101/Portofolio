@@ -12,15 +12,17 @@ import {
   Plant,
 } from "../Models/DeskParts.jsx";
 import { createDashboardTexture } from "../Models/canvasTextures.js";
+import { useThemeTween } from "../Models/useThemeTween.js";
+import { heroPalettes } from "../Models/scenePalettes.js";
 
 const ROOM = 7;
 const WALL_HEIGHT = 5;
 const WALL = 0.2;
 const HALF = ROOM / 2;
 
-// Architectural cove light: a dim neutral white kept below the bloom
-// threshold, so it reads as a soft studio fixture rather than an LED strip.
-const COVE = "#7d8087";
+// The room shell (floor, walls, cove light, rug) takes its colours from the
+// theme palette; the cove stays below the bloom threshold in both themes so
+// it reads as a soft studio fixture rather than an LED strip.
 const ACCENT = "#94a3b8";
 const TRIM = "#71717a";
 
@@ -53,10 +55,15 @@ const NetworkSwitch = (props) => (
  * render: dual monitors (ops terminal and a live GLSL telemetry view), a
  * wall-mounted status dashboard, a shelf with binders and a network switch,
  * neutral surfaces with a walnut desk, and one dim cove light. Built entirely
- * from procedural meshes.
+ * from procedural meshes. `palette` is a `heroPalettes` entry.
  */
-const DeveloperRoom = (props) => {
+const DeveloperRoom = ({ palette = heroPalettes.dark, ...props }) => {
   const dashboard = useMemo(() => createDashboardTexture(), []);
+  const floor = useThemeTween({ color: palette.floor });
+  const wallBack = useThemeTween({ color: palette.wallBack });
+  const wallSide = useThemeTween({ color: palette.wallSide });
+  const cove = useThemeTween({ color: palette.cove });
+  const rug = useThemeTween({ color: palette.rug });
 
   useEffect(() => () => dashboard.dispose(), [dashboard]);
 
@@ -68,28 +75,28 @@ const DeveloperRoom = (props) => {
       {/* ---------------------------- Shell ---------------------------- */}
       <mesh position={[0, -0.125, 0]} receiveShadow>
         <boxGeometry args={[ROOM, 0.25, ROOM]} />
-        <meshStandardMaterial color="#26262a" roughness={0.85} />
+        <meshStandardMaterial ref={floor} roughness={0.85} />
       </mesh>
 
       <mesh position={[-WALL / 2, WALL_HEIGHT / 2, -HALF - WALL / 2]} receiveShadow>
         <boxGeometry args={[ROOM + WALL, WALL_HEIGHT, WALL]} />
-        <meshStandardMaterial color="#2c2c31" roughness={0.9} />
+        <meshStandardMaterial ref={wallBack} roughness={0.9} />
       </mesh>
       <mesh position={[-HALF - WALL / 2, WALL_HEIGHT / 2, 0]} receiveShadow>
         <boxGeometry args={[WALL, WALL_HEIGHT, ROOM]} />
-        <meshStandardMaterial color="#29292e" roughness={0.9} />
+        <meshStandardMaterial ref={wallSide} roughness={0.9} />
       </mesh>
 
       {/* Ceiling cove light (back wall only) */}
       <mesh position={[0, WALL_HEIGHT - 0.12, -HALF + 0.03]}>
         <boxGeometry args={[ROOM, 0.035, 0.035]} />
-        <meshBasicMaterial color={COVE} />
+        <meshBasicMaterial ref={cove} />
       </mesh>
 
       {/* Rug */}
       <mesh position={[-0.4, 0.01, -1.2]} receiveShadow>
         <cylinderGeometry args={[1.6, 1.6, 0.02, 64]} />
-        <meshStandardMaterial color="#2c2a27" roughness={1} />
+        <meshStandardMaterial ref={rug} roughness={1} />
       </mesh>
 
       {/* --------------------------- Wall decor --------------------------- */}

@@ -6,11 +6,14 @@ import TitleHeader from "../components/TitleHeader.jsx";
 import GlowCard from "../components/GlowCard.jsx";
 import { ExternalIcon, Icon } from "../components/Icons.jsx";
 import { BrandLogo } from "../components/CompanyEmblems.jsx";
-import { expCards } from "../constants/index.js";
+import { expCards as cardSource, ui } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
 const ExperienceSection = () => {
   const sectionRef = useRef(null);
+  const expCards = useLocalized(cardSource);
+  const { experience: text } = useLocalized(ui);
 
   useGSAP(
     () => {
@@ -69,12 +72,12 @@ const ExperienceSection = () => {
   return (
     <section id="experience" ref={sectionRef} className="section-padding flex-center w-full xl:px-0">
       <div className="h-full w-full max-w-[1600px] px-5 md:px-20">
-        <TitleHeader title="Professional Experience" sub="Enterprise Application Operations" />
+        <TitleHeader title={text.title} sub={text.sub} />
 
         <div className="relative mt-20 md:mt-32">
           <div className="relative z-50 space-y-16 xl:space-y-32">
             {expCards.map((card) => (
-              <div key={card.title} className="exp-card-wrapper">
+              <div key={card.id} className="exp-card-wrapper">
                 <div className="exp-glow xl:w-2/6">
                   <GlowCard
                     card={card}
@@ -97,7 +100,7 @@ const ExperienceSection = () => {
                   >
                     <div className="flex flex-col gap-3">
                       <p className="font-mono text-xs tracking-widest text-blue-50 uppercase">
-                        {card.platformsLabel ?? "Stack & Targets"}
+                        {card.platformsLabel ?? text.stackTargets}
                       </p>
                       <ul className="flex flex-wrap gap-2">
                         {card.platforms.map((platform) => (
@@ -133,7 +136,7 @@ const ExperienceSection = () => {
                         <span className="inline-block size-1.5 rounded-full bg-blue-50" />
                         {card.period}
                       </p>
-                      <p className="text-blue-50 italic">{card.logo ? "Key Responsibilities & Achievements" : "Highlights"}</p>
+                      <p className="text-blue-50 italic">{card.logo ? text.responsibilities : text.highlights}</p>
                       <ul className="mt-4 ms-5 flex list-disc flex-col gap-4 text-body marker:text-blue-50/60">
                         {card.responsibilities.map((item) => (
                           <li key={item} className="text-lg leading-relaxed">
@@ -144,10 +147,10 @@ const ExperienceSection = () => {
 
                       {card.systems?.length > 0 && (
                         <div className="mt-8">
-                          <p className="font-mono text-xs tracking-widest text-blue-50 uppercase">Production systems</p>
+                          <p className="font-mono text-xs tracking-widest text-blue-50 uppercase">{text.productionSystems}</p>
                           <ul className="mt-3 flex flex-wrap gap-3">
                             {card.systems.map((system) => (
-                              <li key={system.label}>
+                              <li key={system.href}>
                                 <a href={system.href} target="_blank" rel="noreferrer" className="system-link">
                                   <BrandLogo brand={system.brand} className="h-9 w-[5.25rem]" decorative />
                                   <span className="min-w-0">

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { ui } from "../constants/index.js";
 
-const SITE_NAME = "Adriansyah Prasetya Nugraha";
-const DEFAULT_TITLE = `${SITE_NAME} | Systems & Application Operations Engineer`;
-
-/** Sets `document.title` for the current page. */
+/** Sets `document.title` for the current page (pass an already localized title, or null for Home). */
 export const usePageTitle = (title) => {
+  const { siteName, role } = useLocalized(ui.meta);
   useEffect(() => {
-    document.title = title ? `${title} | ${SITE_NAME}` : DEFAULT_TITLE;
-  }, [title]);
+    document.title = title ? `${title} | ${siteName}` : `${siteName} | ${role}`;
+  }, [title, siteName, role]);
 };
 
 /** Instantly scrolls to an element on the page (in-page "#anchors" would change the HashRouter route). */

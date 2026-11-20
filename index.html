@@ -1,9 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="dark" style="color-scheme: dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#09090b" />
+    <script>
+      // Apply the saved theme and language before the first paint (no flash).
+      // Keys match src/context/ThemeContext.jsx and LanguageContext.jsx.
+      (function () {
+        var root = document.documentElement;
+        var theme = "dark";
+        var lang = "en";
+        try {
+          var storedTheme = localStorage.getItem("portfolio-theme");
+          var storedLang = localStorage.getItem("portfolio-lang");
+          if (storedTheme === "light" || storedTheme === "dark") theme = storedTheme;
+          if (storedLang === "id" || storedLang === "en") lang = storedLang;
+        } catch (error) {}
+        root.setAttribute("data-theme", theme);
+        root.classList.toggle("dark", theme === "dark");
+        root.style.colorScheme = theme;
+        root.lang = lang;
+        if (theme === "light") {
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", "#f8fafc");
+        }
+      })();
+    </script>
     <meta
       name="description"
       content="Adriansyah Prasetya Nugraha (adriansyah101): Systems & Application Operations Engineer from Semarang, Indonesia. Enterprise production operations at PT ASDP Indonesia Ferry (Persero): high-availability ticketing (trip.ferizy.com), hybrid cloud/on-premise port deployments and Omron barrier gate integration, plus low-level binary recompilation."

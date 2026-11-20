@@ -1,24 +1,26 @@
 import { Link } from "react-router-dom";
 import PageHeader from "../components/PageHeader.jsx";
-import { routes } from "../constants/index.js";
+import { routes, ui } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
 import { usePageTitle } from "../utils/hooks.js";
 
 const NotFound = () => {
-  usePageTitle("Page not found");
+  const { notFound: text, meta } = useLocalized(ui);
+  usePageTitle(meta.notFound);
 
   return (
     <div className="page-enter min-h-screen">
       <PageHeader
-        eyebrow="404 · Route Not Found"
-        title="This page could not be found"
-        description="The link may be old or mistyped. Head back home, or see my work experience."
+        eyebrow={text.eyebrow}
+        title={text.title}
+        description={text.description}
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to={routes.home} className="project-link primary">
-            Back to Home
+            {text.home}
           </Link>
           <Link to={routes.journey} className="project-link secondary">
-            View Work Experience
+            {text.journey}
           </Link>
         </div>
       </PageHeader>

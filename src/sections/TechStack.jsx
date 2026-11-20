@@ -4,10 +4,15 @@ import { useGSAP } from "@gsap/react";
 
 import TitleHeader from "../components/TitleHeader.jsx";
 import TechIcon from "../components/Models/TechLogos/TechIcon.jsx";
-import { techStackIcons } from "../constants/index.js";
+import { techStackIcons, ui } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { useTheme } from "../context/ThemeContext.jsx";
 
 const TechStack = () => {
   const sectionRef = useRef(null);
+  const icons = useLocalized(techStackIcons);
+  const { techStack: text } = useLocalized(ui);
+  const { theme } = useTheme();
 
   useGSAP(
     () => {
@@ -30,15 +35,16 @@ const TechStack = () => {
   return (
     <section id="skills" ref={sectionRef} className="section-padding flex-center w-full">
       <div className="w-full max-w-[1600px] md:px-10">
-        <TitleHeader title="Enterprise & Systems Tech Stack" sub="Tools I Run in Production" />
+        <TitleHeader title={text.title} sub={text.sub} />
 
         <div className="tech-grid">
-          {techStackIcons.map((model) => (
-            <div key={model.name} className="tech-card group">
+          {icons.map((model) => (
+            // Keyed by emblem so switching language never remounts the WebGL canvas.
+            <div key={model.emblem} className="tech-card group">
               <div className="tech-card-animated-bg" />
               <div className="tech-card-content">
                 <div className="tech-icon-wrapper">
-                  <TechIcon model={model} />
+                  <TechIcon model={model} theme={theme} />
                 </div>
                 <h3 className="text-xl font-semibold text-white-50">{model.name}</h3>
                 <p className="mt-1 text-sm text-blue-50">{model.subtitle}</p>

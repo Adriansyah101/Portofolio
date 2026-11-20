@@ -27,6 +27,62 @@
   --color-accent-orange: #b8a48c;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Theme tokens                               */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Dark is the default (the @theme values above). Light mode re-points the same
+ * tokens, so every utility and component class follows `html[data-theme]`
+ * without per-component overrides. index.html sets the attribute before the
+ * first paint from localStorage ("portfolio-theme").
+ *
+ * In light mode `--color-white` becomes the ink colour: the dark theme uses
+ * `white/8` borders, `white/5` tints and `hover:text-white` to mean "a little
+ * brighter than the surface", which on a light surface has to be "a little
+ * darker". Anything that must stay literally white (logo pills) uses #fff.
+ */
+:root {
+  --contact-stage: #2a2825; /* = contactPalettes.dark.stage (fog colour) */
+  --glow-a: rgb(228 228 231 / 0.35);
+  --glow-b: rgb(148 163 184 / 0.22);
+  --selection-bg: rgb(148 163 184 / 0.3);
+  --selection-fg: #ffffff;
+}
+
+:root[data-theme="light"] {
+  --color-canvas: #f8fafc; /* warm alabaster */
+  --color-white-50: #0f172a; /* deep charcoal headings & primary text */
+  --color-body: #475569; /* muted slate body copy */
+  --color-black-50: rgb(15 23 42 / 0.08); /* hairline borders */
+  --color-black-100: #ffffff; /* card surface */
+  --color-black-200: #f1f5f9; /* raised surface */
+  --color-blue-50: #526175; /* muted labels (AA on white and on tinted pills) */
+  --color-blue-100: #f1f5f9; /* inputs */
+
+  --color-accent-cyan: #334155; /* calm steel accent */
+  --color-accent-violet: #475569;
+  --color-accent-pink: #64748b;
+  --color-accent-orange: #8a6d4a;
+
+  --color-white: #020617; /* ink: see note above */
+  --color-zinc-100: #0f172a;
+  --color-zinc-300: #334155;
+  /* Status colours deep enough for text on white. */
+  --color-rose-200: #9f1239;
+  --color-rose-300: #be123c;
+  --color-emerald-200: #047857;
+  --color-emerald-300: #047857;
+
+  --contact-stage: #e7e4df; /* = contactPalettes.light.stage */
+  --glow-a: rgb(15 23 42 / 0.28);
+  --glow-b: rgb(71 85 105 / 0.18);
+  --selection-bg: rgb(51 65 85 / 0.18);
+  --selection-fg: #0f172a;
+  --slide-from: #0f172a;
+  --slide-to: #64748b;
+}
+
 /* Custom utilities (usable in markup and in @apply) */
 @utility flex-center {
   display: flex;
@@ -122,6 +178,9 @@
   body {
     @apply bg-canvas font-sans text-white-50 antialiased;
     overflow-x: clip;
+    transition:
+      background-color 0.5s ease,
+      color 0.5s ease;
   }
 
   section[id],
@@ -130,8 +189,8 @@
   }
 
   ::selection {
-    background: rgb(148 163 184 / 0.3);
-    color: #fff;
+    background: var(--selection-bg);
+    color: var(--selection-fg);
   }
 
   canvas {
@@ -238,8 +297,38 @@
     @apply w-full;
   }
 
+  /* Language pill, theme toggle and GitHub button (desktop). */
+  .navbar-actions {
+    @apply hidden items-center gap-3 lg:flex;
+  }
+
   .contact-btn {
-    @apply hidden lg:flex;
+    @apply flex;
+  }
+
+  .lang-toggle {
+    @apply inline-flex items-center rounded-full border border-white/10 bg-black-100/60 p-0.5 font-mono text-xs;
+  }
+
+  .lang-toggle button {
+    @apply rounded-full px-2.5 py-1 font-medium tracking-wider text-blue-50 transition-colors duration-300 hover:text-white;
+  }
+
+  .lang-toggle button.active {
+    @apply bg-white-50 text-canvas hover:text-canvas;
+  }
+
+  .theme-toggle {
+    @apply flex-center size-9 flex-none rounded-full border border-white/10 bg-black-100/60 text-white-50 transition-colors duration-300 hover:border-white/25 hover:text-white;
+  }
+
+  .theme-toggle.with-label {
+    @apply h-9 w-auto gap-2 px-4 text-sm;
+  }
+
+  /* Language and theme controls inside the mobile menu. */
+  .mobile-prefs {
+    @apply mt-4 flex flex-wrap items-center gap-3 border-t border-white/6 px-1 pt-4;
   }
 
   .contact-btn-inner {
@@ -299,7 +388,7 @@
   }
 
   .hero-layout {
-    @apply relative z-10 flex flex-col pt-32 md:pt-40 xl:min-h-screen xl:flex-row xl:items-center xl:pt-0;
+    @apply relative z-10 flex flex-col pt-32 md:pt-40 xl:min-h-screen xl:flex-row xl:items-center xl:pt-32 xl:pb-12;
   }
 
   .hero-header {
@@ -330,11 +419,18 @@
   }
 
   .hero-bio {
-    @apply max-w-2xl text-base leading-relaxed text-body md:text-xl;
+    @apply max-w-2xl text-base leading-relaxed text-body md:text-xl xl:max-w-[34rem] 2xl:max-w-[38rem];
   }
 
   .hero-3d-layout {
     @apply relative h-[52vh] min-h-[360px] w-full xl:absolute xl:top-0 xl:right-0 xl:h-full xl:w-[58%];
+  }
+
+  /* Side by side, the scene's left edge fades into the page so the copy beside it stays readable. */
+  @media (min-width: 80rem) {
+    .hero-3d-layout {
+      mask-image: linear-gradient(90deg, transparent, #000 16%);
+    }
   }
 
   /* Rotating headline words */
@@ -368,7 +464,7 @@
   }
 
   .slide-text {
-    background: linear-gradient(90deg, #f4f4f5, #a9b8c9);
+    background: linear-gradient(90deg, var(--slide-from, #f4f4f5), var(--slide-to, #a9b8c9));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -541,7 +637,7 @@
   }
 
   .timeline-card:hover {
-    border-color: rgb(255 255 255 / 0.06);
+    border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
   }
 
   /* Border-only conic gradient that follows the cursor angle (`--start`). */
@@ -556,8 +652,8 @@
     background: conic-gradient(
       from calc((var(--start) - 45) * 1deg),
       transparent 0deg,
-      rgb(228 228 231 / 0.35) 35deg,
-      rgb(148 163 184 / 0.22) 60deg,
+      var(--glow-a) 35deg,
+      var(--glow-b) 60deg,
       transparent 90deg
     );
     -webkit-mask:
@@ -633,8 +729,10 @@
   }
 
   /* Official brand logos on a light pill so their colours stay legible. */
+  /* Literal white in both themes (`white` is the ink colour in light mode). */
   .brand-logo {
-    @apply flex-center flex-none overflow-hidden rounded-xl bg-white/95 p-1.5 ring-1 ring-white/10;
+    @apply flex-center flex-none overflow-hidden rounded-xl p-1.5 ring-1 ring-white/10;
+    background-color: rgb(255 255 255 / 0.96);
   }
 
   .brand-logo.is-circle {
@@ -702,8 +800,21 @@
 
   .contact-canvas {
     @apply h-full min-h-96 w-full overflow-hidden rounded-3xl border border-black-50 hover:cursor-grab active:cursor-grabbing;
-    /* Must match STUDIO_BACKGROUND in ContactExperience.jsx (fog colour). */
-    background: #2a2825;
+    /* Must match `stage` in contactPalettes (scenePalettes.js), the fog colour. */
+    background: var(--contact-stage);
+    transition: background-color 0.5s ease;
+  }
+
+  .form-status {
+    @apply rounded-md border px-4 py-3 text-sm;
+  }
+
+  .form-status.is-success {
+    @apply border-emerald-400/30 bg-emerald-400/10 text-emerald-300;
+  }
+
+  .form-status.is-error {
+    @apply border-rose-400/30 bg-rose-400/10 text-rose-300;
   }
 
   .contact-preview {
@@ -761,6 +872,51 @@
 
   .archive-card .project-preview {
     @apply rounded-none border-0 border-b border-black-50;
+  }
+
+  /* Cards in centred rows: 1 / 2 / 3 per row, so a lone last card sits in the middle. */
+  .archive-grid {
+    @apply mt-8 flex flex-wrap justify-center gap-8;
+  }
+
+  .archive-grid > * {
+    @apply w-full md:w-[calc((100%-2rem)/2)] xl:w-[calc((100%-4rem)/3)];
+  }
+
+  .archive-grid.is-pair > * {
+    @apply xl:w-[calc((100%-2rem)/2)];
+  }
+
+  .category-tabs {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .filter-count {
+    @apply ml-2 inline-flex min-w-5 justify-center rounded-full bg-white/8 px-1.5 font-mono text-[11px] leading-5;
+  }
+
+  .filter-chip.active .filter-count {
+    @apply bg-canvas/20;
+  }
+
+  .catalog-section {
+    @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12;
+  }
+
+  .catalog-heading {
+    @apply flex items-start gap-4 md:gap-6;
+  }
+
+  .catalog-index {
+    @apply flex-center mt-0.5 size-10 flex-none rounded-full border border-white/10 font-mono text-xs text-accent-cyan md:size-12 md:text-sm;
+  }
+
+  .catalog-count {
+    @apply ml-3 inline-flex -translate-y-[0.2em] items-center rounded-full border border-white/10 px-2 py-0.5 align-middle font-mono text-xs font-normal text-blue-50;
+  }
+
+  .category-chip {
+    @apply inline-flex items-center rounded-full border border-white/10 px-3 py-1 font-mono text-[11px] tracking-wider whitespace-nowrap text-blue-50 uppercase;
   }
 
   .filter-chip {
@@ -928,4 +1084,20 @@
   .cta-button .arrow-wrapper svg {
     animation: none !important;
   }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Light-mode refinements                           */
+/* -------------------------------------------------------------------------- */
+
+/* Badges float over the (always dark) project artwork, so keep them legible there. */
+:root[data-theme="light"] .platform-badge {
+  background-color: rgb(255 255 255 / 0.88);
+  border-color: rgb(15 23 42 / 0.12);
+}
+
+/* A whisper of depth so white cards separate from the alabaster page. */
+:root[data-theme="light"]
+  :is(.work-card, .counter-card, .archive-card, .tech-card, .timeline-card, .card-border, .contact-preview) {
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
 }

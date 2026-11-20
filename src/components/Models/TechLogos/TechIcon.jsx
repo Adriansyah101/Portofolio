@@ -6,23 +6,39 @@ import GltfModel from "../GltfModel.jsx";
 import StudioEnvironment from "../StudioEnvironment.jsx";
 import { emblemMap, CppEmblem } from "./TechEmblems.jsx";
 import { assetUrl } from "../../../utils/assets.js";
+import { useThemeTween } from "../useThemeTween.js";
+import { paletteFor, techIconPalettes } from "../scenePalettes.js";
+
+/** Direct lights for one emblem; brighter and airier in light mode, eased on change. */
+const EmblemLights = ({ palette }) => {
+  const ambient = useThemeTween(palette.ambient);
+  const key = useThemeTween(palette.key);
+  const fill = useThemeTween(palette.fill);
+  const accent = useThemeTween(palette.accent);
+
+  return (
+    <>
+      <ambientLight ref={ambient} />
+      <directionalLight ref={key} position={[5, 5, 5]} />
+      <directionalLight ref={fill} position={[-4, -2, 3]} />
+      <pointLight ref={accent} position={[-3, 2, -2]} decay={2} />
+    </>
+  );
+};
 
 /**
  * Floating, draggable 3D emblem for a tech-stack card. Renders the
  * procedural emblem by default, or `model.glbPath` when one is configured.
  * Lighting is entirely local: direct lights plus a procedural Lightformer
- * environment for reflections (no remote HDRI).
+ * environment for reflections (no remote HDRI). `theme` selects the light palette.
  */
-const TechIcon = ({ model }) => {
+const TechIcon = ({ model, theme = "dark" }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const Emblem = emblemMap[model.emblem] ?? CppEmblem;
 
   return (
     <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
-      <ambientLight intensity={0.35} color="#e4e4e7" />
-      <directionalLight position={[5, 5, 5]} intensity={1.4} color="#f4f4f5" />
-      <directionalLight position={[-4, -2, 3]} intensity={0.45} color="#cbd5e1" />
-      <pointLight position={[-3, 2, -2]} intensity={3} decay={2} color="#94a3b8" />
+      <EmblemLights palette={paletteFor(techIconPalettes, theme)} />
       <StudioEnvironment resolution={256} />
 
       {!isMobile && <OrbitControls enableZoom={false} enablePan={false} />}

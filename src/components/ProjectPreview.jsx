@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { assetUrl } from "../utils/assets.js";
+import { useLanguage } from "../context/LanguageContext.jsx";
+import { tx } from "../utils/i18n.js";
 
 /* -------------------------------------------------------------------------- */
 /*            Built-in SVG previews (used until a screenshot is set)          */
 /* -------------------------------------------------------------------------- */
 
-const RacingArt = () => (
-  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Stylized night race track with a 60 FPS HUD">
+const RacingArt = ({ label }) => (
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
     <defs>
       <linearGradient id="race-sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stopColor="#05060f" />
@@ -112,8 +114,8 @@ const RacingArt = () => (
   </svg>
 );
 
-const MiamiArt = () => (
-  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Neon sunset city skyline with palm trees">
+const MiamiArt = ({ label }) => (
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
     <defs>
       <linearGradient id="miami-sky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stopColor="#12062b" />
@@ -201,7 +203,7 @@ const MiamiArt = () => (
   </svg>
 );
 
-const PipelineArt = () => {
+const PipelineArt = ({ label }) => {
   const stages = [
     { label: "VERTEX", sub: "GLES 2.0", color: "#6ee7ff" },
     { label: "VBO CACHE", sub: "reuse", color: "#82aaff" },
@@ -211,7 +213,7 @@ const PipelineArt = () => {
   ];
 
   return (
-    <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="OpenGL ES render pipeline diagram">
+    <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
       <defs>
         <pattern id="pipe-grid" width="32" height="32" patternUnits="userSpaceOnUse">
           <path d="M32 0H0V32" fill="none" stroke="#ffffff" strokeOpacity="0.05" />
@@ -268,10 +270,276 @@ const PipelineArt = () => {
   );
 };
 
+/* ---------------- Original projects: restrained slate artwork ---------------- */
+
+const MONO = "JetBrains Mono, monospace";
+
+/** SIDAF: an admin dashboard wireframe (sidebar, KPI tiles, records table, chart). */
+const SidafArt = ({ label }) => (
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
+    <rect width="800" height="500" fill="#0e1014" />
+    <rect x="40" y="36" width="720" height="428" rx="14" fill="#14161b" stroke="#262930" />
+    {/* Window bar */}
+    <path d="M40 50a14 14 0 0 1 14-14h692a14 14 0 0 1 14 14v18H40Z" fill="#191c22" />
+    {["#3f4450", "#3f4450", "#3f4450"].map((fill, index) => (
+      <circle key={index} cx={62 + index * 16} cy="52" r="4.5" fill={fill} />
+    ))}
+    <rect x="300" y="45" width="200" height="14" rx="7" fill="#22252c" />
+
+    {/* Sidebar */}
+    <rect x="40" y="68" width="150" height="396" fill="#111318" />
+    <text x="62" y="104" fontFamily={MONO} fontSize="17" fontWeight="700" fill="#d4d8de">SIDAF</text>
+    {[0, 1, 2, 3, 4, 5].map((index) => (
+      <g key={index} transform={`translate(56 ${132 + index * 34})`}>
+        {index === 1 && <rect x="-8" y="-12" width="134" height="26" rx="7" fill="#1d2129" />}
+        <rect width="10" height="10" y="-4" rx="3" fill={index === 1 ? "#7c98b6" : "#3a3f49"} />
+        <rect x="20" y="-2" width={index === 1 ? 72 : 56 + ((index * 17) % 30)} height="6" rx="3" fill={index === 1 ? "#a9b8c9" : "#4a505b"} />
+      </g>
+    ))}
+
+    {/* Header */}
+    <text x="220" y="106" fontFamily={MONO} fontSize="12" fill="#8b93a1">DATA · WORKFLOW · REPORTS</text>
+    <rect x="626" y="88" width="108" height="28" rx="8" fill="#1d2129" stroke="#2f343d" />
+    <rect x="642" y="99" width="76" height="6" rx="3" fill="#7c98b6" opacity="0.8" />
+
+    {/* KPI tiles */}
+    {[
+      { x: 220, bar: 0.72, color: "#7c98b6" },
+      { x: 392, bar: 0.46, color: "#94a3b8" },
+      { x: 564, bar: 0.6, color: "#7fa38f" },
+    ].map(({ x, bar, color }) => (
+      <g key={x} transform={`translate(${x} 132)`}>
+        <rect width="156" height="74" rx="10" fill="#181b21" stroke="#262930" />
+        <rect x="16" y="18" width="54" height="6" rx="3" fill="#4a505b" />
+        <rect x="16" y="34" width="84" height="12" rx="4" fill="#c4c9d1" opacity="0.85" />
+        <rect x="16" y="56" width="124" height="4" rx="2" fill="#262930" />
+        <rect x="16" y="56" width={124 * bar} height="4" rx="2" fill={color} />
+      </g>
+    ))}
+
+    {/* Records table */}
+    <g transform="translate(220 226)">
+      <rect width="330" height="214" rx="10" fill="#181b21" stroke="#262930" />
+      <rect x="0" y="0" width="330" height="34" rx="10" fill="#1d2129" />
+      {[16, 112, 208].map((x) => (
+        <rect key={x} x={x} y="14" width="58" height="6" rx="3" fill="#5b616d" />
+      ))}
+      {[0, 1, 2, 3, 4].map((row) => (
+        <g key={row} transform={`translate(0 ${52 + row * 32})`}>
+          <rect x="16" y="0" width={70 + ((row * 23) % 24)} height="6" rx="3" fill="#8b93a1" opacity="0.75" />
+          <rect x="112" y="0" width={58 + ((row * 31) % 30)} height="6" rx="3" fill="#4a505b" />
+          <rect x="208" y="-5" width="54" height="16" rx="8" fill={row % 3 === 1 ? "#3a332a" : "#22302a"} />
+          <rect x="218" y="0" width="34" height="6" rx="3" fill={row % 3 === 1 ? "#b8a48c" : "#7fa38f"} />
+          {row < 4 && <rect x="16" y="18" width="298" height="1" fill="#262930" />}
+        </g>
+      ))}
+    </g>
+
+    {/* Monthly report chart */}
+    <g transform="translate(566 226)">
+      <rect width="168" height="214" rx="10" fill="#181b21" stroke="#262930" />
+      <rect x="16" y="18" width="70" height="6" rx="3" fill="#5b616d" />
+      {[0.45, 0.62, 0.38, 0.74, 0.56, 0.82].map((height, index) => (
+        <rect
+          key={index}
+          x={20 + index * 23}
+          y={190 - height * 130}
+          width="13"
+          height={height * 130}
+          rx="3"
+          fill={index === 5 ? "#7c98b6" : "#3a4150"}
+        />
+      ))}
+      <rect x="16" y="192" width="136" height="1" fill="#2f343d" />
+    </g>
+  </svg>
+);
+
+/** VR Simulation Airport: terminal, tower and runway at dusk, seen through a VR gaze reticle. */
+const AirportArt = ({ label }) => (
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
+    <defs>
+      <linearGradient id="vr-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#0d1117" />
+        <stop offset="0.7" stopColor="#1c2430" />
+        <stop offset="1" stopColor="#2a3240" />
+      </linearGradient>
+      <linearGradient id="vr-ground" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#1a1d22" />
+        <stop offset="1" stopColor="#0f1114" />
+      </linearGradient>
+      <radialGradient id="vr-vignette" cx="0.5" cy="0.5" r="0.75">
+        <stop offset="0.62" stopColor="#000" stopOpacity="0" />
+        <stop offset="1" stopColor="#000" stopOpacity="0.7" />
+      </radialGradient>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#vr-sky)" />
+    <rect y="250" width="800" height="250" fill="url(#vr-ground)" />
+
+    {/* Terminal with glass facade */}
+    <path d="M70 250V196l300-14 300 14v54Z" fill="#20252d" />
+    <path d="M70 196l300-14 300 14" fill="none" stroke="#3a4150" strokeWidth="2" />
+    {Array.from({ length: 18 }, (_, index) => (
+      <rect key={index} x={88 + index * 32} y="206" width="22" height="32" rx="2" fill="#a9b8c9" opacity={0.12 + ((index * 7) % 5) * 0.04} />
+    ))}
+
+    {/* Control tower */}
+    <rect x="690" y="132" width="16" height="118" fill="#20252d" />
+    <path d="M676 132h44l-6-22h-32Z" fill="#2a303a" />
+    <rect x="682" y="114" width="32" height="10" rx="2" fill="#a9b8c9" opacity="0.35" />
+
+    {/* Runway in perspective */}
+    <path d="M372 252h56l250 248H122Z" fill="#16181c" />
+    <path d="M372 252 122 500M428 252l250 248" stroke="#3a4150" strokeWidth="2" />
+    {[
+      [398, 264, 4, 10],
+      [397, 290, 6, 16],
+      [395, 326, 10, 24],
+      [392, 378, 16, 34],
+      [388, 450, 24, 46],
+    ].map(([x, y, w, h]) => (
+      <rect key={y} x={x} y={y} width={w} height={h} fill="#c4c9d1" opacity="0.55" />
+    ))}
+    {[0.1, 0.25, 0.42, 0.62, 0.86].map((t) => (
+      <g key={t} fill="#e7c9a5" opacity="0.7">
+        <circle cx={372 - 250 * t} cy={252 + 248 * t} r={1.5 + t * 3} />
+        <circle cx={428 + 250 * t} cy={252 + 248 * t} r={1.5 + t * 3} />
+      </g>
+    ))}
+
+    {/* Parked aircraft */}
+    <g transform="translate(170 262)" fill="#8b93a1">
+      <path d="M0 14c0-5 6-8 14-8h120c10 0 18 4 22 8-4 4-12 8-22 8H14C6 22 0 19 0 14Z" />
+      <path d="M62 14 40 -6h14l34 20Z" />
+      <path d="M62 14 40 34h14l34-20Z" opacity="0.7" />
+      <path d="M126 6 140-10h8l-6 20Z" />
+    </g>
+
+    {/* VR gaze reticle */}
+    <g stroke="#e2e8f0" strokeOpacity="0.8" fill="none">
+      <circle cx="400" cy="214" r="18" strokeWidth="1.5" />
+      <circle cx="400" cy="214" r="3" fill="#e2e8f0" stroke="none" />
+      <path d="M400 186v-10M400 252v-10M372 214h-10M438 214h-10" strokeWidth="1.5" />
+    </g>
+
+    <rect width="800" height="500" fill="url(#vr-vignette)" />
+
+    <g fontFamily={MONO}>
+      <rect x="24" y="22" width="168" height="34" rx="17" fill="#000" opacity="0.45" stroke="#94a3b8" strokeOpacity="0.35" />
+      <text x="42" y="44" fontSize="13" fill="#d4d8de">VR · QUEST 2</text>
+      <text x="776" y="478" fontSize="12" fill="#a1a1aa" textAnchor="end">TERMINAL · AIRSIDE</text>
+    </g>
+  </svg>
+);
+
+/** War Plane 1945: a top-down arcade sky over the sea, player below, a wave above. */
+const Plane = ({ fill, wing = fill }) => (
+  <g>
+    <path d="M0-26c4 0 6 6 6 14v34c0 4-2 6-6 6s-6-2-6-6v-34c0-8 2-14 6-14Z" fill={fill} />
+    <path d="M-34-2h68c2 0 3 2 3 4v4c0 2-1 3-3 3h-68c-2 0-3-1-3-3v-4c0-2 1-4 3-4Z" fill={wing} />
+    <path d="M-13 20h26c1 0 2 1 2 2v3c0 1-1 2-2 2h-26c-1 0-2-1-2-2v-3c0-1 1-2 2-2Z" fill={wing} />
+    <rect x="-9" y="-30" width="18" height="2.5" rx="1.25" fill={fill} opacity="0.6" />
+  </g>
+);
+
+const WarplaneArt = ({ label }) => (
+  <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
+    <defs>
+      <linearGradient id="wp-sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#0f1d24" />
+        <stop offset="1" stopColor="#132a33" />
+      </linearGradient>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#wp-sea)" />
+    <g stroke="#a9b8c9" strokeOpacity="0.08" strokeWidth="2" fill="none" strokeLinecap="round">
+      {[60, 130, 205, 290, 360, 440].map((y, index) => (
+        <path key={y} d={`M${(index * 97) % 160} ${y}c30-8 60 8 90 0s60-8 90 0`} />
+      ))}
+      {[95, 250, 400].map((y, index) => (
+        <path key={y} d={`M${520 + ((index * 53) % 90)} ${y}c30-8 60 8 90 0s60-8 90 0`} />
+      ))}
+    </g>
+
+    {/* Soft clouds */}
+    <g fill="#e2e8f0" opacity="0.07">
+      <ellipse cx="160" cy="150" rx="120" ry="34" />
+      <ellipse cx="220" cy="134" rx="70" ry="26" />
+      <ellipse cx="640" cy="330" rx="130" ry="36" />
+      <ellipse cx="590" cy="312" rx="64" ry="24" />
+    </g>
+
+    {/* Enemy wave in a V formation, flying down the screen */}
+    {[
+      [400, 96],
+      [340, 132],
+      [460, 132],
+      [280, 168],
+      [520, 168],
+    ].map(([x, y]) => (
+      <g key={`${x}-${y}`} transform={`translate(${x} ${y}) rotate(180) scale(0.8)`}>
+        <Plane fill="#6b7280" wing="#565c66" />
+      </g>
+    ))}
+
+    {/* Player shots */}
+    <g fill="#e7c9a5">
+      {[0, 1, 2, 3].map((index) => (
+        <g key={index} opacity={1 - index * 0.18}>
+          <rect x="389" y={330 - index * 42} width="4" height="16" rx="2" />
+          <rect x="407" y={330 - index * 42} width="4" height="16" rx="2" />
+        </g>
+      ))}
+    </g>
+    {/* Enemy shots */}
+    <g fill="#c0504a" opacity="0.8">
+      <circle cx="340" cy="190" r="3.5" />
+      <circle cx="332" cy="226" r="3.5" />
+      <circle cx="520" cy="206" r="3.5" />
+    </g>
+
+    {/* Player plane and its shadow on the water */}
+    <g transform="translate(414 420) scale(1.25)" opacity="0.25">
+      <Plane fill="#000" />
+    </g>
+    <g transform="translate(400 404) scale(1.25)">
+      <Plane fill="#d4d8de" wing="#b4bac4" />
+    </g>
+
+    {/* HUD */}
+    <g fontFamily={MONO}>
+      <rect x="24" y="22" width="176" height="34" rx="17" fill="#000" opacity="0.4" stroke="#94a3b8" strokeOpacity="0.3" />
+      <text x="42" y="44" fontSize="13" fill="#d4d8de">SCORE 004200</text>
+      <rect x="664" y="22" width="112" height="34" rx="17" fill="#000" opacity="0.4" stroke="#94a3b8" strokeOpacity="0.3" />
+      <text x="720" y="44" fontSize="13" fill="#d4d8de" textAnchor="middle">WAVE 03</text>
+      {[0, 1, 2].map((index) => (
+        <g key={index} transform={`translate(${44 + index * 24} 470) scale(0.32)`}>
+          <Plane fill="#a9b8c9" />
+        </g>
+      ))}
+      <text x="776" y="478" fontSize="12" fill="#a1a1aa" textAnchor="end">1945 · ARCADE</text>
+    </g>
+  </svg>
+);
+
+/** Accessible names for the artwork, in both languages. */
+const artLabels = {
+  racing: tx("Stylized night race track with a 60 FPS HUD", "Ilustrasi lintasan balap malam dengan HUD 60 FPS"),
+  miami: tx("Neon sunset city skyline with palm trees", "Ilustrasi siluet kota saat matahari terbenam dengan pohon palem"),
+  pipeline: tx("OpenGL ES render pipeline diagram", "Diagram pipeline render OpenGL ES"),
+  sidaf: tx("Information system dashboard wireframe", "Wireframe dashboard sistem informasi"),
+  airport: tx("Virtual reality airport terminal and runway", "Terminal dan landasan bandara dalam virtual reality"),
+  warplane: tx("Top-down arcade air combat scene over the sea", "Adegan pertempuran udara arcade dari atas, di atas laut"),
+};
+
 const artMap = {
   racing: RacingArt,
   miami: MiamiArt,
   pipeline: PipelineArt,
+  sidaf: SidafArt,
+  airport: AirportArt,
+  warplane: WarplaneArt,
 };
 
 /**
@@ -280,7 +548,9 @@ const artMap = {
  */
 const ProjectPreview = ({ art, image, alt, className = "" }) => {
   const [failed, setFailed] = useState(false);
+  const { lang } = useLanguage();
   const Art = artMap[art] ?? PipelineArt;
+  const label = (artLabels[art] ?? artLabels.pipeline)[lang];
   const src = assetUrl(image);
 
   return (
@@ -288,7 +558,7 @@ const ProjectPreview = ({ art, image, alt, className = "" }) => {
       {src && !failed ? (
         <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
       ) : (
-        <Art />
+        <Art label={label} />
       )}
     </div>
   );

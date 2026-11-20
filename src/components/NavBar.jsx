@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 import { CloseIcon, GitHubIcon, MenuIcon } from "./Icons.jsx";
-import { githubUser, links, navLinks, routes } from "../constants/index.js";
+import { LanguageToggle, ThemeToggle } from "./Preferences.jsx";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { githubUser, links, navLinks, routes, ui } from "../constants/index.js";
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const items = useLocalized(navLinks);
+  const { nav } = useLocalized(ui);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -37,14 +41,14 @@ const NavBar = () => {
     <>
       <header className={`navbar ${state}`}>
         <div className="navbar-inner">
-          <Link to={routes.home} className="navbar-logo" aria-label="Adriansyah, home">
+          <Link to={routes.home} className="navbar-logo" aria-label={nav.homeLabel}>
             ADRIANSYAH
           </Link>
 
-          <nav className="navbar-desktop" aria-label="Primary">
+          <nav className="navbar-desktop" aria-label={nav.primary}>
             <ul>
-              {navLinks.map(({ name, to, end }) => (
-                <li key={name} className="group">
+              {items.map(({ id, name, to, end }) => (
+                <li key={id} className="group">
                   <NavLink to={to} end={end} className={({ isActive }) => (isActive ? "active" : undefined)}>
                     <span>{name}</span>
                     <span className="nav-underline" />
@@ -54,19 +58,23 @@ const NavBar = () => {
             </ul>
           </nav>
 
-          <a href={links.githubProfile} target="_blank" rel="noopener noreferrer" className="contact-btn group">
-            <div className="contact-btn-inner">
-              <GitHubIcon className="size-4" />
-              <span>GitHub</span>
-            </div>
-          </a>
+          <div className="navbar-actions">
+            <LanguageToggle />
+            <ThemeToggle />
+            <a href={links.githubProfile} target="_blank" rel="noopener noreferrer" className="contact-btn group">
+              <div className="contact-btn-inner">
+                <GitHubIcon className="size-4" />
+                <span>GitHub</span>
+              </div>
+            </a>
+          </div>
 
           <button
             type="button"
             className="menu-toggle"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? nav.closeMenu : nav.openMenu}
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <CloseIcon className="size-6" /> : <MenuIcon className="size-6" />}
@@ -75,10 +83,10 @@ const NavBar = () => {
 
         <div id="mobile-menu" className={`mobile-menu ${open ? "open" : ""}`} inert={!open}>
           <div className="mobile-menu-inner">
-            <nav aria-label="Mobile">
+            <nav aria-label={nav.mobile}>
               <ul className="flex flex-col gap-1 pt-4">
-                {navLinks.map(({ name, to, end }) => (
-                  <li key={name}>
+                {items.map(({ id, name, to, end }) => (
+                  <li key={id}>
                     <NavLink
                       to={to}
                       end={end}
@@ -91,6 +99,12 @@ const NavBar = () => {
                 ))}
               </ul>
             </nav>
+
+            <div className="mobile-prefs" role="group" aria-label={nav.preferences}>
+              <LanguageToggle />
+              <ThemeToggle withLabel />
+            </div>
+
             <a
               href={links.githubProfile}
               target="_blank"

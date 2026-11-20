@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { createDotTexture } from "../Models/canvasTextures.js";
+import { useThemeTween } from "../Models/useThemeTween.js";
 
 const TOP = 7;
 const BOTTOM = -3;
 
-/** A few faint, slow-rising dust motes that give the scene depth. */
-const Particles = ({ count = 40, spread = 10, color = "#e4e4e7" }) => {
+/** A few faint, slow-rising dust motes that give the scene depth (`tone` = { color, opacity }). */
+const Particles = ({ count = 40, spread = 10, tone = { color: "#e4e4e7", opacity: 0.3 } }) => {
   const pointsRef = useRef(null);
+  const material = useThemeTween(tone);
   const sprite = useMemo(() => createDotTexture(), []);
 
   const { positions, speeds } = useMemo(() => {
@@ -45,12 +47,11 @@ const Particles = ({ count = 40, spread = 10, color = "#e4e4e7" }) => {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
+        ref={material}
         map={sprite}
-        color={color}
         size={0.05}
         sizeAttenuation
         transparent
-        opacity={0.3}
         depthWrite={false}
         toneMapped={false}
       />

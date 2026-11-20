@@ -6,21 +6,25 @@ import { useGSAP } from "@gsap/react";
 import TitleHeader from "../components/TitleHeader.jsx";
 import { BrandLogo } from "../components/CompanyEmblems.jsx";
 import { ArrowRightIcon, ExternalIcon, Icon } from "../components/Icons.jsx";
-import { featuredWork } from "../constants/index.js";
+import { ProjectTags } from "../components/ProjectBits.jsx";
+import { useLocalized } from "../context/LanguageContext.jsx";
+import { featuredWork, ui } from "../constants/index.js";
 import { renderInlineCode } from "../utils/text.jsx";
 
-const Tags = ({ tags }) => (
-  <ul className="flex flex-wrap gap-2" aria-label="Technologies">
-    {tags.map((tag) => (
-      <li key={tag} className="tag-pill">
-        {tag}
-      </li>
+/** Value-over-label stat tiles shared by both cards. */
+const Stats = ({ stats, className = "" }) => (
+  <dl className={`work-stats ${className}`}>
+    {stats.map((stat) => (
+      <div key={stat.id} className="work-stat">
+        <dt className="text-xs text-blue-50">{stat.label}</dt>
+        <dd className="counter-number mb-0! text-2xl! md:text-3xl!">{stat.value}</dd>
+      </div>
     ))}
-  </ul>
+  </dl>
 );
 
 /** Enterprise operations card: org header, summary and a three-node system topology. */
-const EnterpriseCard = ({ work }) => (
+const EnterpriseCard = ({ work, topologyLabel }) => (
   <article className="work-card is-pro">
     <div className="flex items-center gap-4">
       <BrandLogo brand={work.logo} className="h-14 w-20" decorative />
@@ -35,9 +39,9 @@ const EnterpriseCard = ({ work }) => (
 
     <p className="text-lg leading-relaxed text-body">{renderInlineCode(work.summary)}</p>
 
-    <ol className="topology" aria-label="Systems operated">
+    <ol className="topology" aria-label={topologyLabel}>
       {work.topology.map((node) => (
-        <li key={node.title} className="topology-node">
+        <li key={node.icon} className="topology-node">
           <span className="topology-icon" aria-hidden="true">
             <Icon name={node.icon} className="size-5" />
           </span>
@@ -49,16 +53,9 @@ const EnterpriseCard = ({ work }) => (
       ))}
     </ol>
 
-    <dl className="work-stats">
-      {work.stats.map((stat) => (
-        <div key={stat.label} className="work-stat">
-          <dt className="text-xs text-blue-50">{stat.label}</dt>
-          <dd className="counter-number mb-0! text-2xl! md:text-3xl!">{stat.value}</dd>
-        </div>
-      ))}
-    </dl>
+    <Stats stats={work.stats} />
 
-    <Tags tags={work.tags} />
+    <ProjectTags tags={work.tags} />
 
     <div className="mt-auto flex flex-wrap gap-3 pt-2">
       <Link to={work.cta.to} className="project-link primary">
@@ -74,8 +71,11 @@ const EnterpriseCard = ({ work }) => (
   </article>
 );
 
-/** Preservation archive card: a technical pipeline, no game titles or artwork. */
-const PreservationCard = ({ work }) => (
+/**
+ * Projects card: the 3 original + 2 preservation split, then the preservation
+ * pipeline as systems engineering (no game titles or artwork on Home).
+ */
+const ProjectsCard = ({ work }) => (
   <article className="work-card is-sys">
     <div className="flex items-center gap-4">
       <span className="exp-card-icon size-14!" aria-hidden="true">
@@ -89,24 +89,29 @@ const PreservationCard = ({ work }) => (
 
     <p className="text-lg leading-relaxed text-body">{work.summary}</p>
 
-    <ol className="pipeline" aria-label="Recompilation pipeline">
-      {work.pipeline.map((step, index) => (
-        <li key={step.title} className="pipeline-step">
-          <span className="pipeline-index" aria-hidden="true">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <span className="topology-icon" aria-hidden="true">
-            <Icon name={step.icon} className="size-5" />
-          </span>
-          <span className="min-w-0">
-            <span className="block font-semibold text-white-50">{step.title}</span>
-            <span className="block text-sm text-white-50/65">{step.body}</span>
-          </span>
-        </li>
-      ))}
-    </ol>
+    <Stats stats={work.stats} className="sm:grid-cols-2!" />
 
-    <Tags tags={work.tags} />
+    <div>
+      <p className="mb-3 font-mono text-xs tracking-widest text-blue-50 uppercase">{work.pipelineLabel}</p>
+      <ol className="pipeline" aria-label={work.pipelineLabel}>
+        {work.pipeline.map((step, index) => (
+          <li key={step.icon} className="pipeline-step">
+            <span className="pipeline-index" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="topology-icon" aria-hidden="true">
+              <Icon name={step.icon} className="size-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block font-semibold text-white-50">{step.title}</span>
+              <span className="block text-sm text-white-50/65">{step.body}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <ProjectTags tags={work.tags} />
 
     <div className="mt-auto pt-2">
       <Link to={work.cta.to} className="project-link secondary">
@@ -117,9 +122,11 @@ const PreservationCard = ({ work }) => (
   </article>
 );
 
-/** Home "Featured Work": enterprise operations first, then the preservation archive. */
+/** Home "Featured Work": enterprise operations first, then the projects summary. */
 const FeaturedWork = () => {
   const sectionRef = useRef(null);
+  const work = useLocalized(featuredWork);
+  const { featured } = useLocalized(ui);
 
   useGSAP(
     () => {
@@ -142,14 +149,14 @@ const FeaturedWork = () => {
   return (
     <section id="work" ref={sectionRef} className="section-padding flex-center w-full">
       <div className="w-full max-w-[1600px]">
-        <TitleHeader title="Featured Work" sub="Operations & Systems Engineering" />
+        <TitleHeader title={featured.title} sub={featured.sub} />
 
         <div className="mt-16 grid grid-cols-1 gap-8 xl:grid-cols-5">
           <div className="xl:col-span-3">
-            <EnterpriseCard work={featuredWork.enterprise} />
+            <EnterpriseCard work={work.enterprise} topologyLabel={featured.topologyLabel} />
           </div>
           <div className="xl:col-span-2">
-            <PreservationCard work={featuredWork.preservation} />
+            <ProjectsCard work={work.projects} />
           </div>
         </div>
       </div>

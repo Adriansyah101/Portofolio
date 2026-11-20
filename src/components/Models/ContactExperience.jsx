@@ -18,9 +18,9 @@ import {
 } from "./DeskParts.jsx";
 import { contactScene } from "../../constants/index.js";
 import { assetUrl } from "../../utils/assets.js";
+import { useThemeTween } from "./useThemeTween.js";
+import { contactPalettes, paletteFor } from "./scenePalettes.js";
 
-// Warm graphite studio backdrop; must match `.contact-canvas` in index.css.
-const STUDIO_BACKGROUND = "#2a2825";
 const FLOOR_Y = -1.5;
 
 /** Quiet single-monitor workstation: walnut desk, neutral studio light. */
@@ -39,19 +39,27 @@ const ContactDesk = () => (
   </group>
 );
 
-const ContactExperience = () => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+/**
+ * Fog, floor and studio lights, eased toward the theme palette. The fog
+ * colour (`palette.stage`) matches the `.contact-canvas` background, which
+ * fades with a CSS transition at the same pace.
+ */
+const Studio = ({ palette }) => {
+  const fog = useThemeTween({ color: palette.stage });
+  const floor = useThemeTween({ color: palette.floor });
+  const ambient = useThemeTween(palette.ambient);
+  const key = useThemeTween(palette.key);
+  const fill = useThemeTween(palette.fill);
+  const hemisphere = useThemeTween(palette.hemisphere);
 
   return (
-    // `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly.
-    <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]}>
-      <fog attach="fog" args={[STUDIO_BACKGROUND, 9, 22]} />
+    <>
+      <fog ref={fog} attach="fog" args={["#000000", 9, 22]} />
 
-      <ambientLight intensity={0.5} color="#f4f4f5" />
+      <ambientLight ref={ambient} />
       <directionalLight
+        ref={key}
         position={[5, 6, 3]}
-        intensity={2.1}
-        color="#f5eee6"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0005}
@@ -62,8 +70,26 @@ const ContactExperience = () => {
         shadow-camera-near={0.5}
         shadow-camera-far={25}
       />
-      <directionalLight position={[-5, 4, 5]} intensity={0.7} color="#cbd5e1" />
-      <hemisphereLight args={["#e4e4e7", "#3a3631", 0.35]} />
+      <directionalLight ref={fill} position={[-5, 4, 5]} />
+      <hemisphereLight ref={hemisphere} />
+
+      {/* Shadow-receiving floor */}
+      <mesh position={[0, FLOOR_Y, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[40, 40]} />
+        <meshStandardMaterial ref={floor} roughness={0.95} />
+      </mesh>
+    </>
+  );
+};
+
+/** `theme` ("dark" | "light") selects the studio palette. */
+const ContactExperience = ({ theme = "dark" }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
+  return (
+    // `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly.
+    <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]}>
+      <Studio palette={paletteFor(contactPalettes, theme)} />
 
       {!isMobile && (
         <OrbitControls
@@ -75,12 +101,6 @@ const ContactExperience = () => {
           maxAzimuthAngle={Math.PI / 3}
         />
       )}
-
-      {/* Shadow-receiving floor */}
-      <mesh position={[0, FLOOR_Y, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color="#35322e" roughness={0.95} />
-      </mesh>
 
       <Suspense fallback={null}>
         <group position={[0, FLOOR_Y, 0]} rotation={[0, -0.45, 0]} scale={isMobile ? 0.85 : 1}>

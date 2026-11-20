@@ -1,4 +1,5 @@
-import { logoItems } from "../constants/index.js";
+import { logoItems, ui } from "../constants/index.js";
+import { useLocalized } from "../context/LanguageContext.jsx";
 
 /** Short monogram shown in the glyph tile of each marquee item. */
 const monogram = (name) =>
@@ -12,15 +13,17 @@ const monogram = (name) =>
     .toUpperCase() || name.slice(0, 2);
 
 const LogoSection = () => {
+  const items = useLocalized(logoItems);
+  const { logos } = useLocalized(ui);
   // Duplicated so translating the track by -50% loops seamlessly.
-  const track = [...logoItems, ...logoItems];
+  const track = [...items, ...items];
 
   return (
-    <section className="relative my-16 md:my-24" aria-label="Core technologies">
+    <section className="relative my-16 md:my-24" aria-label={logos.label}>
       <div className="marquee">
         <div className="marquee-track">
           {track.map((item, index) => (
-            <div key={`${item.name}-${index}`} className="marquee-item" aria-hidden={index >= logoItems.length}>
+            <div key={`${item.id}-${index}`} className="marquee-item" aria-hidden={index >= items.length}>
               <span className="marquee-glyph" aria-hidden="true">
                 {item.glyph ?? monogram(item.name)}
               </span>
