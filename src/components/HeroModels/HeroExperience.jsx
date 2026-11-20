@@ -39,7 +39,7 @@ const HeroExperience = () => {
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
       <HeroLights />
-      <Particles count={isMobile ? 60 : 110} />
+      <Particles count={isMobile ? 18 : 36} />
 
       {/* On phones the canvas stays non-interactive so page scrolling works. */}
       {!isMobile && (
@@ -70,7 +70,7 @@ const HeroExperience = () => {
 
       {!isMobile && (
         <EffectComposer multisampling={4}>
-          <Bloom intensity={0.85} luminanceThreshold={0.9} luminanceSmoothing={0.25} mipmapBlur />
+          <Bloom intensity={0.25} luminanceThreshold={0.95} luminanceSmoothing={0.2} mipmapBlur />
           <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
         </EffectComposer>
       )}

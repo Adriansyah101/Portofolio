@@ -96,7 +96,11 @@ All copy lives in [`src/constants/index.js`](src/constants/index.js):
 - `heroContent`, `words`, `counterItems`, `featuredWork`, `logoItems` and `abilities`: the Home page.
   A counter item with `text` (e.g. `"Dozens"`) shows that word instead of an animated number.
 - `expCards`, `techStackIcons` and `highlights`: the Journey page (work experience only). Set `logo`
-  on an `expCards` entry to use an inline SVG emblem from `src/components/CompanyEmblems.jsx`.
+  on an `expCards` entry (or `brand` on a highlight) to a key of `brandLogos`.
+- `brandLogos`: official company/product logos, read from `public/images/` with relative paths
+  (`./images/asdp.png`, `./images/ferizy.svg`). Each lists fallback files in order (png → svg); if
+  none loads, the drawn SVG emblem or a text wordmark is shown, never a broken image. Logos sit on a
+  light pill so their brand colours stay readable on the dark theme.
 
 ## Adding your own screenshots and models
 

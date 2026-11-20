@@ -121,35 +121,41 @@ export const createCodeTexture = ({ seed = 7, accent = "#6ee7ff" } = {}) => {
  * Terminal screen with ops-style shell output. Like the code texture it holds
  * two identical halves so it can scroll and loop seamlessly.
  */
+// Muted palette: slate prompt, sage "ok" states, zinc output.
+const T_PROMPT = "#94a3b8";
+const T_OK = "#8fb3a0";
+const T_CMD = "#d4d4d8";
+const T_OUT = "#a1a1aa";
+
 const TERMINAL_LINES = [
-  ["$ ", "#6ee7ff", "systemctl status ticketing.service", "#e2e8f0"],
-  ["● ", "#34d399", "ticketing.service - Ticketing API", "#cbd5e1"],
-  ["  ", null, "Active: active (running) · 41d uptime", "#34d399"],
-  ["$ ", "#6ee7ff", "./deploy.sh counter-app --harbor all", "#e2e8f0"],
-  ["[OK] ", "#34d399", "harbor-node-01   counter-app   synced", "#cbd5e1"],
-  ["[OK] ", "#34d399", "harbor-node-02   counter-app   synced", "#cbd5e1"],
-  ["[OK] ", "#34d399", "cloud-edge       ticketing     healthy", "#cbd5e1"],
-  ["$ ", "#6ee7ff", "gatectl status --site surabaya", "#e2e8f0"],
-  ["  ", null, "plc: online   gates: 4/4   mode: auto", "#93c5fd"],
-  ["$ ", "#6ee7ff", "curl -s api/health | jq .status", "#e2e8f0"],
-  ["  ", null, '"ok"   p95 latency 120 ms', "#34d399"],
-  ["$ ", "#6ee7ff", "uptime", "#e2e8f0"],
-  ["  ", null, "load average: 0.42, 0.38, 0.35", "#94a3b8"],
-  ["$ ", "#6ee7ff", "_", "#e2e8f0"],
+  ["$ ", T_PROMPT, "systemctl status ticketing.service", T_CMD],
+  ["● ", T_OK, "ticketing.service - Ticketing API", T_OUT],
+  ["  ", null, "Active: active (running) · 41d uptime", T_OK],
+  ["$ ", T_PROMPT, "./deploy.sh counter-app --harbor all", T_CMD],
+  ["[OK] ", T_OK, "harbor-node-01   counter-app   synced", T_OUT],
+  ["[OK] ", T_OK, "harbor-node-02   counter-app   synced", T_OUT],
+  ["[OK] ", T_OK, "cloud-edge       ticketing     healthy", T_OUT],
+  ["$ ", T_PROMPT, "gatectl status --site surabaya", T_CMD],
+  ["  ", null, "plc: online   gates: 4/4   mode: auto", T_OUT],
+  ["$ ", T_PROMPT, "curl -s api/health | jq .status", T_CMD],
+  ["  ", null, '"ok"   p95 latency 120 ms', T_OK],
+  ["$ ", T_PROMPT, "uptime", T_CMD],
+  ["  ", null, "load average: 0.42, 0.38, 0.35", "#71717a"],
+  ["$ ", T_PROMPT, "_", T_CMD],
 ];
 
-export const createTerminalTexture = ({ accent = "#6ee7ff" } = {}) => {
+export const createTerminalTexture = ({ accent = "#94a3b8" } = {}) => {
   const width = 1024;
   const half = 640;
   const canvas = createCanvas(width, half * 2);
   const ctx = canvas.getContext("2d");
   const lineHeight = (half - 70) / TERMINAL_LINES.length;
 
-  ctx.fillStyle = "#070b14";
+  ctx.fillStyle = "#0c0d10";
   ctx.fillRect(0, 0, width, half);
 
   // Title bar
-  ctx.fillStyle = "#0f172a";
+  ctx.fillStyle = "#16171b";
   ctx.fillRect(0, 0, width, 48);
   ["#334155", "#334155", "#334155"].forEach((color, index) => {
     ctx.fillStyle = color;
@@ -162,7 +168,7 @@ export const createTerminalTexture = ({ accent = "#6ee7ff" } = {}) => {
   ctx.textBaseline = "middle";
   ctx.fillText("ops@harbor-gw: ~", 120, 25);
   ctx.fillStyle = accent;
-  ctx.globalAlpha = 0.6;
+  ctx.globalAlpha = 0.25;
   ctx.fillRect(0, 47, width, 2);
   ctx.globalAlpha = 1;
 
@@ -196,8 +202,8 @@ export const createDashboardTexture = () => {
   const ctx = canvas.getContext("2d");
 
   const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, "#07111f");
-  gradient.addColorStop(1, "#0b1f3a");
+  gradient.addColorStop(0, "#0e0f12");
+  gradient.addColorStop(1, "#16181c");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
@@ -205,16 +211,16 @@ export const createDashboardTexture = () => {
   ctx.fillStyle = "#94a3b8";
   ctx.font = "600 26px monospace";
   ctx.fillText("PRODUCTION · SYSTEM STATUS", 48, 56);
-  ctx.fillStyle = "#34d399";
+  ctx.fillStyle = "#8fb3a0";
   ctx.beginPath();
   ctx.arc(width - 70, 56, 10, 0, Math.PI * 2);
   ctx.fill();
 
   // Headline metric
-  ctx.fillStyle = "#e2e8f0";
-  ctx.font = "700 112px Arial, Helvetica, sans-serif";
+  ctx.fillStyle = "#e4e4e7";
+  ctx.font = "600 112px Arial, Helvetica, sans-serif";
   ctx.fillText("99.9%", 48, 160);
-  ctx.fillStyle = "#6ee7ff";
+  ctx.fillStyle = "#94a3b8";
   ctx.font = "26px monospace";
   ctx.fillText("ticketing availability", 52, 236);
 
@@ -223,11 +229,11 @@ export const createDashboardTexture = () => {
   ctx.font = "26px monospace";
   services.forEach((name, index) => {
     const y = 300 + index * 58;
-    ctx.fillStyle = "#34d399";
+    ctx.fillStyle = "#8fb3a0";
     ctx.beginPath();
     ctx.arc(60, y, 8, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#cbd5e1";
+    ctx.fillStyle = "#d4d4d8";
     ctx.fillText(name, 86, y);
     ctx.fillStyle = "#64748b";
     ctx.fillText("OK", 400, y);
@@ -251,8 +257,8 @@ export const createDashboardTexture = () => {
     return [chart.x + t * chart.w, chart.y + chart.h * (1 - value)];
   });
   const fill = ctx.createLinearGradient(0, chart.y, 0, chart.y + chart.h);
-  fill.addColorStop(0, "rgba(110, 231, 255, 0.35)");
-  fill.addColorStop(1, "rgba(110, 231, 255, 0)");
+  fill.addColorStop(0, "rgba(148, 163, 184, 0.22)");
+  fill.addColorStop(1, "rgba(148, 163, 184, 0)");
   ctx.beginPath();
   ctx.moveTo(points[0][0], chart.y + chart.h);
   points.forEach(([x, y]) => ctx.lineTo(x, y));
@@ -262,15 +268,15 @@ export const createDashboardTexture = () => {
   ctx.fill();
   ctx.beginPath();
   points.forEach(([x, y], index) => (index === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
-  ctx.strokeStyle = "#6ee7ff";
-  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#a9b8c9";
+  ctx.lineWidth = 3;
   ctx.stroke();
   ctx.fillStyle = "#64748b";
   ctx.font = "22px monospace";
   ctx.fillText("transactions / min", chart.x, chart.y + chart.h + 34);
 
-  ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
-  ctx.lineWidth = 4;
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.2)";
+  ctx.lineWidth = 3;
   ctx.strokeRect(14, 14, width - 28, height - 28);
 
   return toTexture(canvas);

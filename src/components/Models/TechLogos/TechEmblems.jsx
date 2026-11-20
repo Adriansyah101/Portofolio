@@ -69,11 +69,11 @@ export const OpenGLEmblem = () => {
       <group ref={ringRef} rotation={[1.1, 0.3, 0]}>
         <mesh>
           <torusGeometry args={[1.15, 0.02, 12, 96]} />
-          <meshStandardMaterial color="#a78bfa" emissive="#a78bfa" emissiveIntensity={1.4} />
+          <meshStandardMaterial color="#94a3b8" emissive="#94a3b8" emissiveIntensity={0.5} />
         </mesh>
         <mesh position={[1.15, 0, 0]}>
           <sphereGeometry args={[0.07, 16, 16]} />
-          <meshStandardMaterial color="#6ee7ff" emissive="#6ee7ff" emissiveIntensity={2} />
+          <meshStandardMaterial color="#cbd5e1" emissive="#cbd5e1" emissiveIntensity={0.6} />
         </mesh>
       </group>
     </group>
@@ -191,7 +191,7 @@ export const CloudflareEmblem = () => {
           return (
             <mesh key={index} position={[Math.cos(angle) * 1.45, 0, Math.sin(angle) * 1.45]}>
               <sphereGeometry args={[0.08, 16, 16]} />
-              <meshStandardMaterial color="#ffffff" emissive="#ffd29a" emissiveIntensity={1.6} />
+              <meshStandardMaterial color="#ffffff" emissive="#ffd29a" emissiveIntensity={0.7} />
             </mesh>
           );
         })}
@@ -235,8 +235,8 @@ export const GitEmblem = () => {
 
 /* ------------------------------ Server rack ------------------------------- */
 
-const STATUS_GREEN = [0.4, 2.4, 1.1];
-const STATUS_CYAN = [0.6, 2.2, 2.8];
+const STATUS_GREEN = "#7fa38f";
+const STATUS_CYAN = "#a9b8c9";
 
 /** One rack-mount server: chassis, front vents and status LEDs. */
 const ServerUnit = ({ y, row, ledsRef }) => (
@@ -264,7 +264,7 @@ const ServerUnit = ({ y, row, ledsRef }) => (
     ))}
     <mesh position={[0.6, -0.09, 0.61]}>
       <boxGeometry args={[0.38, 0.03, 0.01]} />
-      <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+      <meshBasicMaterial color="#7c98b6" />
     </mesh>
   </group>
 );
@@ -324,18 +324,18 @@ export const HybridCloudEmblem = () => {
       {CLOUD_PUFFS.map(([x, y, z, r]) => (
         <mesh key={x} position={[x, y, z]}>
           <sphereGeometry args={[r, 32, 32]} />
-          <meshStandardMaterial color="#7dd3fc" roughness={0.3} metalness={0.1} />
+          <meshStandardMaterial color="#d4dbe3" roughness={0.45} metalness={0.05} />
         </mesh>
       ))}
       <mesh position={[-0.02, 0.42, 0]} rotation={[0, 0, Math.PI / 2]}>
         <capsuleGeometry args={[0.26, 1.1, 8, 24]} />
-        <meshStandardMaterial color="#7dd3fc" roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial color="#d4dbe3" roughness={0.45} metalness={0.05} />
       </mesh>
 
       {[-0.25, 0.25].map((x) => (
         <mesh key={x} position={[x, -0.05, 0]}>
           <cylinderGeometry args={[0.025, 0.025, 1.0, 12]} />
-          <meshStandardMaterial color="#38bdf8" emissive="#0ea5e9" emissiveIntensity={0.6} />
+          <meshStandardMaterial color="#94a3b8" emissive="#64748b" emissiveIntensity={0.25} />
         </mesh>
       ))}
       {[0, 1, 2, 3].map((index) => (
@@ -363,7 +363,7 @@ export const HybridCloudEmblem = () => {
         ))}
         <mesh position={[-0.3, 0, 0.455]}>
           <boxGeometry args={[0.6, 0.05, 0.01]} />
-          <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+          <meshBasicMaterial color="#7c98b6" />
         </mesh>
       </group>
     </group>
@@ -374,8 +374,8 @@ export const HybridCloudEmblem = () => {
 
 const BOOM_LENGTH = 1.8;
 const BOOM_STRIPES = 6;
-const LAMP_STOP = [2.6, 0.5, 0.4];
-const LAMP_GO = [0.4, 2.4, 1.1];
+const LAMP_STOP = [1.3, 0.38, 0.32];
+const LAMP_GO = [0.4, 1.2, 0.65];
 
 /** Automated barrier gate: PLC cabinet with a striped boom that lifts and lowers. */
 export const GateEmblem = () => {
@@ -402,7 +402,7 @@ export const GateEmblem = () => {
       </mesh>
       <mesh position={[0, -0.25, 0.255]}>
         <boxGeometry args={[0.36, 0.04, 0.01]} />
-        <meshBasicMaterial color="#38bdf8" toneMapped={false} />
+        <meshBasicMaterial color="#7c98b6" />
       </mesh>
       <mesh position={[0, 0.6, 0]}>
         <sphereGeometry args={[0.09, 16, 16]} />
@@ -420,7 +420,7 @@ export const GateEmblem = () => {
           return (
             <mesh key={index} position={[segment * index + segment / 2, 0, 0]}>
               <boxGeometry args={[segment, 0.12, 0.08]} />
-              <meshStandardMaterial color={index % 2 === 0 ? "#f8fafc" : "#ef4444"} roughness={0.4} />
+              <meshStandardMaterial color={index % 2 === 0 ? "#f4f4f5" : "#c0504a"} roughness={0.4} />
             </mesh>
           );
         })}

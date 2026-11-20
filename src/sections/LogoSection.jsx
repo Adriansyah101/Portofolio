@@ -1,6 +1,6 @@
 import { logoItems } from "../constants/index.js";
 
-/** Short monogram shown in the coloured glyph tile of each marquee item. */
+/** Short monogram shown in the glyph tile of each marquee item. */
 const monogram = (name) =>
   name
     .replace(/[^A-Za-z0-9+ ]/g, "")
@@ -21,7 +21,7 @@ const LogoSection = () => {
         <div className="marquee-track">
           {track.map((item, index) => (
             <div key={`${item.name}-${index}`} className="marquee-item" aria-hidden={index >= logoItems.length}>
-              <span className="marquee-glyph" style={{ backgroundColor: item.color }}>
+              <span className="marquee-glyph" aria-hidden="true">
                 {item.glyph ?? monogram(item.name)}
               </span>
               {item.name}

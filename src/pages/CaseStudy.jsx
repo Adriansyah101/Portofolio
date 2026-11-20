@@ -104,7 +104,7 @@ const CaseStudy = () => {
               {section.title}
             </h2>
             {section.intro && (
-              <p className="mt-4 max-w-3xl text-lg leading-relaxed text-white-50/75">{renderInlineCode(section.intro)}</p>
+              <p className="mt-4 max-w-3xl text-lg leading-relaxed text-body">{renderInlineCode(section.intro)}</p>
             )}
             <div className="mt-10 flex flex-col gap-8">
               {section.blocks.map((block, blockIndex) => (

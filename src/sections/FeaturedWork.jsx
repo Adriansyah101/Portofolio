@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
 import TitleHeader from "../components/TitleHeader.jsx";
-import { CompanyEmblem } from "../components/CompanyEmblems.jsx";
+import { BrandLogo } from "../components/CompanyEmblems.jsx";
 import { ArrowRightIcon, ExternalIcon, Icon } from "../components/Icons.jsx";
 import { featuredWork } from "../constants/index.js";
 import { renderInlineCode } from "../utils/text.jsx";
@@ -23,7 +23,7 @@ const Tags = ({ tags }) => (
 const EnterpriseCard = ({ work }) => (
   <article className="work-card is-pro">
     <div className="flex items-center gap-4">
-      <CompanyEmblem logo={work.logo} className="size-14 flex-none" />
+      <BrandLogo brand={work.logo} className="h-14 w-20" decorative />
       <div className="min-w-0">
         <p className="exp-kind is-pro">{work.kind}</p>
         <h3 className="mt-1 text-xl font-semibold wrap-break-word text-white-50 md:text-2xl">{work.org}</h3>
@@ -33,7 +33,7 @@ const EnterpriseCard = ({ work }) => (
       </div>
     </div>
 
-    <p className="text-lg leading-relaxed text-white-50/80">{renderInlineCode(work.summary)}</p>
+    <p className="text-lg leading-relaxed text-body">{renderInlineCode(work.summary)}</p>
 
     <ol className="topology" aria-label="Systems operated">
       {work.topology.map((node) => (
@@ -66,6 +66,7 @@ const EnterpriseCard = ({ work }) => (
         <ArrowRightIcon className="size-4" />
       </Link>
       <a href={work.link.href} target="_blank" rel="noreferrer" className="project-link secondary">
+        {work.link.brand && <BrandLogo brand={work.link.brand} className="-my-1 -ml-2 h-7 w-[3.75rem] rounded-full! px-2! py-1!" decorative />}
         {work.link.label}
         <ExternalIcon className="size-4" />
       </a>
@@ -86,7 +87,7 @@ const PreservationCard = ({ work }) => (
       </div>
     </div>
 
-    <p className="text-lg leading-relaxed text-white-50/80">{work.summary}</p>
+    <p className="text-lg leading-relaxed text-body">{work.summary}</p>
 
     <ol className="pipeline" aria-label="Recompilation pipeline">
       {work.pipeline.map((step, index) => (

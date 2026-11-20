@@ -38,7 +38,7 @@ const Hero = () => {
       <div className="hero-layout">
         <header className="hero-header">
           <p className="hero-eyebrow hero-reveal">
-            <span className="size-2 flex-none rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399]" aria-hidden="true" />
+            <span className="size-1.5 flex-none rounded-full bg-emerald-400/80" aria-hidden="true" />
             {heroContent.eyebrow}
           </p>
           <div className="hero-text">

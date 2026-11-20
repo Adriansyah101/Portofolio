@@ -149,7 +149,7 @@ const Checklist = ({ title, items }) => (
     <h3 className="text-lg font-semibold text-white-50">{title}</h3>
     <ul className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 text-white-50/80">
+        <li key={item} className="flex items-start gap-3 text-body">
           <Icon name="shield" className="mt-0.5 size-5 flex-none text-emerald-300" />
           <span>{item}</span>
         </li>
@@ -216,7 +216,7 @@ const Links = ({ items }) => (
 );
 
 const Prose = ({ paragraphs }) => (
-  <div className="flex max-w-3xl flex-col gap-4 text-lg leading-relaxed text-white-50/80">
+  <div className="flex max-w-3xl flex-col gap-4 text-lg leading-relaxed text-body">
     {paragraphs.map((paragraph) => (
       <p key={paragraph}>{renderInlineCode(paragraph)}</p>
     ))}

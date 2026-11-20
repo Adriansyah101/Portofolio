@@ -4,8 +4,8 @@ import { useGSAP } from "@gsap/react";
 
 import TitleHeader from "../components/TitleHeader.jsx";
 import GlowCard from "../components/GlowCard.jsx";
-import { Icon } from "../components/Icons.jsx";
-import { CompanyEmblem } from "../components/CompanyEmblems.jsx";
+import { ExternalIcon, Icon } from "../components/Icons.jsx";
+import { BrandLogo } from "../components/CompanyEmblems.jsx";
 import { expCards } from "../constants/index.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
@@ -82,7 +82,7 @@ const ExperienceSection = () => {
                     header={
                       <div className="exp-card-head">
                         {card.logo ? (
-                          <CompanyEmblem logo={card.logo} className="size-12 flex-none" />
+                          <BrandLogo brand={card.logo} className="h-12 w-[4.5rem]" decorative />
                         ) : (
                           <span className="exp-card-icon" aria-hidden="true">
                             <Icon name={card.icon} className="size-6" />
@@ -115,7 +115,7 @@ const ExperienceSection = () => {
                     <div className="flex flex-col items-center">
                       <div className={`timeline-logo ${card.logo ? "has-emblem" : ""}`}>
                         {card.logo ? (
-                          <CompanyEmblem logo={card.logo} shape="circle" className="size-full" title={card.project} />
+                          <BrandLogo brand={card.logo} shape="circle" className="size-full" />
                         ) : (
                           <Icon name={card.icon} className="size-6 md:size-7" />
                         )}
@@ -130,17 +130,39 @@ const ExperienceSection = () => {
                       <h3 className="text-2xl font-semibold md:text-3xl">{card.title}</h3>
                       <p className="mt-2 text-lg font-medium text-accent-cyan">{softBreak(card.project)}</p>
                       <p className="my-4 flex items-center gap-2 font-mono text-sm text-white-50/70">
-                        <span className="inline-block size-2 rounded-full bg-accent-violet" />
+                        <span className="inline-block size-1.5 rounded-full bg-blue-50" />
                         {card.period}
                       </p>
                       <p className="text-blue-50 italic">{card.logo ? "Key Responsibilities & Achievements" : "Highlights"}</p>
-                      <ul className="mt-4 ms-5 flex list-disc flex-col gap-4 text-white-50/80 marker:text-accent-violet">
+                      <ul className="mt-4 ms-5 flex list-disc flex-col gap-4 text-body marker:text-blue-50/60">
                         {card.responsibilities.map((item) => (
                           <li key={item} className="text-lg leading-relaxed">
                             {renderInlineCode(item)}
                           </li>
                         ))}
                       </ul>
+
+                      {card.systems?.length > 0 && (
+                        <div className="mt-8">
+                          <p className="font-mono text-xs tracking-widest text-blue-50 uppercase">Production systems</p>
+                          <ul className="mt-3 flex flex-wrap gap-3">
+                            {card.systems.map((system) => (
+                              <li key={system.label}>
+                                <a href={system.href} target="_blank" rel="noreferrer" className="system-link">
+                                  <BrandLogo brand={system.brand} className="h-9 w-[5.25rem]" decorative />
+                                  <span className="min-w-0">
+                                    <span className="flex items-center gap-1.5 font-medium text-white-50">
+                                      {system.label}
+                                      <ExternalIcon className="size-3.5 text-blue-50" />
+                                    </span>
+                                    <span className="block text-sm text-blue-50">{system.note}</span>
+                                  </span>
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -45,7 +45,7 @@ const GlowCard = ({ card, header, children, rating = 5, className = "" }) => {
 
       {card?.review && (
         <div className="mb-5">
-          <p className="text-lg leading-relaxed text-white-50">{renderInlineCode(card.review)}</p>
+          <p className="text-lg leading-relaxed text-body">{renderInlineCode(card.review)}</p>
         </div>
       )}
 

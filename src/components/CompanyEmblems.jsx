@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { useId, useState } from "react";
+import { brandLogos } from "../constants/index.js";
 
 /**
  * Inline SVG emblem for PT ASDP Indonesia Ferry (Persero): a stylised ferry
@@ -84,4 +85,57 @@ export const emblemMap = {
 export const CompanyEmblem = ({ logo, ...props }) => {
   const Component = emblemMap[logo];
   return Component ? <Component {...props} /> : null;
+};
+
+/**
+ * Official brand logo loaded from `public/images/`, shown on a light pill so
+ * the brand colours stay legible on the dark theme.
+ *
+ * Each brand in `brandLogos` lists candidate files (e.g. png, then svg). When
+ * one fails to load the next is tried; if none load, the drawn emblem (ASDP)
+ * or a text wordmark is shown instead, so a missing file never leaves a
+ * broken-image icon.
+ *
+ * `shape`: "badge" (rounded rectangle, sized by `className`) or "circle".
+ */
+export const BrandLogo = ({ brand, shape = "badge", className = "", decorative = false }) => {
+  const entry = brandLogos[brand];
+  const [index, setIndex] = useState(0);
+  if (!entry) return null;
+
+  const source = entry.sources[index];
+  const label = decorative ? undefined : entry.name;
+  const frame = `brand-logo ${shape === "circle" ? "is-circle" : ""} ${className}`;
+
+  if (!source) {
+    const Emblem = emblemMap[entry.emblem];
+    if (Emblem) {
+      return (
+        <Emblem
+          shape={shape === "circle" ? "circle" : "square"}
+          className={`flex-none ${className}`}
+          title={label}
+        />
+      );
+    }
+    return (
+      <span className={`${frame} brand-logo-text`} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
+        {entry.wordmark}
+      </span>
+    );
+  }
+
+  return (
+    <span className={frame}>
+      <img
+        src={source}
+        alt={label ?? ""}
+        width={entry.width}
+        height={entry.height}
+        decoding="async"
+        draggable="false"
+        onError={() => setIndex((value) => value + 1)}
+      />
+    </span>
+  );
 };

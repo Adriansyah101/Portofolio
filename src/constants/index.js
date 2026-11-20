@@ -36,6 +36,30 @@ export const links = {
   ferizy: "https://trip.ferizy.com",
 };
 
+/**
+ * Official logos in `public/images/`, rendered by `<BrandLogo>`. Paths are
+ * relative (`./images/...`) so they resolve under any GitHub Pages sub-path.
+ * Candidates are tried in order; `emblem` (a drawn SVG) or `wordmark` (text)
+ * is the last resort when no file loads. `width`/`height` are the intrinsic
+ * size, used to reserve space before the image arrives.
+ */
+export const brandLogos = {
+  asdp: {
+    name: "PT ASDP Indonesia Ferry (Persero)",
+    sources: ["./images/asdp.png", "./images/asdp.svg"],
+    width: 1773,
+    height: 1220,
+    emblem: "asdp",
+  },
+  ferizy: {
+    name: "Ferizy",
+    sources: ["./images/ferizy.svg", "./images/ferizy.png"],
+    width: 99,
+    height: 42,
+    wordmark: "ferizy",
+  },
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
@@ -134,7 +158,7 @@ export const featuredWork = {
     ],
     tags: ["Hybrid Cloud", "Linux & Windows Servers", "Omron PLC", "Production Support"],
     cta: { label: "View Work Experience", to: routes.journey },
-    link: { label: "trip.ferizy.com", href: links.ferizy },
+    link: { label: "trip.ferizy.com", href: links.ferizy, brand: "ferizy" },
   },
   preservation: {
     icon: "chip",
@@ -529,21 +553,21 @@ export const caseStudies = {
 
 /** Core technologies. `glyph` overrides the auto-generated monogram tile. */
 export const logoItems = [
-  { name: "Linux Servers", glyph: "LX", color: "#facc15" },
-  { name: "Windows Server", glyph: "WS", color: "#38bdf8" },
-  { name: "Hybrid Cloud", color: "#6ee7ff" },
-  { name: "Omron PLC / Barrier Gate", glyph: "OP", color: "#34d399" },
-  { name: "trip.ferizy.com", glyph: "TF", color: "#22d3ee" },
-  { name: "Production Ops", color: "#4ade80" },
-  { name: "Cloudflare Workers", color: "#f38020" },
-  { name: "D1 Database", color: "#fb923c" },
-  { name: "C/C++", glyph: "C++", color: "#82aaff" },
-  { name: "Win32 API", color: "#38bdf8" },
-  { name: "Static Recompilation", color: "#6ee7ff" },
-  { name: "ARMv7", color: "#82aaff" },
-  { name: "x86", color: "#a78bfa" },
-  { name: "OpenGL ES", color: "#6ee7ff" },
-  { name: "Git & CI/CD", glyph: "CI", color: "#f05032" },
+  { name: "Linux Servers", glyph: "LX" },
+  { name: "Windows Server", glyph: "WS" },
+  { name: "Hybrid Cloud" },
+  { name: "Omron PLC / Barrier Gate", glyph: "OP" },
+  { name: "trip.ferizy.com", glyph: "TF" },
+  { name: "Production Ops" },
+  { name: "Cloudflare Workers" },
+  { name: "D1 Database" },
+  { name: "C/C++", glyph: "C++" },
+  { name: "Win32 API" },
+  { name: "Static Recompilation" },
+  { name: "ARMv7" },
+  { name: "x86" },
+  { name: "OpenGL ES" },
+  { name: "Git & CI/CD", glyph: "CI" },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -573,8 +597,9 @@ export const abilities = [
 /* -------------------------------------------------------------------------- */
 
 /**
- * Professional work experience on `/journey`, newest first. `logo` selects an
- * inline SVG emblem from `components/CompanyEmblems.jsx` (falls back to `icon`).
+ * Professional work experience on `/journey`, newest first. `logo` is a key of
+ * `brandLogos` (official image, falling back to the drawn emblem, then `icon`).
+ * `systems` lists production systems shown with their own logo.
  * Open-source preservation work lives on `/projects`, not here.
  */
 export const expCards = [
@@ -594,6 +619,7 @@ export const expCards = [
       "Installed, configured, and integrated Omron-based automated barrier gate hardware systems at the Surabaya port.",
       "Maintained high availability and operational stability for `trip.ferizy.com`, ensuring smooth, uninterrupted online ferry ticket transactions.",
     ],
+    systems: [{ brand: "ferizy", label: "trip.ferizy.com", note: "National online ferry ticketing", href: links.ferizy }],
   },
 ];
 
@@ -684,6 +710,7 @@ export const highlights = [
   },
   {
     icon: "shield",
+    brand: "ferizy",
     title: "trip.ferizy.com reliability",
     project: "PT ASDP Indonesia Ferry (Persero)",
     release: "Availability · Online Ticketing",

@@ -15,7 +15,7 @@ const ArchiveCard = ({ project }) => (
       <PlatformBadge project={project} className="w-fit" />
       <h2 className="text-xl font-semibold wrap-break-word md:text-2xl">{softBreak(project.shortTitle)}</h2>
       <OriginTarget project={project} />
-      <p className="leading-relaxed text-white-50/75">{renderInlineCode(project.description)}</p>
+      <p className="leading-relaxed text-body">{renderInlineCode(project.description)}</p>
       <ProjectTags tags={project.tags} />
       <div className="mt-auto pt-2">
         <ProjectActions project={project} />

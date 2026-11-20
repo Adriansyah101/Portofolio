@@ -5,8 +5,8 @@ import { createDotTexture } from "../Models/canvasTextures.js";
 const TOP = 7;
 const BOTTOM = -3;
 
-/** Slow-rising dust motes that give the scene depth. */
-const Particles = ({ count = 100, spread = 10, color = "#d9ecff" }) => {
+/** A few faint, slow-rising dust motes that give the scene depth. */
+const Particles = ({ count = 40, spread = 10, color = "#e4e4e7" }) => {
   const pointsRef = useRef(null);
   const sprite = useMemo(() => createDotTexture(), []);
 
@@ -47,10 +47,10 @@ const Particles = ({ count = 100, spread = 10, color = "#d9ecff" }) => {
       <pointsMaterial
         map={sprite}
         color={color}
-        size={0.07}
+        size={0.05}
         sizeAttenuation
         transparent
-        opacity={0.8}
+        opacity={0.3}
         depthWrite={false}
         toneMapped={false}
       />

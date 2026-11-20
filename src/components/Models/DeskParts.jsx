@@ -102,8 +102,8 @@ const screenVertex = /* glsl */ `
   }
 `;
 
-// Calm system-telemetry view: a fine grid, two live metric curves and a
-// slowly rotating hexagon outline. Low saturation, no scanlines.
+// Calm system-telemetry view in muted slate: a fine grid, two live metric
+// curves and a slowly rotating hexagon outline. No scanlines.
 const telemetryFragment = /* glsl */ `
   uniform float uTime;
   varying vec2 vUv;
@@ -119,22 +119,22 @@ const telemetryFragment = /* glsl */ `
 
   void main() {
     vec2 uv = vUv;
-    vec3 color = mix(vec3(0.016, 0.03, 0.07), vec3(0.03, 0.07, 0.13), uv.y);
+    vec3 color = mix(vec3(0.018, 0.02, 0.026), vec3(0.04, 0.045, 0.055), uv.y);
 
     vec2 cell = abs(fract(uv * vec2(14.0, 8.0)) - 0.5);
-    color += smoothstep(0.47, 0.5, max(cell.x, cell.y)) * vec3(0.03, 0.08, 0.12);
+    color += smoothstep(0.47, 0.5, max(cell.x, cell.y)) * vec3(0.035, 0.04, 0.05);
 
     float x = uv.x * 6.2831 + uTime * 0.45;
     float primary = 0.6 + 0.09 * sin(x) + 0.03 * sin(x * 2.7 + 1.3);
     float secondary = 0.3 + 0.05 * sin(x * 0.8 + 2.0) + 0.02 * sin(x * 3.1);
-    color += smoothstep(0.0, primary, uv.y) * step(uv.y, primary) * 0.05 * vec3(0.43, 0.9, 1.0);
-    color += lineMask(uv.y - primary, 0.007) * vec3(0.43, 0.9, 1.0) * 0.9;
-    color += lineMask(uv.y - secondary, 0.006) * vec3(0.22, 0.74, 0.97) * 0.7;
+    color += smoothstep(0.0, primary, uv.y) * step(uv.y, primary) * 0.04 * vec3(0.62, 0.69, 0.78);
+    color += lineMask(uv.y - primary, 0.007) * vec3(0.62, 0.69, 0.78) * 0.75;
+    color += lineMask(uv.y - secondary, 0.006) * vec3(0.49, 0.6, 0.71) * 0.5;
 
     vec2 p = (uv - vec2(0.84, 0.8)) * vec2(1.75, 1.0);
     float angle = uTime * 0.2;
     p = mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * p;
-    color += lineMask(hexagon(p, 0.09), 0.004) * vec3(0.43, 0.9, 1.0) * 0.6;
+    color += lineMask(hexagon(p, 0.09), 0.004) * vec3(0.62, 0.69, 0.78) * 0.45;
 
     float vignette = smoothstep(1.05, 0.35, length(uv - 0.5));
     gl_FragColor = vec4(color * mix(0.8, 1.0, vignette), 1.0);
@@ -168,10 +168,11 @@ export const Monitor = ({
   screen = "code",
   seed = 7,
   glowLight = true,
+  accent: accentColor = null,
   ...props
 }) => {
   const screenY = 0.55 + height / 2;
-  const accent = screen === "telemetry" ? "#38bdf8" : "#6ee7ff";
+  const accent = accentColor ?? (screen === "telemetry" ? "#38bdf8" : "#6ee7ff");
 
   return (
     <group {...props}>
@@ -206,7 +207,7 @@ export const Monitor = ({
       </group>
 
       {glowLight && (
-        <pointLight position={[0, screenY, 0.45]} intensity={0.9} distance={3} decay={2} color={accent} />
+        <pointLight position={[0, screenY, 0.45]} intensity={0.5} distance={3} decay={2} color={accent} />
       )}
     </group>
   );
@@ -595,7 +596,7 @@ export const Plant = ({ potColor = "#d9d4cc", ...props }) => (
           castShadow
         >
           <sphereGeometry args={[1, 12, 12]} />
-          <meshStandardMaterial color={index % 2 ? "#2f7d4f" : "#3fa86a"} roughness={0.6} />
+          <meshStandardMaterial color={index % 2 ? "#4a6b55" : "#5f8569"} roughness={0.6} />
         </mesh>
       </group>
     ))}

@@ -5,10 +5,13 @@ import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLigh
 // RectAreaLight needs its LTC lookup textures registered once per app.
 RectAreaLightUniformsLib.init();
 
-/** Studio lighting rig: key + fill spotlights, a soft area light and accents. */
+/**
+ * Soft, natural studio rig: a neutral key, slate fill and rim, one large
+ * softbox (area light) and a warm desk bounce. No saturated colours.
+ */
 const HeroLights = () => {
   const areaLight = useMemo(() => {
-    const light = new THREE.RectAreaLight("#5b8def", 5, 4, 3);
+    const light = new THREE.RectAreaLight("#e2e8f0", 5, 4, 3);
     light.position.set(1.5, 5, 5);
     light.lookAt(0, 0, 0);
     return light;
@@ -21,36 +24,37 @@ const HeroLights = () => {
         position={[3, 9, 7]}
         angle={0.5}
         penumbra={0.4}
-        intensity={260}
+        intensity={210}
         decay={2}
-        color="#ffffff"
+        color="#f4f4f5"
       />
-      {/* Cool rim */}
+      {/* Slate rim */}
       <spotLight
         position={[6, 6, 2]}
         angle={0.45}
         penumbra={0.6}
-        intensity={70}
+        intensity={40}
         decay={2}
-        color="#4cc9f0"
+        color="#94a3b8"
       />
-      {/* Cool blue fill */}
+      {/* Neutral fill */}
       <spotLight
         position={[-5, 7, 6]}
         angle={0.5}
         penumbra={1}
-        intensity={90}
+        intensity={60}
         decay={2}
-        color="#3b82f6"
+        color="#cbd5e1"
       />
 
       <primitive object={areaLight} />
 
-      <pointLight position={[0, 1.5, 1]} intensity={5} decay={2} color="#1d4ed8" />
-      <pointLight position={[1, 3, -2]} intensity={5} decay={2} color="#0e4c92" />
+      {/* Warm bounce off the desk */}
+      <pointLight position={[0, 1.5, 1]} intensity={3} decay={2} color="#e7c9a5" />
+      <pointLight position={[1, 3, -2]} intensity={2.5} decay={2} color="#94a3b8" />
 
-      <hemisphereLight args={["#5a6f9e", "#0a0d14", 1.4]} />
-      <ambientLight intensity={0.35} color="#24324f" />
+      <hemisphereLight args={["#e2e8f0", "#141416", 1.5]} />
+      <ambientLight intensity={0.45} color="#52525b" />
     </>
   );
 };

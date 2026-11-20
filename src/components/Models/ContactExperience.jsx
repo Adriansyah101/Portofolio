@@ -19,22 +19,23 @@ import {
 import { contactScene } from "../../constants/index.js";
 import { assetUrl } from "../../utils/assets.js";
 
-const WARM_BACKGROUND = "#cd7c2e";
+// Warm graphite studio backdrop; must match `.contact-canvas` in index.css.
+const STUDIO_BACKGROUND = "#2a2825";
 const FLOOR_Y = -1.5;
 
-/** Warm, cosy single-monitor workstation. */
+/** Quiet single-monitor workstation: walnut desk, neutral studio light. */
 const ContactDesk = () => (
   <group>
-    <Desk width={3.2} depth={1.3} topColor="#8a5a33" frameColor="#2b2118" />
-    <Monitor position={[0, 1.5, -0.32]} width={1.7} height={0.95} screen="code" seed={23} glowLight={false} />
-    <DeskMat position={[0, 1.5, 0.27]} width={1.9} depth={0.58} color="#2a1d14" edge="#ffb36b" />
-    <Keyboard position={[-0.15, 1.508, 0.27]} />
-    <Mouse position={[0.68, 1.508, 0.3]} accent="#ffb36b" />
-    <DeskLamp position={[-1.3, 1.5, -0.3]} rotation={[0, -0.35, 0]} intensity={5} color="#ffcf8f" castShadow />
-    <Mug position={[1.25, 1.5, 0.22]} color="#f3efe6" />
-    <Plant position={[1.25, 1.5, -0.35]} scale={0.42} potColor="#efe7da" />
-    <PCTower position={[2.0, 0, -0.15]} rotation={[0, -0.25, 0]} accent="#ffb36b" />
-    <Chair position={[-0.85, 0, 1.25]} rotation={[0, 0.7, 0]} color="#3a2a22" accent="#ffb36b" />
+    <Desk width={3.2} depth={1.3} topColor="#6b5442" frameColor="#27272a" />
+    <Monitor position={[0, 1.5, -0.32]} width={1.7} height={0.95} screen="terminal" accent="#a8a29e" glowLight={false} />
+    <DeskMat position={[0, 1.5, 0.27]} width={1.9} depth={0.58} color="#232220" edge="#57534e" />
+    <Keyboard position={[-0.15, 1.508, 0.27]} glow="#4a4640" />
+    <Mouse position={[0.68, 1.508, 0.3]} accent="#a8a29e" />
+    <DeskLamp position={[-1.3, 1.5, -0.3]} rotation={[0, -0.35, 0]} intensity={4} color="#f3dcc0" castShadow />
+    <Mug position={[1.25, 1.5, 0.22]} color="#e7e5e4" />
+    <Plant position={[1.25, 1.5, -0.35]} scale={0.42} potColor="#d6d3d1" />
+    <PCTower position={[2.0, 0, -0.15]} rotation={[0, -0.25, 0]} accent="#a8a29e" trim="#78716c" />
+    <Chair position={[-0.85, 0, 1.25]} rotation={[0, 0.7, 0]} color="#2f2d2a" accent="#57534e" />
   </group>
 );
 
@@ -44,13 +45,13 @@ const ContactExperience = () => {
   return (
     // `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly.
     <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]}>
-      <fog attach="fog" args={[WARM_BACKGROUND, 9, 22]} />
+      <fog attach="fog" args={[STUDIO_BACKGROUND, 9, 22]} />
 
-      <ambientLight intensity={0.55} color="#fff4e6" />
+      <ambientLight intensity={0.5} color="#f4f4f5" />
       <directionalLight
         position={[5, 6, 3]}
-        intensity={2.4}
-        color="#ffd9b3"
+        intensity={2.1}
+        color="#f5eee6"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0005}
@@ -61,8 +62,8 @@ const ContactExperience = () => {
         shadow-camera-near={0.5}
         shadow-camera-far={25}
       />
-      <directionalLight position={[-5, 4, 5]} intensity={0.8} color="#ffb070" />
-      <hemisphereLight args={["#ffe3c2", "#7a4a1f", 0.35]} />
+      <directionalLight position={[-5, 4, 5]} intensity={0.7} color="#cbd5e1" />
+      <hemisphereLight args={["#e4e4e7", "#3a3631", 0.35]} />
 
       {!isMobile && (
         <OrbitControls
@@ -78,7 +79,7 @@ const ContactExperience = () => {
       {/* Shadow-receiving floor */}
       <mesh position={[0, FLOOR_Y, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color="#a46b2d" roughness={0.95} />
+        <meshStandardMaterial color="#35322e" roughness={0.95} />
       </mesh>
 
       <Suspense fallback={null}>

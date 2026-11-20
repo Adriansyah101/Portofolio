@@ -13,7 +13,7 @@ const ContactPreview = () => (
           <h2 id="contact-preview-title" className="mt-5 text-3xl font-semibold md:text-5xl">
             Need critical systems that stay online?
           </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white-50/75">
+          <p className="mt-5 text-lg leading-relaxed text-body">
             I&apos;m open to systems operations, infrastructure and application support roles, plus low-level
             C/C++ engineering work. Send a message, or browse my source code on GitHub.
           </p>

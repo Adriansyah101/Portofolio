@@ -19,15 +19,15 @@ const TechIcon = ({ model }) => {
 
   return (
     <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={1.6} />
-      <directionalLight position={[-4, -2, 3]} intensity={0.5} color="#93c5fd" />
-      <pointLight position={[-3, 2, -2]} intensity={6} decay={2} color="#4cc9f0" />
+      <ambientLight intensity={0.35} color="#e4e4e7" />
+      <directionalLight position={[5, 5, 5]} intensity={1.4} color="#f4f4f5" />
+      <directionalLight position={[-4, -2, 3]} intensity={0.45} color="#cbd5e1" />
+      <pointLight position={[-3, 2, -2]} intensity={3} decay={2} color="#94a3b8" />
       <StudioEnvironment resolution={256} />
 
       {!isMobile && <OrbitControls enableZoom={false} enablePan={false} />}
 
-      <Float speed={5.5} rotationIntensity={0.5} floatIntensity={0.9}>
+      <Float speed={2.5} rotationIntensity={0.35} floatIntensity={0.6}>
         <group scale={model.scale ?? 1} rotation={model.rotation ?? [0, 0, 0]}>
           <GltfModel url={assetUrl(model.glbPath)} fallback={<Emblem />} />
         </group>

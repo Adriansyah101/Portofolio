@@ -9,7 +9,7 @@ import { Environment, Lightformer } from "@react-three/drei";
 const StudioEnvironment = ({ resolution = 256 }) => (
   <Environment resolution={resolution} frames={1}>
     {/* Dark studio backdrop so the panels read as distinct highlights */}
-    <color attach="background" args={["#0b0b14"]} />
+    <color attach="background" args={["#0c0c0e"]} />
 
     {/* Soft overhead softbox */}
     <Lightformer
@@ -32,31 +32,31 @@ const StudioEnvironment = ({ resolution = 256 }) => (
       target={[0, 0, 0]}
     />
 
-    {/* Cool cyan rim strip, back-left */}
+    {/* Slate rim strip, back-left */}
     <Lightformer
       form="rect"
-      intensity={4}
-      color="#4cc9f0"
+      intensity={2.5}
+      color="#cbd5e1"
       position={[-5, 1, -3]}
       scale={[1, 6, 1]}
       target={[0, 0, 0]}
     />
 
-    {/* Violet accent strip, right */}
+    {/* Soft neutral strip, right */}
     <Lightformer
       form="rect"
-      intensity={3}
-      color="#a259ff"
+      intensity={2}
+      color="#94a3b8"
       position={[5, 0, -2]}
       scale={[1, 5, 1]}
       target={[0, 0, 0]}
     />
 
-    {/* Warm ring from below for subtle under-lighting */}
+    {/* Faint warm ring from below for subtle under-lighting */}
     <Lightformer
       form="ring"
-      intensity={1.5}
-      color="#ff9f5a"
+      intensity={0.8}
+      color="#e7c9a5"
       position={[0, -4, 2]}
       scale={3}
       target={[0, 0, 0]}
