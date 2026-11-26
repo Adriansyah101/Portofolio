@@ -511,22 +511,8 @@ export const createContactScreenTexture = () => {
   ctx.fillStyle = S.text;
   ctx.font = font(26, 600);
   ctx.textAlign = "center";
-  ctx.fillText("Compose  ✉", width / 2, height - 46);
+  ctx.fillText("Compose", width / 2, height - 46);
   ctx.textAlign = "left";
 
-  return toTexture(canvas);
-};
-
-/** Soft round sprite for particles. */
-export const createDotTexture = () => {
-  const size = 64;
-  const canvas = createCanvas(size, size);
-  const ctx = canvas.getContext("2d");
-  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  gradient.addColorStop(0, "rgba(255,255,255,1)");
-  gradient.addColorStop(0.4, "rgba(255,255,255,0.6)");
-  gradient.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
   return toTexture(canvas);
 };

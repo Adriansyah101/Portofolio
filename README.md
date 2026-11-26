@@ -1,19 +1,23 @@
 # Adriansyah Prasetya Nugraha: Systems & Application Operations Portfolio
 
-Multi-page 3D portfolio of **Adriansyah Prasetya Nugraha** ([`adriansyah101`](https://github.com/adriansyah101)),
+Multi-page 3D portfolio of **Adriansyah Prasetya Nugraha** ([`Adriansyah101`](https://github.com/Adriansyah101)),
 a Systems & Application Operations Engineer based in Semarang, Indonesia.
 
-- **Home (`/`)** presents the engineering identity: high-availability national ticketing
-  infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments, industrial
-  hardware integration and low-level binary recompilation. It has no game titles or game artwork.
+- **Home (`/`)**: name, role (Systems & Application Operations Engineer · Windows Systems &
+  Binary Recompilation), a two-sentence bio, four factual metrics and the 3D workstation.
 - **Journey (`/journey`)** is professional work experience only: Business Application Operational
   Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026).
-- **Projects (`/projects`)** holds five open-source projects in two separate categories:
-  - **Original Projects**: **SIDAF** (PHP / CodeIgniter information system), **VR Simulation Airport**
-    (Unity / C#, Oculus Quest 2) and **War Plane 1945** (GameMaker arcade air combat game).
-  - **32-Bit Game Preservation Projects**:
-    - **GTRacingMotorAcademyRecomp**: GT Racing: Motor Academy, from 32-bit iPad (ARMv7 / PowerVR) to a native Windows release (`v1.0.0`).
-    - **Gangstar: Miami Vindication**: from a 32-bit x86 Mac binary to native Windows x86 and Linux (`V1.0.0`).
+- **Projects (`/projects`)** holds six open-source projects in two separate categories:
+  - **Original Software**: **Niskala Utilities** (featured: Windows WinUI & CLI system utility,
+    C# / .NET), **SIDAF** (PHP / CodeIgniter information system), **VR Simulation Airport**
+    (Unity / C#, Oculus Quest 2) and **War Plane 1945** (interactive 2D application).
+  - **32-Bit Software Preservation** (native PC software ports):
+    - **GTRacingMotorAcademy-PC-Port**: static binary recompilation of a 32-bit iPad (ARMv7) application to native Windows and Linux x86.
+    - **GangstarMiamiVindication-PC-Port**: a custom Mach-O loader that runs a 32-bit Mac (i386) application natively on Windows and Linux x86.
+
+Copy rules: the words "game" and "gaming" are not used anywhere in the site copy (EN or ID), there
+are no emojis, and there are no unverified percentage claims. Technical facts in the case studies
+and notes follow each repository's README, FIXES.md and PATCHNOTES.md.
 
 The whole site is **bilingual (English / Bahasa Indonesia)** and has a **dark (default) and light
 theme**. Both choices are remembered in `localStorage`.
@@ -26,19 +30,21 @@ The 3D scenes (hero systems workstation, tech-stack emblems, contact desk) and t
 are drawn in code. The site needs no image or model files to render, and it makes no runtime
 requests to third-party CDNs for assets: the tech-card reflections come from a procedural
 `<Lightformer>` environment rather than a downloaded HDRI. The only external requests are
-Google Fonts (with system-font fallbacks). The contact page has no form: it links to Gmail's
+Google Fonts (Inter for prose, JetBrains Mono for versions, years and tech badges, with system-font
+fallbacks) and the GitHub REST API (profile stats and latest release tags, cached in
+`sessionStorage` for 30 minutes, with built-in fallbacks when it is unreachable). The contact page has no form: it links to Gmail's
 compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail service.
 
 ## Pages
 
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
-| `#/`                  | Home                     | Command center: intro, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact) |
-| `#/projects`          | Projects                 | Two separate groups (Original Projects, 32-Bit Game Preservation) with `All / Original / 32-Bit Preservation` filters (`?category=original` or `preservation`). "All" is a compact overview; the preservation view adds the "Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port" comparison as tabs |
-| `#/projects/gt-racing`| GT Racing case study     | Why it was lost, recompilation & graphics pipeline, leaderboard architecture, controls & release info |
-| `#/projects/gangstar` | Gangstar case study      | Why it was lost, Windows & Linux porting, V1.0.0 release packaging and checksum verification |
-| `#/journey`           | Journey                  | PT ASDP experience card beside tabs: Operational Impact · Enterprise Stack · 3D Tech Cards |
-| `#/notes`, `#/notes/:slug` | Engineering Notes   | Note list and reading pane side by side on desktop; list and article pages on phones |
+| `#/`                  | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips, no particles or speech bubbles) |
+| `#/projects`          | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
+| `#/projects/gt-racing`| GT Racing case study     | Back link, live release badge, why it stopped running, legacy-vs-port table, key engineering work, leaderboard architecture, default controls, release and checksum verification |
+| `#/projects/gangstar` | Gangstar case study      | Back link, live release badge, why it stopped running, legacy-vs-port table, Mach-O loader approach, key engineering fixes, release and checksum verification |
+| `#/journey`           | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown · Enterprise Stack · 3D Tech Cards |
+| `#/notes`, `#/notes/:slug` | Engineering Notes   | Note list and reading pane side by side on desktop; list and article pages on phones. Each note is Context → Engineering Approach → Outcome |
 | `#/contact`           | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
 Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
@@ -69,6 +75,8 @@ context. Every canvas caps its device pixel ratio at `dpr={[1, 1.5]}`.
 - Both toggles sit in the navbar on desktop and in the mobile menu.
 - A small inline script in `index.html` applies the saved theme and language before the first
   paint, so the page never flashes the wrong theme.
+- **Surfaces** are flat: `#111215` (dark) or `#ffffff` (light) with 1px hairline borders
+  (`rgba(255,255,255,0.08)` / `rgba(15,23,42,0.08)`). No glows, radial backgrounds or shadows.
 - **Colours** are CSS custom properties. `@theme` in `src/index.css` holds the dark values and
   `:root[data-theme="light"]` re-points the same tokens. In light mode `--color-white` is the ink
   colour, so `white/8` borders and `hover:text-white` keep working on light surfaces. Anything that
@@ -106,18 +114,15 @@ npm run dev
 
 | Variable                       | Required | Description                                                   |
 | ------------------------------ | -------- | ------------------------------------------------------------- |
-| `VITE_GITHUB_USERNAME`         | no       | GitHub account for all links. Defaults to `adriansyah101`     |
-| `VITE_GANGSTAR_REPO`           | no       | Exact repo name of the Gangstar port, for direct repo and release links |
+| `VITE_GITHUB_USERNAME`         | no       | GitHub account for all links. Defaults to `Adriansyah101`     |
 | `VITE_TWITTER_HANDLE`          | no       | X/Twitter handle, without the `@`. The footer shows an X icon only when set |
-
-Without `VITE_GANGSTAR_REPO`, Gangstar links open your GitHub profile (`https://github.com/adriansyah101`).
 
 ## Deploying to GitHub Pages
 
 1. Push this project to a GitHub repository on the `main` branch.
 2. In **Settings → Pages**, set **Source** to **GitHub Actions**.
 3. Optionally, in **Settings → Secrets and variables → Actions**, add the **variables**
-   `VITE_GANGSTAR_REPO`, `VITE_TWITTER_HANDLE` and `VITE_GITHUB_USERNAME`.
+   `VITE_TWITTER_HANDLE` and `VITE_GITHUB_USERNAME`.
 4. Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
    which builds the site and publishes `dist/` to `https://<username>.github.io/<repo-name>/`.
 
@@ -134,17 +139,25 @@ name or a version tag) shows the same text in both languages. Components read co
 - `ui`: interface copy (navigation, buttons, page headers, form labels and placeholders,
   validation and status messages, page titles). `{name}` placeholders are filled by `format()`.
 - `originalProjects` and `preservationProjects`: the two catalog categories (`projects` combines
-  them). `projectCategories` defines the tabs and `projectSections` the section headings. Original
-  projects link straight to GitHub (`View Source on GitHub →`). Preservation projects also have a
+  them), in display order. `featured: true` marks the top project (Niskala Utilities).
+  `projectCategories` defines the tabs and `projectSections` the section headings. Original
+  projects link straight to GitHub (`View Source on GitHub`). Preservation projects also have a
   case study and a comparison table (`comparison`).
+- `releaseSources`: the repositories whose latest GitHub release drives the version badges and
+  release links ([`src/hooks/useGitHubReleases.js`](src/hooks/useGitHubReleases.js)), with a
+  fallback tag and URL each. In project and case-study data, a link with `release: "<project id>"`
+  points at that release, and `{tag}` in a label, target, fact or table cell becomes the tag.
 - `caseStudies`: the two deep-dive pages. Each section is a list of typed blocks (`timeline`,
-  `cards`, `flow`, `architecture`, `table`, `checklist`, `code`, `links`, `prose`).
+  `cards`, `flow`, `architecture`, `table`, `comparison`, `checklist`, `code`, `links`, `prose`).
 - `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
-- `heroContent`, `words` and `counterItems`: the Home page.
-  A counter item with `text` (e.g. `"Dozens"`) shows that word instead of an animated number.
-- `expCards`, `techStackIcons` and `highlights`: the Journey page (work experience only). `icon` on a
+- `heroContent` and `counterItems`: the Home page. A counter item with `text` (e.g.
+  `"Dozens of ports"`) shows that text instead of an animated number; the project count follows
+  `projects.length`.
+- `expCards` and `techStackIcons`: the Journey page (work experience only). `breakdown` on an
+  `expCards` entry feeds the Operational Breakdown tab and the résumé. `icon` on a
   `techStackIcons` entry is its flat icon in the Enterprise Stack tab. Set `logo`
-  on an `expCards` entry (or `brand` on a highlight) to a key of `brandLogos`.
+  on an `expCards` entry to a key of `brandLogos`.
+- `engineeringNotes`: the notes, each with three sections (Context, Engineering Approach, Outcome).
 - `brandLogos`: official company/product logos, read from `public/images/` with relative paths
   (`./images/asdp.png`, `./images/ferizy.svg`). Each lists fallback files in order (png → svg); if
   none loads, the drawn SVG emblem or a text wordmark is shown, never a broken image. Logos sit on a
@@ -152,7 +165,7 @@ name or a version tag) shows the same text in both languages. Components read co
 
 ## Adding your own screenshots and models
 
-### Gameplay screenshots
+### Screenshots
 
 `public/images/` is already in the repo (kept by an empty `.gitkeep`). To replace the SVG
 artwork on a project card with a real capture:
@@ -163,10 +176,11 @@ artwork on a project card with a real capture:
 
 | Project card                         | File                              | Set in constants                          |
 | ------------------------------------ | --------------------------------- | ----------------------------------------- |
-| SIDAF                                | `public/images/sidaf.png`          | `originalProjects[0].image = "images/sidaf.png"`              |
-| VR Simulation Airport                | `public/images/vr-airport.png`     | `originalProjects[1].image = "images/vr-airport.png"`         |
-| War Plane 1945                       | `public/images/war-plane-1945.png` | `originalProjects[2].image = "images/war-plane-1945.png"`     |
-| GTRacingMotorAcademyRecomp           | `public/images/gtracing-pc.png`    | `preservationProjects[0].image = "images/gtracing-pc.png"`    |
+| Niskala Utilities                    | `public/images/niskala.png`        | `originalProjects[0].image = "images/niskala.png"`            |
+| SIDAF                                | `public/images/sidaf.png`          | `originalProjects[1].image = "images/sidaf.png"`              |
+| VR Simulation Airport                | `public/images/vr-airport.png`     | `originalProjects[2].image = "images/vr-airport.png"`         |
+| War Plane 1945                       | `public/images/war-plane-1945.png` | `originalProjects[3].image = "images/war-plane-1945.png"`     |
+| GT Racing: Motor Academy PC port     | `public/images/gtracing-pc.png`    | `preservationProjects[0].image = "images/gtracing-pc.png"`    |
 | Gangstar: Miami Vindication PC port  | `public/images/gangstar-mv-pc.png` | `preservationProjects[1].image = "images/gangstar-mv-pc.png"` |
 
 - **Aspect ratio:** 16:9. Recommended size is 1920×1080 (at least 1280×720).
@@ -176,6 +190,8 @@ artwork on a project card with a real capture:
   away from the outer edges.
 - The `image` values default to `null` so the live site never requests a file that is not
   there. If a configured file fails to load, the SVG artwork is shown instead.
+- Niskala Utilities has no screenshot by default: its artwork is the app's own splash screen
+  (`SplashWindow.xaml`: brand gradient, NiskalaMark monogram and wordmark) redrawn as SVG.
 
 ### 3D models
 
@@ -195,6 +211,7 @@ src/
 ├── App.jsx                   # HashRouter, lazy routes, persistent NavBar + Footer
 ├── constants/index.js        # All bilingual content, UI copy, routes, links and asset hooks
 ├── context/                  # ThemeContext (dark/light) and LanguageContext (en/id)
+├── hooks/useGitHubReleases.js # Latest GitHub release per repo (sessionStorage cache, fallbacks)
 ├── pages/                    # Home, Projects, CaseStudy, Journey, Notes, ContactPage, NotFound
 ├── components/
 │   ├── NavBar.jsx            # NavLinks with active underline + mobile slide-down menu
@@ -202,10 +219,10 @@ src/
 │   ├── ScrollToTop.jsx       # Resets the window scroll on route change
 │   ├── Tabs.jsx              # Accessible tab list + panel (Journey, project comparison)
 │   ├── PageHeader.jsx, ProjectBits.jsx, CaseStudyBlocks.jsx, NoteBits.jsx, GitHubStats.jsx
-│   ├── AnimatedCounter.jsx, GlowCard.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx
-│   ├── HeroModels/           # Hero canvas, lights, particles, procedural room
+│   ├── AnimatedCounter.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx
+│   ├── HeroModels/           # Hero canvas, lights, avatar, hotspots, procedural room
 │   └── Models/               # Desk parts, contact scene, glTF loader, studio env, emblems
-├── sections/                 # Hero, JourneyPanels (experience, impact, stack, 3D cards),
+├── sections/                 # Hero, JourneyPanels (summary, breakdown, stack, 3D cards),
 │                             # Contact, Footer
 ├── utils/                    # i18n (tx/localize/format), asset URL, inline-code and page-title helpers
 └── index.css                 # Tailwind v4 theme, custom utilities and keyframes

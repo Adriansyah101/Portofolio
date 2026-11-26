@@ -1,20 +1,20 @@
-import GlowCard from "../components/GlowCard.jsx";
 import TechIcon from "../components/Models/TechLogos/TechIcon.jsx";
 import { ExternalIcon, Icon } from "../components/Icons.jsx";
 import { BrandLogo } from "../components/CompanyEmblems.jsx";
-import { expCards as cardSource, highlights as highlightSource, techStackIcons, ui } from "../constants/index.js";
+import { expCards as cardSource, techStackIcons, ui } from "../constants/index.js";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
 /**
- * Panels of `/journey`: the experience card (left) and the three tab panels
- * beside it: operational impact, the enterprise stack as a list, and the same
- * stack as draggable 3D emblems. The tab panels lay out by their own width
- * (container queries), so they adapt to the split instead of the viewport.
+ * Panels of `/journey`: the executive summary of the role (left) and the
+ * three tab panels beside it: the structured operational breakdown, the
+ * enterprise stack as a list, and the same stack as draggable 3D emblems. The
+ * tab panels lay out by their own width (container queries), so they adapt to
+ * the split instead of the viewport.
  */
 
-/** PT ASDP experience: logo, role, period, key achievements and the production system it ran. */
+/** PT ASDP role: logo, title, period, one-paragraph summary, systems covered and the production site. */
 export const ExperiencePanel = () => {
   const cards = useLocalized(cardSource);
   const { experience: text } = useLocalized(ui);
@@ -39,15 +39,20 @@ export const ExperiencePanel = () => {
           </div>
 
           <h2 className="text-xl leading-snug font-semibold text-balance md:text-2xl lg:text-xl xl:text-2xl">{card.title}</h2>
+          <p className="mt-4 leading-relaxed text-body lg:mt-3 lg:text-sm 2xl:text-[0.9375rem]">{renderInlineCode(card.summary)}</p>
 
-          <p className="mt-5 text-sm text-blue-50 italic lg:mt-4">{card.logo ? text.responsibilities : text.highlights}</p>
-          <ul className="mt-3 ms-5 flex list-disc flex-col gap-3 text-body marker:text-blue-50/60 lg:gap-2.5">
-            {card.responsibilities.map((item) => (
-              <li key={item} className="leading-relaxed lg:text-sm 2xl:text-[0.9375rem]">
-                {renderInlineCode(item)}
-              </li>
-            ))}
-          </ul>
+          {card.platforms?.length > 0 && (
+            <div className="mt-6 lg:mt-5">
+              <p className="font-mono text-xs tracking-widest text-blue-50 uppercase">{card.platformsLabel}</p>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {card.platforms.map((platform) => (
+                  <li key={platform} className="tag-pill">
+                    {platform}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {card.systems?.length > 0 && (
             <div className="mt-6 lg:mt-5">
@@ -76,64 +81,53 @@ export const ExperiencePanel = () => {
   );
 };
 
-/** Production outcomes as cursor-lit GlowCards: one, two or three per row by panel width. */
-export const ImpactGrid = () => {
-  const highlights = useLocalized(highlightSource);
+/** What the role covered, one flat card per area: one, two or three per row by panel width. */
+export const OperationalBreakdown = () => {
+  const cards = useLocalized(cardSource);
+  const items = cards.flatMap((card) => card.breakdown ?? []);
+
   return (
-    <ul className="impact-grid">
-      {highlights.map((item) => (
-        <li key={item.id} className="min-w-0">
-          <GlowCard rating={0} className="mb-0! flex h-full flex-col p-5!">
-            <div className="flex items-center gap-3">
-              {item.brand ? (
-                <BrandLogo brand={item.brand} className="h-10 w-[5.5rem]" />
-              ) : (
-                <span className="icon-chip" aria-hidden="true">
-                  <Icon name={item.icon} className="size-5" />
-                </span>
-              )}
-              <p className="min-w-0 font-mono text-[11px] tracking-widest text-blue-50 uppercase">{item.release}</p>
-            </div>
-            <h3 className="mt-4 text-lg leading-snug font-semibold text-white-50">{item.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-body">{renderInlineCode(item.summary)}</p>
-
-            <div className="mt-4 mb-4 flex flex-wrap gap-1.5 lg:mt-3 lg:mb-3">
-              {item.tags.map((tag) => (
-                <span key={tag} className="tag-pill">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* On desktop the company sits in the panel beside, so the footer keeps only a link. */}
-            <div className={`mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-black-200 pt-3 ${item.link?.href ? "" : "lg:hidden"}`}>
-              <p className="min-w-0 text-xs text-blue-50 wrap-break-word lg:hidden">{softBreak(item.project)}</p>
-              {item.link?.href && (
-                <a
-                  href={item.link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-white-50 transition-colors hover:text-white"
-                >
-                  {item.link.label}
-                  <ExternalIcon className="size-4" />
-                </a>
-              )}
-            </div>
-          </GlowCard>
+    <ol className="breakdown-grid">
+      {items.map((item, index) => (
+        <li key={item.id} className="breakdown-card">
+          <div className="flex items-center justify-between gap-3">
+            <span className="icon-chip" aria-hidden="true">
+              <Icon name={item.icon} className="size-5" />
+            </span>
+            <span className="font-mono text-xs text-blue-50" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+          </div>
+          <h3 className="mt-4 text-lg leading-snug font-semibold text-white-50">{item.title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-body">{renderInlineCode(item.body)}</p>
+          <ul className="mt-4 flex flex-wrap gap-1.5 lg:mt-3">
+            {item.tags.map((tag) => (
+              <li key={tag} className="tag-pill">
+                {tag}
+              </li>
+            ))}
+          </ul>
+          {item.link?.href && (
+            <a
+              href={item.link.href}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium text-white-50 transition-colors hover:text-white"
+            >
+              {item.link.label}
+              <ExternalIcon className="size-4" />
+            </a>
+          )}
         </li>
       ))}
-    </ul>
+    </ol>
   );
 };
 
-/** The stack as a scannable list, plus the systems the role covered. */
+/** The stack as a scannable list. */
 export const EnterpriseStack = () => {
   const icons = useLocalized(techStackIcons);
-  const cards = useLocalized(cardSource);
   const { journey: text } = useLocalized(ui);
-  const platforms = [...new Set(cards.flatMap((card) => card.platforms))];
-  const platformsLabel = cards[0]?.platformsLabel;
 
   return (
     <div>
@@ -151,23 +145,11 @@ export const EnterpriseStack = () => {
           </li>
         ))}
       </ul>
-      {platformsLabel && (
-        <>
-          <p className="mt-6 font-mono text-xs tracking-widest text-blue-50 uppercase">{platformsLabel}</p>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {platforms.map((platform) => (
-              <li key={platform} className="tag-pill">
-                {platform}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
     </div>
   );
 };
 
-/** The same stack as floating, draggable 3D emblems (each card is its own small canvas). */
+/** The same stack as draggable 3D emblems (each card is its own small canvas). */
 export const TechCards = () => {
   const icons = useLocalized(techStackIcons);
   const { journey: text } = useLocalized(ui);
@@ -179,8 +161,7 @@ export const TechCards = () => {
       <ul className="tech-grid">
         {icons.map((model) => (
           // Keyed by emblem so switching language never remounts the WebGL canvas.
-          <li key={model.emblem} className="tech-card group">
-            <div className="tech-card-animated-bg" />
+          <li key={model.emblem} className="tech-card">
             <div className="tech-card-content">
               <div className="tech-icon-wrapper">
                 <TechIcon model={model} theme={theme} />

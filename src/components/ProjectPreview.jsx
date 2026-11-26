@@ -256,7 +256,7 @@ const PipelineArt = ({ label }) => {
             <circle cx="56" cy="24" r="2" fill="#d9ecff" />
             <circle cx="64" cy="32" r="2" fill="#d9ecff" />
           </g>
-          <text x="128" y="50" fontSize="14" fontWeight="700" fill="#d9ecff">GAMEPAD INPUT</text>
+          <text x="128" y="50" fontSize="14" fontWeight="700" fill="#d9ecff">CONTROLLER INPUT</text>
           <text x="128" y="72" fontSize="11" fill="#839cb5">menu snap navigation</text>
           <text x="128" y="90" fontSize="11" fill="#839cb5">rebindable keys & pads</text>
         </g>
@@ -433,7 +433,7 @@ const AirportArt = ({ label }) => (
   </svg>
 );
 
-/** War Plane 1945: a top-down arcade sky over the sea, player below, a wave above. */
+/** War Plane 1945: a top-down 2D sky over the sea, player below, a wave above. */
 const Plane = ({ fill, wing = fill }) => (
   <g>
     <path d="M0-26c4 0 6 6 6 14v34c0 4-2 6-6 6s-6-2-6-6v-34c0-8 2-14 6-14Z" fill={fill} />
@@ -518,8 +518,71 @@ const WarplaneArt = ({ label }) => (
           <Plane fill="#a9b8c9" />
         </g>
       ))}
-      <text x="776" y="478" fontSize="12" fill="#a1a1aa" textAnchor="end">1945 · ARCADE</text>
+      <text x="776" y="478" fontSize="12" fill="#a1a1aa" textAnchor="end">1945 · 2D</text>
     </g>
+  </svg>
+);
+
+/**
+ * Niskala Utilities: the app's own splash screen (src/Niskala.UI/Views/SplashWindow.xaml
+ * in the NiskalaUtilities repository), redrawn as SVG: the NiskalaBrandBrush
+ * gradient, the NiskalaMark monogram (same path data, 110 × 100 canvas) and
+ * the NISKALA / UTILITIES wordmark with the splash's letter spacing.
+ */
+const NiskalaArt = ({ label }) => (
+  // The viewBox hugs the logo and `meet` keeps it whole in any frame shape; the
+  // oversized backdrop fills whatever the frame adds around it.
+  <svg viewBox="200 80 400 330" preserveAspectRatio="xMidYMid meet" role="img" aria-label={label}>
+    <defs>
+      <linearGradient id="niskala-brand" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="500">
+        <stop offset="0" stopColor="#183D66" />
+        <stop offset="1" stopColor="#08111E" />
+      </linearGradient>
+    </defs>
+    <rect x="-4000" y="-4000" width="8800" height="8500" fill="url(#niskala-brand)" />
+
+    {/* NiskalaMark, scaled 1.5× and centred (the splash nudges it 16px right). */}
+    <g transform="translate(329.5 112) scale(1.5)">
+      <path
+        d="M89,9 L89,5 L70,5 L70,61 L18,5 L5,5 L5,95 L24,95 L24,40 L75,95 L89,95 L89,44"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="10"
+        strokeLinejoin="miter"
+        strokeMiterlimit="4"
+        strokeLinecap="butt"
+      />
+      <path d="M84,9 L94,9 L84,19 Z M94,34 L94,44 L84,44 Z" fill="#FFFFFF" />
+      <path d="M95,24 L109,10 L109,22 L95,36 Z" fill="#FFFFFF" />
+    </g>
+
+    {/* Wordmark: CharacterSpacing 320 and 420 (thousandths of an em) as letter-spacing. */}
+    <text
+      x="400"
+      y="350"
+      dx="7"
+      textAnchor="middle"
+      fontFamily="'Segoe UI Variable Display', 'Segoe UI', Inter, sans-serif"
+      fontSize="45"
+      fontWeight="300"
+      letterSpacing="0.32em"
+      fill="#FFFFFF"
+    >
+      NISKALA
+    </text>
+    <text
+      x="400"
+      y="384"
+      dx="4"
+      textAnchor="middle"
+      fontFamily="'Segoe UI Variable Text', 'Segoe UI', Inter, sans-serif"
+      fontSize="18"
+      fontWeight="600"
+      letterSpacing="0.42em"
+      fill="#C4D6E8"
+    >
+      UTILITIES
+    </text>
   </svg>
 );
 
@@ -530,7 +593,8 @@ const artLabels = {
   pipeline: tx("OpenGL ES render pipeline diagram", "Diagram pipeline render OpenGL ES"),
   sidaf: tx("Information system dashboard wireframe", "Wireframe dashboard sistem informasi"),
   airport: tx("Virtual reality airport terminal and runway", "Terminal dan landasan bandara dalam virtual reality"),
-  warplane: tx("Top-down arcade air combat scene over the sea", "Adegan pertempuran udara arcade dari atas, di atas laut"),
+  warplane: tx("Top-down 2D aircraft scene over the sea", "Adegan pesawat 2D dari atas, di atas laut"),
+  niskala: tx("Niskala Utilities splash screen: the N monogram above the NISKALA UTILITIES wordmark", "Layar splash Niskala Utilities: monogram N di atas wordmark NISKALA UTILITIES"),
 };
 
 const artMap = {
@@ -540,11 +604,11 @@ const artMap = {
   sidaf: SidafArt,
   airport: AirportArt,
   warplane: WarplaneArt,
+  niskala: NiskalaArt,
 };
 
 const videoText = {
   play: tx("Play video: {title}", "Putar video: {title}"),
-  gameplay: tx("Watch gameplay", "Tonton gameplay"),
   demo: tx("Watch demo", "Tonton demo"),
 };
 
@@ -552,7 +616,7 @@ const videoText = {
  * Shows the project's screenshot when `image` is set and loads correctly;
  * otherwise renders the matching built-in SVG artwork.
  *
- * With `video` ({ youtubeId, title, kind?: "gameplay" | "demo" }) the preview becomes a click-to-play
+ * With `video` ({ youtubeId, title, kind?: "demo" }) the preview becomes a click-to-play
  * facade: the YouTube player (privacy-enhanced, no cookies until played) only
  * loads after the visitor presses play. `overlay` (for example a badge) is
  * shown on top of the poster and hidden while the video plays.
@@ -612,7 +676,7 @@ const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null,
               </svg>
             </span>
             <span className="video-chip" aria-hidden="true">
-              {(videoText[video.kind] ?? videoText.gameplay)[lang]}
+              {(videoText[video.kind] ?? videoText.demo)[lang]}
             </span>
           </button>
           {overlay}

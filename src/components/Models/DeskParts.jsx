@@ -328,7 +328,7 @@ export const DeskMat = ({ width = 2, depth = 0.65, color = "#101018", edge = "#a
   </group>
 );
 
-export const Gamepad = ({ color = "#1b1b24", ...props }) => (
+export const Controller = ({ color = "#1b1b24", ...props }) => (
   <group {...props}>
     <RoundedBox args={[0.3, 0.06, 0.16]} radius={0.025} smoothness={3} position={[0, 0.04, 0]} castShadow>
       <meshStandardMaterial color={color} roughness={0.5} />

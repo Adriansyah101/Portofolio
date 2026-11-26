@@ -119,8 +119,10 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
                 <p className="resume-meta">{job.period}</p>
               </div>
               <ul>
-                {job.responsibilities.map((item) => (
-                  <li key={item}>{plain(item)}</li>
+                {job.breakdown.map((item) => (
+                  <li key={item.id}>
+                    <strong>{item.title}:</strong> {plain(item.body)}
+                  </li>
                 ))}
               </ul>
             </div>

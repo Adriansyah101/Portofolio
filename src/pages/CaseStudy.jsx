@@ -2,20 +2,23 @@ import { Link, useParams } from "react-router-dom";
 
 import ProjectPreview from "../components/ProjectPreview.jsx";
 import { ArrowLeftIcon, ArrowRightIcon, Icon } from "../components/Icons.jsx";
-import { PlatformBadge, ProjectTags } from "../components/ProjectBits.jsx";
+import { ComparisonTable, PlatformBadge, ProjectTags, ReleaseBadge } from "../components/ProjectBits.jsx";
 import { CaseStudyBlock } from "../components/CaseStudyBlocks.jsx";
 import NotFound from "./NotFound.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { caseStudies, projects, routes, ui } from "../constants/index.js";
+import { useRelease, useResolvedLinks, withTag } from "../hooks/useGitHubReleases.js";
 import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 import { scrollToId, usePageTitle } from "../utils/hooks.js";
 
 /**
- * `/projects/:slug`: deep-dive technical breakdown of one preservation port.
- * From 1024px up the intro (title, links, artwork) stays on the left and the
- * facts, numbered sections and next links read in a pane on the right that
- * scrolls on its own; below 1024px it is one scrolling page in the same order.
+ * `/projects/:slug`: technical specification of one preservation port. From
+ * 1024px up the intro (back link, title, live release badge, summary, links,
+ * artwork) stays on the left and the facts, numbered sections (context, the
+ * legacy-vs-port table, engineering work, release) and next links read in a
+ * pane on the right that scrolls on its own; below 1024px it is one scrolling
+ * page in the same order.
  */
 const CaseStudy = () => {
   const { slug } = useParams();
@@ -24,6 +27,8 @@ const CaseStudy = () => {
   const { caseStudy: text, projects: projectText, meta, common } = useLocalized(ui);
   const study = studies[slug];
   usePageTitle(study ? format(text.pageTitle, { title: study.title }) : meta.notFound);
+  const release = useRelease(study?.projectId);
+  const studyLinks = useResolvedLinks(study?.links);
 
   if (!study) return <NotFound />;
 
@@ -33,33 +38,24 @@ const CaseStudy = () => {
 
   return (
     <article className="page-shell page-enter" key={slug}>
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame">
         <div className="case-layout">
           <header className="case-intro scroll-pane">
-            <nav aria-label={text.breadcrumb} className="mb-6 lg:mb-4">
-              <ol className="flex flex-wrap items-center gap-2 text-sm text-blue-50">
-                <li>
-                  <Link to={routes.projects} className="hover:text-white">
-                    {projectText.pageTitle}
-                  </Link>
-                </li>
-                <li aria-hidden="true">/</li>
-                <li aria-current="page" className="text-white-50">
-                  {study.title}
-                </li>
-              </ol>
-            </nav>
+            <Link to={routes.projects} className="back-link group">
+              <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
+              {text.allProjects}
+            </Link>
             <p className="page-eyebrow">{study.eyebrow}</p>
             <h1 className="page-title wrap-break-word">{study.title}</h1>
-            <p className="mt-3 font-mono text-sm wrap-break-word text-accent-cyan lg:mt-2 lg:text-xs xl:text-sm">
-              {softBreak(study.repoName)}
-            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 lg:mt-2">
+              <p className="min-w-0 font-mono text-sm wrap-break-word text-accent-cyan lg:text-xs xl:text-sm">{softBreak(study.repoName)}</p>
+              <ReleaseBadge projectId={study.projectId} detailed />
+            </div>
             <p className="page-description">{study.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3 lg:mt-5">
-              {study.links.map((link, index) => (
+              {studyLinks.map((link, index) => (
                 <a
-                  key={link.href}
+                  key={link.href + index}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -98,7 +94,9 @@ const CaseStudy = () => {
                   {study.facts.map((fact) => (
                     <div key={fact.id} className="card-border min-w-0 rounded-xl p-5 md:p-6 lg:p-4">
                       <dt className="font-mono text-[11px] tracking-widest text-blue-50 uppercase">{fact.label}</dt>
-                      <dd className="mt-2 font-semibold wrap-break-word text-white-50 md:text-lg lg:text-base">{fact.value}</dd>
+                      <dd className="mt-2 font-mono text-sm font-medium wrap-break-word text-white-50 md:text-base lg:text-sm">
+                        {withTag(fact.value, release)}
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -127,9 +125,13 @@ const CaseStudy = () => {
                     <p className="mt-4 max-w-3xl text-lg leading-relaxed text-body lg:text-base">{renderInlineCode(section.intro)}</p>
                   )}
                   <div className="mt-10 flex flex-col gap-8 lg:mt-6">
-                    {section.blocks.map((block, blockIndex) => (
-                      <CaseStudyBlock key={`${section.id}-${blockIndex}`} block={block} />
-                    ))}
+                    {section.blocks.map((block, blockIndex) =>
+                      block.type === "comparison" ? (
+                        <ComparisonTable key={`${section.id}-${blockIndex}`} project={project} />
+                      ) : (
+                        <CaseStudyBlock key={`${section.id}-${blockIndex}`} block={block} />
+                      ),
+                    )}
                   </div>
                 </section>
               ))}

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import { MathUtils, Vector3 } from "three";
-import ScreenAnchor from "./ScreenAnchor.jsx";
 
 /**
  * Smart-casual look: a black varsity jacket with yellow sleeves, striped rib
@@ -175,9 +174,7 @@ const Head = ({ headRef }) => (
  * Motion, all in one `useFrame`: breathing, a slow idle head sway, a greeting
  * wave shortly after load, a gentle wave every few seconds, and a livelier
  * wave + nod when the visitor hovers, clicks or presses "Wave back"
- * (`waveSignal` increments). `onGreet` fires with the first wave and with
- * every response, so the parent can show the greeting bubble; `bubbleRef`
- * is that bubble's DOM element, kept pinned above the avatar's head.
+ * (`waveSignal` increments).
  *
  * Desk mode (Contact page): set `screenYaw`, the head yaw (radians) that
  * looks at the screen on the desk. The head then glances between that screen
@@ -186,7 +183,7 @@ const Head = ({ headRef }) => (
  * chair) swivel with the figure. Every mesh casts and receives shadows, which
  * matters only in a canvas with `shadows` enabled.
  */
-const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null, children, ...props }) => {
+const DeveloperAvatar = ({ waveSignal = 0, screenYaw = null, children, ...props }) => {
   const root = useRef(null);
   const seat = useRef(null);
   const torso = useRef(null);
@@ -212,8 +209,6 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null,
   });
   const reduced = useRef(prefersReducedMotion());
   const now = useRef(0);
-  const greetRef = useRef(onGreet);
-  greetRef.current = onGreet;
   const gl = useThree((state) => state.gl);
 
   /** Lively wave + nod; ignored while one is already playing so hovering doesn't restart it. */
@@ -225,7 +220,6 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null,
     state.introDone = true;
     state.nodStart = t;
     state.nextIdle = t + RESPONSE_LENGTH + IDLE_GAP;
-    greetRef.current?.();
   };
 
   // "Wave back" button outside the canvas.
@@ -256,7 +250,6 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null,
       state.wave = { start: t, end: t + INTRO_LENGTH, lively: false };
       state.introDone = true;
       state.nextIdle = t + INTRO_LENGTH + IDLE_GAP;
-      greetRef.current?.();
     }
     if (!calm && !state.wave && t >= state.nextIdle) {
       state.wave = { start: t, end: t + IDLE_LENGTH, lively: false };
@@ -438,9 +431,6 @@ const DeveloperAvatar = ({ onGreet, bubbleRef, waveSignal = 0, screenYaw = null,
         </group>
 
         {children}
-
-        {/* Keeps the greeting bubble (HTML overlay) just above the head. */}
-        <ScreenAnchor targetRef={bubbleRef} position={[0, 2.85, 0.1]} keepInside={8} />
       </group>
     </group>
   );

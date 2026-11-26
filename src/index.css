@@ -5,18 +5,18 @@
 /* -------------------------------------------------------------------------- */
 
 @theme {
-  --font-sans: "Mona Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Calm, low-saturation palette: obsidian canvas, slate surfaces with
-     hairline borders, off-white headings, zinc body copy and one muted
-     slate-blue accent. Token names are kept from the original theme so
-     every component picks the new values up automatically. */
+  /* Calm, low-saturation palette: obsidian canvas, flat #111215 surfaces with
+     1px white/8 hairlines, off-white headings, zinc body copy and one muted
+     slate-blue accent. No glows or gradients on surfaces. Token names are kept
+     from the original theme so every component picks the values up. */
   --color-canvas: #09090b;
   --color-white-50: #e4e4e7; /* headings & primary text */
   --color-body: #a1a1aa; /* body copy */
-  --color-black-50: #24252a; /* hairline border on surfaces (~white/8) */
-  --color-black-100: #121317; /* card surface */
+  --color-black-50: rgb(255 255 255 / 0.08); /* 1px hairline border on surfaces */
+  --color-black-100: #111215; /* flat card surface */
   --color-black-200: #18191e; /* raised surface */
   --color-blue-50: #8b93a1; /* muted labels */
   --color-blue-100: #1a1c21; /* inputs */
@@ -44,8 +44,6 @@
  */
 :root {
   --contact-stage: #2a2825; /* = contactPalettes.dark.stage (fog colour) */
-  --glow-a: rgb(228 228 231 / 0.35);
-  --glow-b: rgb(148 163 184 / 0.22);
   --selection-bg: rgb(148 163 184 / 0.3);
   --selection-fg: #ffffff;
   /* Category badges: neutral slate for original work, cool steel for preservation. */
@@ -88,12 +86,8 @@
   --color-emerald-300: #047857;
 
   --contact-stage: #e7e4df; /* = contactPalettes.light.stage */
-  --glow-a: rgb(15 23 42 / 0.28);
-  --glow-b: rgb(71 85 105 / 0.18);
   --selection-bg: rgb(51 65 85 / 0.18);
   --selection-fg: #0f172a;
-  --slide-from: #0f172a;
-  --slide-to: #64748b;
 }
 
 /* Custom utilities (usable in markup and in @apply) */
@@ -113,30 +107,6 @@
 /* -------------------------------------------------------------------------- */
 /*                                  Keyframes                                 */
 /* -------------------------------------------------------------------------- */
-
-/* The slider wrapper holds the word list twice (8 items), so each step moves
-   one item (12.5%) and the final -50% frame is visually identical to 0%. */
-@keyframes wordSlider {
-  0%,
-  18% {
-    transform: translateY(0%);
-  }
-  25%,
-  43% {
-    transform: translateY(-12.5%);
-  }
-  50%,
-  68% {
-    transform: translateY(-25%);
-  }
-  75%,
-  93% {
-    transform: translateY(-37.5%);
-  }
-  100% {
-    transform: translateY(-50%);
-  }
-}
 
 @keyframes arrowBounce {
   0%,
@@ -416,15 +386,6 @@
   /*                                   Hero                                   */
   /* ------------------------------------------------------------------------ */
 
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    /* A single soft, neutral pool of light behind the 3D scene. */
-    background: radial-gradient(55% 50% at 72% 45%, rgb(148 163 184 / 0.07), transparent 70%);
-  }
-
   /* Stacked below 1024px; a two-column split filling the shell above it. */
   .hero {
     @apply relative flex flex-col overflow-hidden lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,11fr)_minmax(0,10fr)];
@@ -478,20 +439,24 @@
   }
 
   .hero-eyebrow {
-    @apply inline-flex w-fit max-w-full items-center gap-2.5 rounded-full border border-white/8 bg-white/[0.02] px-4 py-2 text-xs font-medium text-body md:text-sm;
+    @apply w-fit max-w-full font-mono text-xs tracking-widest text-blue-50 uppercase md:text-sm lg:text-xs xl:text-sm;
   }
 
   .hero-text {
-    @apply flex flex-col gap-4 md:gap-5;
+    @apply flex flex-col gap-3 md:gap-4 lg:gap-[clamp(0.375rem,1.2vh,0.875rem)];
   }
 
   .hero-text h1 {
     @apply max-w-[20ch] text-[30px] leading-[1.15] font-semibold tracking-tight text-balance text-zinc-100 md:text-[52px] lg:max-w-[22ch] lg:text-[clamp(1.875rem,min(4.6vh,3.3vw),3.25rem)];
   }
 
-  /* "Focused on [rotating word]" line under the headline. */
+  /* Role under the name: the job title, then the engineering focus on its own line. */
+  .hero-role {
+    @apply flex flex-col gap-0.5 text-lg leading-snug font-medium text-white-50/85 md:text-2xl lg:text-[clamp(1rem,2.3vh,1.375rem)];
+  }
+
   .hero-focus {
-    @apply text-xl leading-[1.25] font-medium whitespace-nowrap text-body md:text-3xl lg:text-[clamp(1.125rem,2.6vh,1.75rem)];
+    @apply text-body;
   }
 
   .hero-bio {
@@ -511,43 +476,6 @@
     .hero-3d-layout {
       mask-image: linear-gradient(90deg, transparent, #000 12%);
     }
-  }
-
-  /* Rotating headline words */
-  .slide {
-    display: inline-block;
-    height: 1.25em;
-    overflow: hidden;
-    vertical-align: top;
-  }
-
-  .slide-wrapper {
-    display: flex;
-    flex-direction: column;
-    animation: wordSlider 12s infinite cubic-bezier(0.9, 0.01, 0.3, 0.99);
-  }
-
-  .slide-item {
-    display: flex;
-    align-items: center;
-    height: 1.25em;
-    gap: 0.25em;
-    white-space: nowrap;
-  }
-
-  .slide-icon {
-    @apply flex-center rounded-full border border-white/10 bg-white/5 text-white-50;
-    width: 0.85em;
-    height: 0.85em;
-    padding: 0.16em;
-    flex: none;
-  }
-
-  .slide-text {
-    background: linear-gradient(90deg, var(--slide-from, #f4f4f5), var(--slide-to, #a9b8c9));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
 
   /* ------------------------------------------------------------------------ */
@@ -615,55 +543,6 @@
   }
 
   /* ------------------------------------------------------------------------ */
-  /*                       Glow card (operational impact)                       */
-  /* ------------------------------------------------------------------------ */
-
-  .timeline-card {
-    --start: 0;
-    position: relative;
-    isolation: isolate;
-    border: 1px solid var(--color-black-50);
-    background: var(--color-black-100);
-    transition: border-color 0.6s ease;
-  }
-
-  .timeline-card:hover {
-    border-color: color-mix(in oklab, var(--color-white) 10%, transparent);
-  }
-
-  /* Border-only conic gradient that follows the cursor angle (`--start`). */
-  .timeline-card .glow {
-    position: absolute;
-    inset: -1px;
-    z-index: -1;
-    pointer-events: none;
-    border-radius: inherit;
-    padding: 1px;
-    /* Monochrome silver sheen that follows the cursor. */
-    background: conic-gradient(
-      from calc((var(--start) - 45) * 1deg),
-      transparent 0deg,
-      var(--glow-a) 35deg,
-      var(--glow-b) 60deg,
-      transparent 90deg
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-
-  .timeline-card:hover .glow {
-    opacity: 1;
-  }
-
-  /* ------------------------------------------------------------------------ */
   /*                                 Experience                               */
   /* ------------------------------------------------------------------------ */
 
@@ -697,16 +576,21 @@
   }
 
   /* Operational impact cards, sized by the tab panel: 1 / 2 / 3 columns; a lone last card spans two. */
-  .impact-grid {
+  /* Operational breakdown: one, two or three flat cards per row by panel width. */
+  .breakdown-grid {
     @apply grid grid-cols-1 gap-4 @xl:grid-cols-2 @2xl:grid-cols-3 xl:gap-3;
   }
 
-  .impact-grid > :last-child:nth-child(odd) {
+  .breakdown-grid > :last-child:nth-child(odd) {
     @apply @xl:col-span-2 @2xl:col-span-1;
   }
 
+  .breakdown-card {
+    @apply flex h-full min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-5;
+  }
+
   .stack-item {
-    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-200/60 p-3;
+    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-100 p-3;
   }
 
   /* Official brand logos on a light pill so their colours stay legible. */
@@ -748,11 +632,7 @@
   }
 
   .tech-card {
-    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-500 hover:border-white/12;
-  }
-
-  .tech-card-animated-bg {
-    @apply absolute -bottom-full left-0 h-full w-full bg-linear-to-t from-white/[0.04] to-transparent transition-all duration-700 group-hover:bottom-0;
+    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-300 hover:border-white/15;
   }
 
   .tech-card-content {
@@ -870,6 +750,46 @@
     @apply aspect-8/5;
   }
 
+  /* The featured project spans its row; from tablet width up the artwork sits beside the text. */
+  .archive-card.is-featured {
+    @apply md:col-span-full md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)];
+  }
+
+  .archive-card.is-featured .archive-art {
+    @apply md:aspect-auto md:h-full md:min-h-56;
+  }
+
+  .archive-card.is-featured .project-preview {
+    @apply md:border-r md:border-b-0;
+  }
+
+  /* Overview: a narrower artwork column keeps the featured row short. */
+  .archive-card.is-compact.is-featured {
+    @apply lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)];
+  }
+
+  .archive-card.is-compact.is-featured .archive-art {
+    @apply lg:aspect-auto lg:min-h-0;
+  }
+
+  .featured-badge {
+    @apply inline-flex w-fit flex-none items-center gap-1.5 rounded-full border border-accent-cyan/40 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wider whitespace-nowrap text-accent-cyan uppercase;
+  }
+
+  /* Latest GitHub release tag: monospace, links to the release. */
+  .release-badge {
+    @apply inline-flex w-fit max-w-full flex-none flex-wrap items-center gap-x-1.5 gap-y-0.5 rounded-full border border-emerald-300/30 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wide text-emerald-200 transition-colors hover:border-emerald-300/60;
+  }
+
+  .release-badge-detail {
+    @apply text-blue-50 before:mr-1.5 before:content-['·'];
+  }
+
+  /* Case-study back link above the eyebrow. */
+  .back-link {
+    @apply mb-5 flex w-fit items-center gap-1.5 text-sm font-medium text-blue-50 transition-colors hover:text-white lg:mb-3;
+  }
+
   .archive-body {
     @apply flex flex-1 flex-col gap-4 p-6 lg:gap-3 lg:p-5;
   }
@@ -888,7 +808,7 @@
 
   /* Desktop "All" overview tiles: shorter art, two-line summary, no tag list (the category views show everything). */
   .archive-card.is-compact .archive-art {
-    @apply lg:aspect-[2/1];
+    @apply lg:aspect-[5/2];
   }
 
   .archive-card.is-compact .archive-body {
@@ -937,6 +857,72 @@
     @apply lg:sr-only;
   }
 
+  /*
+   * Desktop overview of the original group: the featured project as a tall
+   * tile on the left, the other originals as thumbnail rows beside it (a
+   * shorter row of artwork, one line of summary, no video label).
+   */
+  .catalog.is-all .archive-grid.is-original {
+    @apply lg:grid-cols-2;
+  }
+
+  .catalog.is-all .archive-card.is-featured {
+    @apply lg:col-span-1 lg:row-span-3 lg:flex;
+  }
+
+  .catalog.is-all .archive-card.is-featured .archive-art {
+    @apply lg:aspect-[5/2] lg:h-auto;
+  }
+
+  .catalog.is-all .archive-card.is-featured .project-preview {
+    @apply lg:border-r-0 lg:border-b;
+  }
+
+  .catalog.is-all .archive-card.is-featured .archive-description {
+    @apply lg:line-clamp-2;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) {
+    @apply lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)];
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-art {
+    @apply lg:aspect-auto lg:h-full;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .project-preview {
+    @apply lg:border-r lg:border-b-0;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-body {
+    @apply lg:gap-1.5 lg:p-3;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-description {
+    @apply lg:line-clamp-1;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .category-chip {
+    @apply lg:hidden;
+  }
+
+  /* One line of actions: the primary label truncates instead of wrapping. */
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .project-actions {
+    @apply lg:flex-nowrap;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-chip {
+    @apply lg:hidden;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-play {
+    @apply lg:size-10;
+  }
+
+  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-play svg {
+    @apply lg:size-5;
+  }
+
   /* The overview keeps each group to its number, title and count. */
   .catalog.is-all :is(.catalog-description, .catalog-heading .kind-badge) {
     @apply lg:hidden;
@@ -954,6 +940,12 @@
   .project-preview > img,
   .video-facade > img {
     @apply block size-full object-cover;
+  }
+
+  /* Built-in SVG artwork fills the frame too; its `preserveAspectRatio="xMidYMid slice"` crops from the centre. */
+  .project-preview > svg,
+  .video-facade > svg {
+    @apply block size-full;
   }
 
   /* Click-to-play video: poster + play button; swapped for the YouTube player on click. */
@@ -1019,9 +1011,11 @@
     @apply md:grid-cols-2 lg:grid-cols-3;
   }
 
-  /* Two-column tablet layout: centre the odd card out instead of leaving it flush left. */
+  /* Two-column tablet layout: centre the odd card out instead of leaving it flush left
+     (the featured card spans its own row, so it shifts the count by one). */
   @media (width >= 48rem) and (width < 64rem) {
-    .archive-grid.is-original > :last-child:nth-child(odd) {
+    .archive-grid.is-original:not(:has(.is-featured)) > :last-child:nth-child(odd),
+    .archive-grid.is-original:has(> .is-featured:first-child) > :last-child:nth-child(even) {
       grid-column: 1 / -1;
       justify-self: center;
       width: calc((100% - 2rem) / 2);
@@ -1072,7 +1066,7 @@
   }
 
   .catalog-section {
-    @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12 lg:mt-0 lg:rounded-2xl lg:border lg:border-black-50 lg:bg-white/[0.015] lg:p-4 xl:p-5;
+    @apply mt-14 border-t border-white/6 pt-10 md:mt-20 md:pt-12 lg:mt-0 lg:rounded-2xl lg:border lg:border-black-50 lg:p-4 xl:p-5;
     animation: sectionIn 0.45s ease both;
   }
 
@@ -1290,7 +1284,6 @@
     scroll-behavior: auto;
   }
 
-  .slide-wrapper,
   .page-enter,
   .catalog-section,
   .cta-button .arrow-wrapper svg {
@@ -1308,14 +1301,10 @@
   border-color: rgb(15 23 42 / 0.12);
 }
 
-/* A whisper of depth so white cards separate from the alabaster page. */
-:root[data-theme="light"]
-  :is(.metric, .archive-card, .tech-card, .timeline-card, .card-border, .panel, .notes-reader, .case-reader) {
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
-}
+/* Flat white surfaces on the alabaster page: the 1px hairline does the separating. */
 
 /* -------------------------------------------------------------------------- */
-/*               Hero scene controls, avatar bubble & tooltips                */
+/*                    Hero scene controls & hover tooltip                     */
 /* -------------------------------------------------------------------------- */
 
 @layer components {
@@ -1351,41 +1340,7 @@
     @apply text-white-50;
   }
 
-  /* drei <Html> puts the element's top-left corner on the 3D anchor, so the bubble lifts itself above it. */
-  .avatar-bubble {
-    @apply relative w-max rounded-2xl border border-white/10 bg-black-100 px-3.5 py-2 text-xs leading-snug font-medium text-white-50 md:text-sm;
-    max-width: min(16rem, 62vw);
-    text-align: center;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
-    opacity: 0;
-    /* --anchor-shift (set by ScreenAnchor) keeps the bubble inside the canvas. */
-    transform: translate(calc(-50% + var(--anchor-shift, 0px)), calc(-100% + 6px)) scale(0.96);
-    transform-origin: 50% 100%;
-    transition:
-      opacity 0.35s ease,
-      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .avatar-bubble.is-visible {
-    opacity: 1;
-    transform: translate(calc(-50% + var(--anchor-shift, 0px)), calc(-100% - 6px)) scale(1);
-  }
-
-  .avatar-bubble::after {
-    content: "";
-    position: absolute;
-    /* Undo the shift so the tail still points at the head. */
-    left: clamp(18px, calc(50% - var(--anchor-shift, 0px)), calc(100% - 18px));
-    bottom: -6px;
-    width: 10px;
-    height: 10px;
-    background: inherit;
-    border-right: inherit;
-    border-bottom: inherit;
-    transform: translateX(-50%) rotate(45deg);
-  }
-
-  /* Zero-size point in the overlay that ScreenAnchor moves with translate3d(). */
+  /* Zero-size point in the overlay that the hover tooltip moves with translate3d(). */
   .scene-anchor {
     @apply pointer-events-none absolute top-0 left-0 z-10 size-0;
   }
@@ -1577,6 +1532,11 @@
     @apply lg:text-base;
   }
 
+  /* The page header stays short on desktop; phones and tablets keep the language list. */
+  .gh-stats.is-compact .gh-stats-languages {
+    @apply lg:hidden;
+  }
+
   .note-card {
     @apply flex h-full min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8 lg:p-5;
   }
@@ -1676,11 +1636,5 @@
     margin: 0;
     padding: 0;
     border-radius: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .avatar-bubble {
-    transition: opacity 0.2s ease;
   }
 }

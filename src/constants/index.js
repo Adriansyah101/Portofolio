@@ -27,12 +27,12 @@ const env = import.meta.env;
 export const siteUrl = "https://adriansyah101.github.io/Portofolio/";
 
 /** GitHub account that owns every repository linked from the site. */
-export const githubUser = env.VITE_GITHUB_USERNAME?.trim() || "adriansyah101";
+export const githubUser = env.VITE_GITHUB_USERNAME?.trim() || "Adriansyah101";
 
 const GITHUB = `https://github.com/${githubUser}`;
-const GT_RACING_REPO = "GTRacingMotorAcademyRecomp";
-/** Exact Gangstar repo name. Without it, links open the GitHub profile. */
-const GANGSTAR_REPO = env.VITE_GANGSTAR_REPO?.trim() || null;
+const NISKALA_REPO = "NiskalaUtilities";
+const GT_RACING_REPO = "GTRacingMotorAcademy-PC-Port";
+const GANGSTAR_REPO = "GangstarMiamiVindication-PC-Port";
 const TWITTER_HANDLE = env.VITE_TWITTER_HANDLE?.trim().replace(/^@/, "") || null;
 
 /** Public contact address. The contact page and the footer link to it. */
@@ -45,16 +45,30 @@ export const gmailComposeUrl = (subject = "") =>
 
 export const links = {
   githubProfile: GITHUB,
+  niskalaRepo: `${GITHUB}/${NISKALA_REPO}`,
+  niskalaReleases: `${GITHUB}/${NISKALA_REPO}/releases`,
   sidafRepo: `${GITHUB}/sidaf`,
   vrAirportRepo: `${GITHUB}/VR-Simulation-Airport`,
   warPlaneRepo: `${GITHUB}/War-Plane-1945`,
-  warPlanePlay: "https://gx.games/games/t2k4q0/war-plane-1945/tracks/b60326ee-2d4f-4321-91a8-59299f6f4831",
+  warPlaneWeb: "https://gx.games/games/t2k4q0/war-plane-1945/tracks/b60326ee-2d4f-4321-91a8-59299f6f4831",
   gtRacingRepo: `${GITHUB}/${GT_RACING_REPO}`,
   gtRacingReleases: `${GITHUB}/${GT_RACING_REPO}/releases`,
-  gangstarRepo: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}` : GITHUB,
-  gangstarReleases: GANGSTAR_REPO ? `${GITHUB}/${GANGSTAR_REPO}/releases` : null,
+  gangstarRepo: `${GITHUB}/${GANGSTAR_REPO}`,
+  gangstarReleases: `${GITHUB}/${GANGSTAR_REPO}/releases`,
   twitter: TWITTER_HANDLE ? `https://x.com/${TWITTER_HANDLE}` : null,
   ferizy: "https://trip.ferizy.com",
+};
+
+/**
+ * Repositories whose latest GitHub release drives the version badges and
+ * release links (src/hooks/useGitHubReleases.js), keyed by project id. The
+ * fallback is shown while loading and whenever the API is unreachable or rate
+ * limited; update it after a release if you like, but nothing breaks if not.
+ */
+export const releaseSources = {
+  niskala: { repo: `${githubUser}/${NISKALA_REPO}`, fallbackTag: "V0.1.0", fallbackUrl: links.niskalaReleases },
+  "gt-racing": { repo: `${githubUser}/${GT_RACING_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.gtRacingReleases },
+  gangstar: { repo: `${githubUser}/${GANGSTAR_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.gangstarReleases },
 };
 
 /**
@@ -141,7 +155,6 @@ export const ui = {
   },
   hero: {
     sceneLabel: tx("Interactive 3D systems workstation", "Workstation sistem 3D interaktif"),
-    greeting: tx("Hi! Welcome to my engineering workspace 👋", "Halo! Selamat datang di ruang kerja saya 👋"),
     waveBack: tx("Wave Back", "Sapa Balik"),
     presetsLabel: tx("Camera view", "Sudut kamera"),
     presets: {
@@ -179,11 +192,11 @@ export const ui = {
   },
   notes: {
     pageTitle: tx("Engineering Notes", "Catatan Teknis"),
-    eyebrow: tx("Engineering Notes", "Catatan Teknis"),
-    title: tx("Notes from production and from preservation work", "Catatan dari operasional produksi dan pekerjaan preservasi"),
+    eyebrow: tx("Notes", "Catatan"),
+    title: tx("Engineering Notes", "Catatan Teknis"),
     description: tx(
-      "Short technical write-ups on the problems behind the projects: translating legacy mobile graphics pipelines to the desktop, and keeping a hybrid harbor-and-cloud ticketing system steady.",
-      "Tulisan teknis singkat tentang masalah di balik proyek-proyek saya: menerjemahkan pipeline grafis mobile lama ke desktop, dan menjaga sistem tiket hybrid pelabuhan-dan-cloud tetap stabil.",
+      "Technical write-ups in three parts (context, approach, outcome): OpenGL ES translation for the iPad port, and hybrid harbor-and-cloud ticketing operations.",
+      "Tulisan teknis dalam tiga bagian (konteks, pendekatan, hasil): translasi OpenGL ES untuk port iPad, dan operasional tiket hybrid pelabuhan-dan-cloud.",
     ),
     read: tx("Read note", "Baca catatan"),
     minutes: tx("{n} min read", "{n} menit baca"),
@@ -196,18 +209,15 @@ export const ui = {
   journey: {
     contactCta: tx("Get in Touch", "Hubungi Saya"),
     pageTitle: tx("Work Experience", "Pengalaman Kerja"),
-    eyebrow: tx("Career & Work Experience", "Karier & Pengalaman Kerja"),
-    title: tx(
-      "Keeping national ferry ticketing running in production",
-      "Menjaga tiket kapal penyeberangan nasional tetap berjalan di produksi",
-    ),
+    eyebrow: tx("Journey", "Perjalanan Karier"),
+    title: tx("Work Experience", "Pengalaman Kerja"),
     description: tx(
-      "Enterprise application operations at PT ASDP Indonesia Ferry (Persero): hybrid cloud and harbor server deployments across dozens of ports, Omron barrier gate integration, and the day-to-day reliability of trip.ferizy.com.",
-      "Operasional aplikasi enterprise di PT ASDP Indonesia Ferry (Persero): deployment hybrid cloud dan server pelabuhan di puluhan pelabuhan, integrasi barrier gate Omron, serta keandalan harian trip.ferizy.com.",
+      "Business application operations at PT ASDP Indonesia Ferry (Persero), 2024 – 2026: harbor and cloud deployments, barrier gate integration and production support for trip.ferizy.com.",
+      "Operasional aplikasi bisnis di PT ASDP Indonesia Ferry (Persero), 2024 – 2026: deployment pelabuhan dan cloud, integrasi barrier gate, serta dukungan produksi untuk trip.ferizy.com.",
     ),
     tabsLabel: tx("Experience details", "Detail pengalaman"),
     tabs: {
-      impact: tx("Operational Impact", "Dampak Operasional"),
+      impact: tx("Operational Breakdown", "Rincian Operasional"),
       stack: tx("Enterprise Stack", "Stack Enterprise"),
       tech3d: tx("3D Tech Cards", "Kartu Teknologi 3D"),
     },
@@ -219,28 +229,22 @@ export const ui = {
   },
   experience: {
     title: tx("Professional Experience", "Pengalaman Profesional"),
-    sub: tx("Enterprise Application Operations", "Operasional Aplikasi Enterprise"),
-    responsibilities: tx("Key Responsibilities & Achievements", "Tanggung Jawab & Pencapaian Utama"),
-    highlights: tx("Highlights", "Sorotan"),
-    stackTargets: tx("Stack & Targets", "Stack & Target"),
     productionSystems: tx("Production systems", "Sistem produksi"),
   },
-  techStack: {
-    title: tx("Enterprise & Systems Tech Stack", "Tech Stack Enterprise & Sistem"),
-    sub: tx("Tools I Run in Production", "Tools yang Saya Jalankan di Produksi"),
-  },
-  highlights: {
-    title: tx("Operational Impact Highlights", "Sorotan Dampak Operasional"),
-    sub: tx("Production Outcomes", "Hasil di Produksi"),
+  release: {
+    latest: tx("Latest release", "Rilis terbaru"),
+    published: tx("Published {date}", "Dirilis {date}"),
+    files: tx("{n} files", "{n} berkas"),
   },
   projects: {
     pageTitle: tx("Projects", "Proyek"),
-    eyebrow: tx("Projects · Original & 32-Bit Preservation", "Proyek · Original & Preservasi 32-Bit"),
-    title: tx("Original builds and preserved 32-bit software", "Karya original dan perangkat lunak 32-bit yang dipreservasi"),
+    eyebrow: tx("Projects", "Proyek"),
+    title: tx("Original software & 32-bit preservation", "Software original & preservasi 32-bit"),
     description: tx(
-      "Three original projects built from scratch, alongside two 32-bit games that modern iOS and macOS can no longer run, rebuilt as native ports. Filter by category, compare each legacy target with its port, and open the case studies for the full technical breakdown.",
-      "Tiga proyek original yang dibangun dari nol, bersama dua game 32-bit yang tak lagi bisa dijalankan iOS dan macOS modern, dibangun ulang sebagai port native. Filter berdasarkan kategori, bandingkan target lama dengan port-nya, dan buka studi kasus untuk rincian teknis lengkapnya.",
+      "Four original applications built from scratch and two native PC ports of 32-bit iPad and Mac software. The case studies cover each port in technical detail.",
+      "Empat aplikasi original yang dibangun dari nol dan dua port PC native untuk software iPad dan Mac 32-bit. Studi kasus membahas setiap port secara teknis.",
     ),
+    featured: tx("Featured Project", "Proyek Unggulan"),
     catalogTitle: tx("Project catalog", "Katalog proyek"),
     filterLabel: tx("Filter projects by category", "Filter proyek berdasarkan kategori"),
     showing: tx("Showing {n} of {total} projects", "Menampilkan {n} dari {total} proyek"),
@@ -250,8 +254,8 @@ export const ui = {
       "iPad/Mac 32-Bit Lama vs. Port Native Windows/Linux",
     ),
     compareDescription: tx(
-      "What each game was built for, and what it runs on now.",
-      "Untuk apa setiap game dibuat, dan di mana game itu berjalan sekarang.",
+      "What each application was built for, and what it runs on now.",
+      "Untuk apa setiap aplikasi dibuat, dan di mana aplikasi itu berjalan sekarang.",
     ),
     aspect: tx("Aspect", "Aspek"),
     legacyTarget: tx("Legacy 32-bit target", "Target 32-bit lama"),
@@ -278,20 +282,17 @@ export const ui = {
   },
   contact: {
     pageTitle: tx("Contact", "Kontak"),
-    greeting: tx("Send me a message — I'm at my desk! 👋", "Kirim pesan saja — saya standby di meja kerja! 👋"),
     sceneLabel: tx(
       "3D desk scene: the developer avatar waves when you hover it or open the email options",
       "Adegan meja 3D: avatar developer melambai saat disorot atau saat Anda membuka opsi email",
     ),
-    eyebrow: tx("Contact", "Kontak"),
-    title: tx("Let's talk about systems that need to stay up", "Mari bicara tentang sistem yang harus tetap berjalan"),
+    eyebrow: tx("Email · GitHub", "Email · GitHub"),
+    title: tx("Contact", "Kontak"),
     description: tx(
-      "Systems operations, infrastructure and application support roles, or a C/C++ and low-level porting question: email me on Gmail, or find my source code and releases on GitHub.",
-      "Peran operasional sistem, infrastruktur, dan dukungan aplikasi, atau pertanyaan seputar C/C++ dan porting tingkat rendah: kirim email lewat Gmail, atau temukan source code dan rilis saya di GitHub.",
+      "For systems operations, infrastructure or application support roles, and questions about Windows utilities or binary porting: write via Gmail, or review the source code and releases on GitHub.",
+      "Untuk peran operasional sistem, infrastruktur, atau dukungan aplikasi, serta pertanyaan seputar utilitas Windows atau porting biner: kirim email lewat Gmail, atau lihat source code dan rilisnya di GitHub.",
     ),
     communityTitle: tx("Source code & releases on GitHub", "Source code & rilis di GitHub"),
-    sectionTitle: tx("Get in Touch – Let's Connect", "Hubungi Saya – Mari Terhubung"),
-    sectionSub: tx("Have a systems or engineering role in mind?", "Punya peran sistem atau engineering yang cocok?"),
     mail: {
       label: "Gmail",
       title: tx("Write to me on Gmail", "Kirim email lewat Gmail"),
@@ -327,27 +328,17 @@ export const ui = {
 /*                                    Hero                                    */
 /* -------------------------------------------------------------------------- */
 
-/** Rotating focus areas under the hero headline (`id` keeps React keys stable across languages). */
-export const words = [
-  { id: "cloud", text: "Cloud & Edge", icon: "cloud" },
-  { id: "ops", text: tx("System Ops", "Operasi Sistem"), icon: "server" },
-  { id: "native", text: "C/C++ & Win32", icon: "code" },
-  { id: "infra", text: tx("Infrastructure", "Infrastruktur"), icon: "layers" },
-];
-
 export const heroContent = {
-  eyebrow: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),
-  headline: tx(
-    "Engineering Reliable Production Systems & Native Software Architecture",
-    "Merekayasa Sistem Produksi yang Andal & Arsitektur Perangkat Lunak Native",
-  ),
-  focusLabel: tx("Focused on", "Berfokus pada"),
+  eyebrow: "Semarang, Indonesia",
+  name: "Adriansyah Prasetya Nugraha",
+  role: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),
+  focus: tx("Windows Systems & Binary Recompilation", "Sistem Windows & Rekompilasi Biner"),
   bio: tx(
-    "Hi, I'm Adriansyah Prasetya Nugraha — a Systems & Application Operations Engineer based in Semarang, Indonesia, experienced in high-availability national ticketing infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments, industrial hardware integration, and low-level binary recompilation.",
-    "Halo, saya Adriansyah Prasetya Nugraha — Engineer Sistem & Operasional Aplikasi asal Semarang, Indonesia, berpengalaman menangani infrastruktur tiket nasional berketersediaan tinggi (`trip.ferizy.com`), deployment hybrid cloud/on-premise di pelabuhan, integrasi perangkat keras industri, serta rekompilasi biner tingkat rendah.",
+    "Business Application Operational Support at PT ASDP Indonesia Ferry (2024–2026), managing nationwide port counter deployments, Omron barrier gate integration, and trip.ferizy.com stability. Independently engineering Windows system utilities (Niskala Utilities) and native PC static recompilation ports for 32-bit legacy software.",
+    "Staf Dukungan Operasional Aplikasi Bisnis di PT ASDP Indonesia Ferry (2024–2026) yang menangani deployment layanan loket di puluhan pelabuhan, integrasi barrier gate Omron, dan operasional trip.ferizy.com. Secara independen mengembangkan utilitas sistem Windows (Niskala Utilities) serta port native PC berbasis rekompilasi biner statis untuk perangkat lunak klasik 32-bit.",
   ),
-  ctaProjects: tx("Explore Projects", "Jelajahi Proyek"),
-  ctaJourney: tx("Work Experience", "Pengalaman Kerja"),
+  ctaProjects: tx("Projects", "Proyek"),
+  ctaJourney: tx("Journey", "Pengalaman"),
 };
 
 /** Optional `.glb` that replaces the procedural developer room in the hero. */
@@ -367,45 +358,13 @@ export const contactScene = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                               Counter metrics                              */
-/* -------------------------------------------------------------------------- */
-
-/** `text` shows a fixed word instead of an animated number; `note` is a small line under the label. */
-export const counterItems = [
-  {
-    id: "years",
-    text: "2024 – 2026", // non-breaking spaces keep the range on one line
-    label: tx("Enterprise Operations Experience", "Pengalaman Operasional Enterprise"),
-    note: "PT ASDP Indonesia Ferry (Persero)",
-  },
-  {
-    id: "ports",
-    text: tx("Dozens", "Puluhan"),
-    label: tx("Harbor & Cloud Deployments", "Deployment Pelabuhan & Cloud"),
-  },
-  {
-    id: "projects",
-    value: 5,
-    suffix: "",
-    label: tx("Total GitHub Projects", "Total Proyek GitHub"),
-    note: tx("3 original · 2 preservation ports", "3 original · 2 port preservasi"),
-  },
-  {
-    id: "platforms",
-    text: "Windows & Linux",
-    label: tx("Supported Desktop Platforms", "Platform Desktop yang Didukung"),
-    note: tx("Native preservation port targets", "Target native port preservasi"),
-  },
-];
-
-/* -------------------------------------------------------------------------- */
 /*                                  Projects                                  */
 /* -------------------------------------------------------------------------- */
 
 /** Tabs on `/projects`; `?category=<id>` in the URL selects one. */
 export const projectCategories = [
   { id: "all", label: tx("All", "Semua") },
-  { id: "original", label: tx("Original Projects", "Proyek Original") },
+  { id: "original", label: tx("Original Software", "Software Original") },
   { id: "preservation", label: tx("32-Bit Preservation", "Preservasi 32-Bit") },
 ];
 
@@ -417,52 +376,77 @@ export const projectCategories = [
 export const projectSections = {
   original: {
     index: "01",
-    title: tx("Original Projects", "Proyek Original"),
+    title: tx("Original Software", "Software Original"),
     badge: { label: tx("Original", "Original"), icon: "code" },
     description: tx(
-      "Applications, 3D/VR simulations, and games engineered from scratch.",
-      "Aplikasi web, simulasi 3D/VR, dan game yang dirancang serta dibangun dari nol.",
+      "A Windows system utility, an information system and interactive 3D and 2D applications, written from scratch.",
+      "Utilitas sistem Windows, sistem informasi, serta aplikasi interaktif 3D dan 2D yang ditulis dari nol.",
     ),
   },
   preservation: {
     index: "02",
-    title: tx("32-Bit Game Preservation", "Preservasi Game 32-Bit"),
+    title: tx("32-Bit Software Preservation", "Preservasi Software 32-Bit"),
     badge: { label: tx("32-Bit Preservation", "Preservasi 32-Bit"), icon: "archive" },
     description: tx(
-      "Static binary recompilation and graphics pipeline modernization rescuing unplayable 32-bit iPad and Mac classics for modern Windows and Linux systems.",
-      "Rekompilasi biner statis dan modernisasi pipeline grafis untuk menyelamatkan game klasik iPad dan Mac 32-bit agar dapat berjalan secara native di Windows dan Linux modern.",
+      "Native PC ports of 32-bit iPad (ARMv7) and Mac (x86) applications that current iOS and macOS no longer run.",
+      "Port PC native untuk aplikasi iPad (ARMv7) dan Mac (x86) 32-bit yang tidak lagi bisa dijalankan iOS dan macOS terbaru.",
     ),
   },
 };
 
-const ORIGINAL_BADGE = tx("Original Project", "Proyek Original");
+const ORIGINAL_BADGE = tx("Original Software", "Software Original");
 const VIEW_SOURCE = tx("View Source on GitHub", "Lihat Source di GitHub");
 const GITHUB_REPOSITORY = tx("GitHub Repository", "Repositori GitHub");
+/** `{tag}` is filled with the latest GitHub release tag (src/hooks/useGitHubReleases.js). */
+const RELEASE_TAG = tx("Release {tag}", "Rilis {tag}");
 
 /**
- * Category A: original work. `art` selects the built-in SVG preview; set
- * `image` to a 16:9 screenshot path inside `/public` to show a real capture
- * (for example `public/images/sidaf.png` → `image: "images/sidaf.png"`).
- * Tags come from each repository's actual languages and engine files.
+ * Category A: original work, in display order (`featured` marks the top
+ * project). `art` selects the built-in SVG preview; set `image` to a 16:9
+ * screenshot path inside `/public` to show a real capture. A link with
+ * `release` takes its URL and `{tag}` from that repository's latest release.
  */
 export const originalProjects = [
+  {
+    id: "niskala",
+    category: "original",
+    featured: true,
+    caseStudy: null,
+    shortTitle: "Niskala Utilities",
+    subtitle: tx("Windows Desktop & CLI Utility", "Utilitas Desktop & CLI Windows"),
+    platform: ORIGINAL_BADGE,
+    platformIcon: "terminal",
+    categoryLabel: tx("System Utility", "Utilitas Sistem"),
+    description: tx(
+      "Modular Windows system utility combining WinUI & CLI interfaces, ETW installation monitoring and rollback, guarded leftover/registry cleanup with .reg backups, and non-destructive system maintenance (DISM, SFC, CHKDSK /scan).",
+      "Utilitas sistem Windows modular dengan antarmuka WinUI & CLI, pemantauan instalasi berbasis ETW dan rollback, pembersihan sisa file/registry terproteksi dengan backup .reg, serta pemeliharaan sistem non-destruktif (DISM, SFC, CHKDSK /scan).",
+    ),
+    tags: ["C# / .NET", "WinUI & CLI", "Windows Internals / ETW", tx("System Maintenance", "Pemeliharaan Sistem")],
+    art: "niskala",
+    image: null, // e.g. "images/niskala.png" (16:9)
+    links: [
+      { label: VIEW_SOURCE, href: links.niskalaRepo, icon: "github" },
+      { release: "niskala", label: RELEASE_TAG, href: links.niskalaReleases, icon: "tag" },
+    ],
+    comparison: null,
+  },
   {
     id: "sidaf",
     category: "original",
     caseStudy: null,
     shortTitle: "SIDAF",
-    subtitle: tx("Information System / Web Application", "Sistem Informasi / Aplikasi Web"),
+    subtitle: tx("Web Information System", "Sistem Informasi Web"),
     platform: ORIGINAL_BADGE,
     platformIcon: "code",
     categoryLabel: tx("Information System", "Sistem Informasi"),
     description: tx(
-      "Original full-stack web information system built to streamline structured data management, operational workflows, and administrative reporting.",
-      "Sistem informasi web full-stack original yang dibangun untuk menyederhanakan pengelolaan data terstruktur, alur kerja operasional, dan pelaporan administratif.",
+      "Full-stack web information system for structured data management, operational workflows and administrative reporting.",
+      "Sistem informasi web full-stack untuk pengelolaan data terstruktur, alur kerja operasional, dan pelaporan administratif.",
     ),
     tags: ["PHP", "CodeIgniter", "JavaScript", "HTML & CSS"],
     art: "sidaf",
     image: null, // e.g. "images/sidaf.png" (16:9)
-    links: [{ label: VIEW_SOURCE, href: links.sidafRepo, icon: "github", arrow: true }],
+    links: [{ label: VIEW_SOURCE, href: links.sidafRepo, icon: "github" }],
     comparison: null,
   },
   {
@@ -475,14 +459,14 @@ export const originalProjects = [
     platformIcon: "cube",
     categoryLabel: tx("VR & 3D Simulation", "Simulasi VR & 3D"),
     description: tx(
-      "Interactive virtual reality airport environment simulation featuring spatial 3D navigation, terminal/airside modeling, and real-time environmental interaction.",
-      "Simulasi lingkungan bandara berbasis virtual reality interaktif dengan navigasi spasial 3D, pemodelan area terminal/sisi udara, serta interaksi lingkungan real-time.",
+      "Virtual reality simulation of airport procedures, with spatial 3D navigation through terminal and airside areas on Oculus Quest 2 and PCVR.",
+      "Simulasi prosedur bandara berbasis virtual reality, dengan navigasi spasial 3D di area terminal dan sisi udara pada Oculus Quest 2 dan PCVR.",
     ),
     tags: ["Unity", "C#", "Oculus Quest 2", "PCVR"],
     art: "airport",
     image: "images/vr-airport.jpg", // thumbnail of the demo video below
-    video: { youtubeId: "oLm0qSSHeiM", title: "Demo Aplikasi Simulasi Prosedur Bandara Menggunakan Virtual Reality", kind: "demo" },
-    links: [{ label: VIEW_SOURCE, href: links.vrAirportRepo, icon: "github", arrow: true }],
+    video: { youtubeId: "oLm0qSSHeiM", title: "Demo Aplikasi Simulasi Prosedur Bandara Menggunakan Virtual Reality" },
+    links: [{ label: VIEW_SOURCE, href: links.vrAirportRepo, icon: "github" }],
     comparison: null,
   },
   {
@@ -490,95 +474,98 @@ export const originalProjects = [
     category: "original",
     caseStudy: null,
     shortTitle: "War Plane 1945",
-    subtitle: tx("Arcade Air Combat Game", "Game Arcade Pertempuran Udara"),
+    subtitle: tx("Custom 2D kinematics and collision systems", "Kinematika 2D dan sistem tabrakan kustom"),
     platform: ORIGINAL_BADGE,
-    platformIcon: "gamepad",
-    categoryLabel: tx("Game Development", "Pengembangan Game"),
+    platformIcon: "controller",
+    categoryLabel: tx("Interactive 2D Application", "Aplikasi Interaktif 2D"),
     description: tx(
-      "Original 1945-inspired aerial combat arcade game built from scratch with custom flight controls, projectile mechanics, enemy wave logic, and collision systems.",
-      "Game arcade pertempuran udara bergaya 1945 yang dibuat dari awal dengan kontrol penerbangan kustom, mekanika proyektil, logika gelombang musuh, dan sistem deteksi tabrakan.",
+      "Interactive 2D application built from scratch, with custom 2D movement kinematics, projectile logic, entity wave management and collision detection.",
+      "Aplikasi interaktif 2D yang dibangun dari nol, dengan kinematika gerak 2D kustom, logika proyektil, manajemen gelombang entitas, dan deteksi tabrakan.",
     ),
-    tags: ["GameMaker", "GML", "2D", "Windows"],
+    tags: ["GML", tx("2D Kinematics", "Kinematika 2D"), tx("Collision Detection", "Deteksi Tabrakan"), "Windows"],
     art: "warplane",
-    image: "images/war-plane-1945.jpg", // thumbnail of the gameplay video below
-    video: { youtubeId: "LXDtVyzX5zQ", title: "War Plane 1945 - Gameplay" },
+    image: "images/war-plane-1945.jpg", // thumbnail of the recording below
+    video: { youtubeId: "LXDtVyzX5zQ", title: "War Plane 1945 - Demo" },
     links: [
-      { label: tx("Play on GX.games", "Mainkan di GX.games"), href: links.warPlanePlay, icon: "gamepad", arrow: true },
       { label: VIEW_SOURCE, href: links.warPlaneRepo, icon: "github" },
+      { label: tx("Open Web Build", "Buka Build Web"), href: links.warPlaneWeb, icon: "external" },
     ],
     comparison: null,
   },
 ];
 
 /**
- * Category B: 32-bit game preservation. `comparison` feeds the "Legacy 32-Bit
- * iPad/Mac vs. Native Windows/Linux Port" table.
+ * Category B: 32-bit software preservation. `comparison` feeds the "Legacy
+ * 32-bit target vs. native port" table on `/projects` and in each case study.
+ * `{tag}` is the repository's latest release tag.
  */
 export const preservationProjects = [
   {
     id: "gt-racing",
     category: "preservation",
     caseStudy: routes.gtRacing,
-    title: tx(
-      "GTRacingMotorAcademyRecomp: 32-Bit iPad Racer, Preserved Natively on Windows",
-      "GTRacingMotorAcademyRecomp: Game Balap iPad 32-Bit, Dipreservasi Native di Windows",
-    ),
     shortTitle: "GT Racing: Motor Academy",
-    subtitle: "GTRacingMotorAcademyRecomp",
+    subtitle: tx("Native PC Software Port · Static Binary Recompilation", "Port Software PC Native · Rekompilasi Biner Statis"),
     platform: "32-Bit iPad",
     platformIcon: "tablet",
-    origin: "32-bit iPad · ARMv7 / PowerVR",
-    target: tx("Native Windows · v1.0.0", "Windows native · v1.0.0"),
+    origin: "32-bit iPad · ARMv7 / iOS",
+    target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "Gameloft's flagship simulation racer stopped launching when iOS 11 dropped 32-bit apps. This static recompilation preserves it as a native Windows executable (`v1.0.0`), without emulation. It adds custom OpenGL ES shaders with instant-apply PostFX and motion blur, PVRTC texture decoding, full keyboard and gamepad remapping, and a restored Cloudflare Workers + D1 leaderboard (`gt-redbull-board`).",
-      "Game balap simulasi andalan Gameloft berhenti bisa dijalankan saat iOS 11 menghentikan aplikasi 32-bit. Rekompilasi statis ini mempreservasinya sebagai executable Windows native (`v1.0.0`) tanpa emulasi, lengkap dengan shader OpenGL ES kustom dengan PostFX dan motion blur yang langsung berlaku, dekode tekstur PVRTC, remapping keyboard dan gamepad penuh, serta leaderboard Cloudflare Workers + D1 yang dipulihkan (`gt-redbull-board`).",
+      "Static binary recompilation of the 32-bit iPad (ARMv7) application into native Windows and Linux x86 builds, with no emulation at run time. Adds an OpenGL ES translation layer with live PostFX and motion blur, widescreen UI scaling, MSAA, remappable controls and a Cloudflare Workers + D1 leaderboard.",
+      "Rekompilasi biner statis aplikasi iPad 32-bit (ARMv7) menjadi build Windows dan Linux x86 native, tanpa emulasi saat runtime. Dilengkapi lapisan translasi OpenGL ES dengan PostFX dan motion blur yang langsung berlaku, skala UI layar lebar, MSAA, kontrol yang bisa diatur ulang, serta leaderboard Cloudflare Workers + D1.",
     ),
-    tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7", "OpenGL ES", "PVRTC", "Cloudflare D1"],
+    tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7 → x86", "OpenGL ES", "Cloudflare D1"],
     art: "racing",
-    image: "images/gtracing-pc.jpg", // thumbnail of the "GT Racing Motor Academy PC Port - Ferrari 288 GTO Gameplay" video
+    image: "images/gtracing-pc.jpg", // thumbnail of the recording below
     imagePosition: "left center", // keeps the title text whole when the 16:9 thumbnail is cropped to 8:5
-    video: { youtubeId: "cn-nsNnlO7E", title: "GT Racing Motor Academy PC Port - Ferrari 288 GTO Gameplay" }, // click-to-play on the card & case study
+    video: { youtubeId: "cn-nsNnlO7E", title: "GT Racing Motor Academy PC Port - Ferrari 288 GTO" },
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { label: tx("Release Notes", "Catatan Rilis"), href: links.gtRacingReleases, icon: "tag" },
+      { release: "gt-racing", label: RELEASE_TAG, href: links.gtRacingReleases, icon: "tag" },
     ],
     comparison: [
-      { id: "platform", aspect: "Platform", original: "32-bit iPad / iOS", modern: tx("Native Windows PC executable", "Executable PC Windows native") },
+      { id: "platform", aspect: "Platform", original: "32-bit iPad / iOS", modern: "Windows & Linux (x86)" },
       {
         id: "cpu",
         aspect: tx("CPU code", "Kode CPU"),
-        original: tx("32-bit ARMv7 machine code", "Kode mesin ARMv7 32-bit"),
-        modern: tx("Statically recompiled native desktop code", "Kode desktop native hasil rekompilasi statis"),
+        original: tx("32-bit ARMv7 and Thumb machine code", "Kode mesin ARMv7 dan Thumb 32-bit"),
+        modern: tx("23,873 functions recompiled ahead of time to C, built for x86", "23.873 fungsi direkompilasi lebih dulu ke C, di-build untuk x86"),
       },
       {
         id: "graphics",
         aspect: tx("Graphics", "Grafis"),
         original: tx("OpenGL ES 1.1/2.0 on PowerVR GPUs", "OpenGL ES 1.1/2.0 di GPU PowerVR"),
-        modern: tx("Desktop OpenGL / ANGLE with custom shaders & PostFX", "OpenGL desktop / ANGLE dengan shader kustom & PostFX"),
+        modern: tx("Desktop OpenGL 2.1 through a translation layer; PostFX, MSAA", "OpenGL 2.1 desktop melalui lapisan translasi; PostFX, MSAA"),
       },
       {
         id: "textures",
         aspect: tx("Textures", "Tekstur"),
         original: tx("PVRTC (PowerVR-only compression)", "PVRTC (kompresi khusus PowerVR)"),
-        modern: tx("Decoded for any desktop GPU", "Didekode untuk GPU desktop apa pun"),
+        modern: tx("Decoded to RGBA at upload for any desktop GPU", "Didekode ke RGBA saat diunggah, untuk GPU desktop apa pun"),
+      },
+      {
+        id: "display",
+        aspect: tx("Display", "Tampilan"),
+        original: tx("4:3 iPad screen", "Layar iPad 4:3"),
+        modern: tx("Any resolution; 16:10, 16:9 and 21:9 with the UI kept in shape", "Resolusi apa pun; 16:10, 16:9, dan 21:9 dengan UI tetap proporsional"),
       },
       {
         id: "controls",
         aspect: tx("Controls", "Kontrol"),
         original: tx("Touchscreen & tilt", "Layar sentuh & kemiringan"),
-        modern: tx("Fully remappable keyboard & gamepad", "Keyboard & gamepad yang bisa diatur ulang sepenuhnya"),
+        modern: tx("Keyboard, mouse and controllers, remappable", "Keyboard, mouse, dan controller yang bisa diatur ulang"),
       },
       {
         id: "online",
         aspect: "Online",
-        original: tx("Legacy servers, now offline", "Server lama, kini offline"),
-        modern: tx("Cloudflare Workers + D1 leaderboard", "Leaderboard Cloudflare Workers + D1"),
+        original: tx("Original servers, shut down", "Server asli, sudah dimatikan"),
+        modern: tx("Leaderboard on Cloudflare Workers + D1", "Leaderboard di Cloudflare Workers + D1"),
       },
       {
         id: "status",
         aspect: "Status",
-        original: tx("Won't launch on iOS 11+", "Tidak bisa berjalan di iOS 11+"),
-        modern: tx("Playable today · v1.0.0", "Bisa dimainkan hari ini · v1.0.0"),
+        original: tx("Does not launch on iOS 11+", "Tidak bisa berjalan di iOS 11+"),
+        modern: tx("Runs today · {tag}", "Berjalan hari ini · {tag}"),
       },
     ],
   },
@@ -586,106 +573,145 @@ export const preservationProjects = [
     id: "gangstar",
     category: "preservation",
     caseStudy: routes.gangstar,
-    title: tx(
-      "Gangstar: Miami Vindication: 32-Bit Mac Classic, Ported to Windows & Linux",
-      "Gangstar: Miami Vindication: Game Klasik Mac 32-Bit, Di-port ke Windows & Linux",
-    ),
     shortTitle: "Gangstar: Miami Vindication",
-    subtitle: tx("Windows & Linux PC Port", "Port PC Windows & Linux"),
+    subtitle: tx("Native PC Software Port · Mach-O Loader & Graphics Modernization", "Port Software PC Native · Loader Mach-O & Modernisasi Grafis"),
     platform: "32-Bit Mac",
     platformIcon: "laptop",
-    origin: tx("32-bit Mac · x86 OS X binary", "Mac 32-bit · biner x86 OS X"),
-    target: "Windows x86 & Linux · V1.0.0",
+    origin: tx("32-bit Mac · x86 OS X (i386)", "Mac 32-bit · x86 OS X (i386)"),
+    target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "The desktop edition of Gameloft's open-world action classic, unplayable on 64-bit-only macOS since Catalina. Binary analysis and cross-platform porting bring it natively to Windows x86 and Linux (`V1.0.0`), with a modernized OpenGL ES pipeline and SHA-256 verified, telemetry-free archives.",
-      "Edisi desktop dari game aksi open-world klasik Gameloft yang tidak bisa dimainkan di macOS khusus 64-bit sejak Catalina. Analisis biner dan porting lintas platform membawanya secara native ke Windows x86 dan Linux (`V1.0.0`), dengan pipeline OpenGL ES yang dimodernisasi serta arsip bebas telemetri yang terverifikasi SHA-256.",
+      "Native Windows and Linux x86 port of the 32-bit Mac (i386 OS X) application: a custom Mach-O loader runs the original executable while host shims replace the macOS libraries it imports. Adds MSAA, VBO caching, bloom and reflection fixes, and SHA-256 verified release archives.",
+      "Port native Windows dan Linux x86 dari aplikasi Mac 32-bit (i386 OS X): loader Mach-O kustom menjalankan executable aslinya, sementara host shim menggantikan pustaka macOS yang diimpornya. Dilengkapi MSAA, VBO caching, perbaikan bloom dan refleksi, serta arsip rilis terverifikasi SHA-256.",
     ),
-    tags: [tx("Binary Analysis", "Analisis Biner"), "x86", "Windows", "Linux", "SHA-256"],
+    tags: [tx("Mach-O Loader", "Loader Mach-O"), "x86", "OpenGL 2.1", "SHA-256"],
     art: "miami",
     image: null, // drop a 16:9 capture at public/images/gangstar-mv-pc.png, then set "images/gangstar-mv-pc.png"
     links: [
       { label: GITHUB_REPOSITORY, href: links.gangstarRepo, icon: "github" },
-      links.gangstarReleases && { label: tx("Releases", "Rilis"), href: links.gangstarReleases, icon: "tag" },
-    ].filter(Boolean),
+      { release: "gangstar", label: RELEASE_TAG, href: links.gangstarReleases, icon: "tag" },
+    ],
     comparison: [
-      { id: "platform", aspect: "Platform", original: "32-bit Mac (OS X)", modern: "Windows x86 & Linux" },
+      { id: "platform", aspect: "Platform", original: "32-bit Mac (OS X)", modern: "Windows & Linux (x86)" },
       {
         id: "binary",
-        aspect: tx("Binary", "Biner"),
-        original: tx("Legacy 32-bit x86 Mach-O app", "Aplikasi Mach-O x86 32-bit lama"),
-        modern: tx("Native Windows & Linux builds", "Build Windows & Linux native"),
+        aspect: tx("Executable", "Executable"),
+        original: tx("i386 Mach-O application", "Aplikasi Mach-O i386"),
+        modern: tx("Original executable run by a custom Mach-O loader, no CPU emulation", "Executable asli dijalankan loader Mach-O kustom, tanpa emulasi CPU"),
+      },
+      {
+        id: "libraries",
+        aspect: tx("System libraries", "Pustaka sistem"),
+        original: tx("macOS frameworks", "Framework macOS"),
+        modern: tx("Host shims over SDL3 and OpenGL 2.1", "Host shim di atas SDL3 dan OpenGL 2.1"),
       },
       {
         id: "graphics",
         aspect: tx("Graphics", "Grafis"),
-        original: tx("Legacy mobile-derived GL renderer", "Renderer GL lama turunan versi mobile"),
-        modern: tx("Modernized OpenGL ES: MSAA depth resolves, VBO caching", "OpenGL ES termodernisasi: depth resolve MSAA, VBO caching"),
+        original: tx("30 fps, original renderer", "30 fps, renderer asli"),
+        modern: tx("60 fps default; MSAA, FXAA, ambient occlusion, dynamic shadows", "60 fps default; MSAA, FXAA, ambient occlusion, bayangan dinamis"),
       },
       {
         id: "controls",
         aspect: tx("Controls", "Kontrol"),
-        original: tx("Original Mac input handling", "Penanganan input Mac asli"),
-        modern: tx("Adapted desktop input controls", "Kontrol input desktop yang disesuaikan"),
+        original: tx("Mac keyboard and mouse", "Keyboard dan mouse Mac"),
+        modern: tx("Keyboard plus Xbox and PlayStation controllers", "Keyboard serta controller Xbox dan PlayStation"),
       },
       {
         id: "distribution",
         aspect: tx("Distribution", "Distribusi"),
-        original: tx("32-bit only app bundle", "App bundle khusus 32-bit"),
-        modern: tx("SHA-256 verified .zip & tarball", ".zip & tarball terverifikasi SHA-256"),
+        original: tx("32-bit-only app bundle", "App bundle khusus 32-bit"),
+        modern: tx("Windows .zip and Linux .tar.gz with SHA256SUMS.txt", ".zip Windows dan .tar.gz Linux dengan SHA256SUMS.txt"),
       },
       {
         id: "status",
         aspect: "Status",
-        original: tx("Blocked on macOS Catalina 10.15+", "Diblokir di macOS Catalina 10.15+"),
-        modern: tx("Playable today · V1.0.0", "Bisa dimainkan hari ini · V1.0.0"),
+        original: tx("Blocked since macOS Catalina 10.15", "Diblokir sejak macOS Catalina 10.15"),
+        modern: tx("Runs today · {tag}", "Berjalan hari ini · {tag}"),
       },
     ],
   },
 ];
 
-/** Every project, originals first (5 in total: 3 original + 2 preservation). */
+/** Every project, originals first (6 in total: 4 original + 2 preservation). */
 export const projects = [...originalProjects, ...preservationProjects];
+
+/* -------------------------------------------------------------------------- */
+/*                               Counter metrics                              */
+/* -------------------------------------------------------------------------- */
+
+/** Home metric strip. `text` shows a fixed word instead of an animated number; `note` is a small line under the label. */
+export const counterItems = [
+  {
+    id: "years",
+    text: "2024 – 2026", // non-breaking spaces keep the range on one line
+    label: tx("Enterprise operations", "Operasional enterprise"),
+    note: "PT ASDP Indonesia Ferry (Persero)",
+  },
+  {
+    id: "ports",
+    text: tx("Dozens of ports", "Puluhan pelabuhan"),
+    label: tx("Harbor & cloud deployments", "Deployment pelabuhan & cloud"),
+  },
+  {
+    id: "projects",
+    value: projects.length,
+    suffix: "",
+    label: tx("Engineering projects", "Proyek engineering"),
+    note: tx(
+      `${originalProjects.length} original · ${preservationProjects.length} preservation ports`,
+      `${originalProjects.length} original · ${preservationProjects.length} port preservasi`,
+    ),
+  },
+  {
+    id: "platforms",
+    text: "Windows & Linux",
+    label: tx("Native port targets", "Target port native"),
+  },
+];
 
 /* -------------------------------------------------------------------------- */
 /*                                Case studies                                */
 /* -------------------------------------------------------------------------- */
 
 const BROWSE_SOURCE = tx("Browse the source on GitHub", "Jelajahi source di GitHub");
+const DOWNLOAD_RELEASE = tx("Download {tag} from GitHub Releases", "Unduh {tag} dari GitHub Releases");
 
 /**
  * Data for the two deep-dive pages. Each section renders a list of typed
  * blocks: `prose`, `cards`, `timeline`, `flow`, `architecture`, `table`,
- * `checklist`, `code` and `links`.
+ * `comparison` (the project's legacy-vs-port table), `checklist`, `code` and
+ * `links`. Facts and links may hold `{tag}` (the latest release tag).
+ * Technical details follow each repository's README, FIXES.md and PATCHNOTES.md.
  */
 export const caseStudies = {
   "gt-racing": {
     projectId: "gt-racing",
-    eyebrow: tx("Case Study · 32-Bit iPad Preservation", "Studi Kasus · Preservasi iPad 32-Bit"),
-    title: "GT Racing: Motor Academy",
-    repoName: "GTRacingMotorAcademyRecomp",
+    eyebrow: tx("Case Study · 32-Bit iPad Software Preservation", "Studi Kasus · Preservasi Software iPad 32-Bit"),
+    title: "GT Racing: Motor Academy — PC Port",
+    repoName: `${githubUser}/${GT_RACING_REPO}`,
     summary: tx(
-      "How a 32-bit iPad simulation racer that modern iOS can no longer launch was statically recompiled into a native Windows release, with its graphics modernized and its online leaderboard rebuilt from scratch.",
-      "Bagaimana game balap simulasi iPad 32-bit yang tak lagi bisa dijalankan iOS modern direkompilasi secara statis menjadi rilis Windows native, dengan grafis yang dimodernisasi dan leaderboard online yang dibangun ulang dari nol.",
+      "Static binary recompilation of a 32-bit iPad (ARMv7) application that iOS 11 and later no longer launch. Every function is translated ahead of time to C, built for x86 and linked with a host layer that replaces the iOS libraries, so the same code runs natively on Windows and Linux.",
+      "Rekompilasi biner statis untuk aplikasi iPad 32-bit (ARMv7) yang tidak lagi bisa dijalankan iOS 11 ke atas. Setiap fungsi diterjemahkan lebih dulu ke C, di-build untuk x86, dan ditautkan dengan host layer pengganti pustaka iOS, sehingga kode yang sama berjalan native di Windows dan Linux.",
     ),
     art: "racing",
     image: "images/gtracing-pc.jpg",
     facts: [
-      { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit iPad · iOS" },
-      { id: "era", label: tx("Hardware era", "Era perangkat keras"), value: "ARMv7 · PowerVR" },
-      { id: "lost", label: tx("Lost with", "Hilang sejak"), value: "iOS 11 (2017)" },
-      { id: "preserved", label: tx("Preserved as", "Dipreservasi sebagai"), value: tx("Native Windows · v1.0.0", "Windows native · v1.0.0") },
+      { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit iPad · ARMv7" },
+      { id: "lost", label: tx("Stopped running on", "Berhenti berjalan di"), value: "iOS 11 (2017)" },
+      { id: "functions", label: tx("Recompiled functions", "Fungsi direkompilasi"), value: tx("23,873", "23.873") },
+      { id: "preserved", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { label: tx("v1.0.0 Release Notes", "Catatan Rilis v1.0.0"), href: links.gtRacingReleases, icon: "tag" },
+      { release: "gt-racing", label: RELEASE_TAG, href: links.gtRacingReleases, icon: "tag" },
     ],
     sections: [
       {
-        id: "why-lost",
-        title: tx("Why It Was Lost", "Mengapa Game Ini Hilang"),
+        id: "context",
+        title: tx("Why it stopped running", "Mengapa aplikasi ini berhenti berjalan"),
         intro: tx(
-          "GT Racing: Motor Academy shipped as a 32-bit ARMv7 binary tuned for early iPad hardware and PowerVR GPUs. When Apple went 64-bit only, the game didn't degrade. It stopped launching.",
-          "GT Racing: Motor Academy dirilis sebagai biner ARMv7 32-bit yang dioptimalkan untuk iPad generasi awal dan GPU PowerVR. Ketika Apple beralih sepenuhnya ke 64-bit, kualitas game ini tidak sekadar menurun — game ini berhenti bisa dijalankan.",
+          "The application shipped only as a 32-bit ARMv7 binary tuned for PowerVR iPads. iOS 11 removed 32-bit support, so it no longer launches on any updated device.",
+          "Aplikasi ini hanya dirilis sebagai biner ARMv7 32-bit yang dioptimalkan untuk iPad ber-GPU PowerVR. iOS 11 menghapus dukungan 32-bit, sehingga aplikasi ini tidak lagi bisa dijalankan di perangkat yang sudah diperbarui.",
         ),
         blocks: [
           {
@@ -695,257 +721,175 @@ export const caseStudies = {
                 when: tx("PowerVR era", "Era PowerVR"),
                 title: tx("Built for 32-bit iPad", "Dibuat untuk iPad 32-bit"),
                 body: tx(
-                  "Compiled for ARMv7 with PVRTC-compressed assets and an OpenGL ES 1.1/2.0 renderer.",
-                  "Dikompilasi untuk ARMv7 dengan aset terkompresi PVRTC dan renderer OpenGL ES 1.1/2.0.",
+                  "ARMv7 code, PVRTC-compressed assets and an OpenGL ES 1.1/2.0 renderer.",
+                  "Kode ARMv7, aset terkompresi PVRTC, dan renderer OpenGL ES 1.1/2.0.",
                 ),
               },
               {
                 when: "iOS 10.3 · 2017",
-                title: tx("32-bit warnings appear", "Peringatan 32-bit muncul"),
-                body: tx(
-                  "iOS starts warning that 32-bit apps won't work with future versions.",
-                  "iOS mulai memperingatkan bahwa aplikasi 32-bit tidak akan berjalan di versi mendatang.",
-                ),
+                title: tx("32-bit warnings", "Peringatan 32-bit"),
+                body: tx("iOS warns that 32-bit apps will stop working.", "iOS memperingatkan bahwa aplikasi 32-bit akan berhenti berjalan."),
               },
               {
                 when: "iOS 11 · 2017",
-                title: tx("32-bit apps stop launching", "Aplikasi 32-bit berhenti berjalan"),
-                body: tx(
-                  "Support ends completely. The binary can no longer run on any updated iPhone or iPad.",
-                  "Dukungan berakhir total. Biner ini tidak bisa lagi dijalankan di iPhone atau iPad yang sudah diperbarui.",
-                ),
-              },
-              {
-                when: tx("Delisted", "Ditarik dari toko"),
-                title: tx("Gone from the App Store", "Hilang dari App Store"),
-                body: tx(
-                  "With the store listing and the legacy online services gone, there was no official way left to play.",
-                  "Dengan hilangnya listing di toko dan layanan online lama, tidak ada lagi cara resmi untuk memainkannya.",
-                ),
-              },
-            ],
-          },
-          {
-            type: "cards",
-            items: [
-              {
-                icon: "broken",
-                title: tx("No 64-bit build", "Tidak ada build 64-bit"),
-                body: tx(
-                  "No 64-bit update was ever shipped, so modern iOS devices have nothing they can run.",
-                  "Update 64-bit tidak pernah dirilis, sehingga perangkat iOS modern tidak punya versi yang bisa dijalankan.",
-                ),
-              },
-              {
-                icon: "lock",
-                title: tx("No legal storefront", "Tidak ada toko resmi"),
-                body: tx(
-                  "Delisting removed the last way to download it, even for players who had bought it.",
-                  "Penarikan dari toko menghapus cara terakhir untuk mengunduhnya, bahkan bagi pemain yang sudah membelinya.",
-                ),
-              },
-              {
-                icon: "shield",
-                title: tx("Emulation isn't preservation", "Emulasi bukan preservasi"),
-                body: tx(
-                  "Emulators are fragile and slow. A native port keeps the game playable on hardware people actually own.",
-                  "Emulator rapuh dan lambat. Port native membuat game tetap bisa dimainkan di perangkat yang benar-benar dimiliki orang.",
-                ),
+                title: tx("32-bit support removed", "Dukungan 32-bit dihapus"),
+                body: tx("The binary no longer launches on updated iPhones or iPads.", "Biner tidak lagi bisa dijalankan di iPhone atau iPad yang sudah diperbarui."),
               },
             ],
           },
         ],
       },
       {
-        id: "pipeline",
-        title: tx("Recompilation & Graphics Pipeline", "Pipeline Rekompilasi & Grafis"),
-        intro: tx(
-          "Instead of interpreting ARM instructions at runtime, the original game code is translated ahead of time into a native Windows executable. iOS services are replaced with a desktop platform layer.",
-          "Alih-alih menerjemahkan instruksi ARM saat runtime, kode game asli diterjemahkan lebih dulu (ahead of time) menjadi executable Windows native. Layanan iOS digantikan oleh platform layer desktop.",
-        ),
+        id: "comparison",
+        title: tx("Legacy target vs. native port", "Target lama vs. port native"),
+        blocks: [{ type: "comparison" }],
+      },
+      {
+        id: "engineering",
+        title: tx("Key engineering work", "Pekerjaan teknis utama"),
         blocks: [
-          {
-            type: "flow",
-            caption: tx("Static recompilation pipeline", "Pipeline rekompilasi statis"),
-            steps: [
-              {
-                icon: "tablet",
-                title: tx("32-bit ARMv7 binary", "Biner ARMv7 32-bit"),
-                body: tx("Original iPad executable and game assets", "Executable iPad asli dan aset game"),
-              },
-              {
-                icon: "terminal",
-                title: tx("Analysis & lifting", "Analisis & lifting"),
-                body: tx("Recover functions and control flow from the binary", "Memulihkan fungsi dan control flow dari biner"),
-              },
-              {
-                icon: "code",
-                title: tx("Recompiled C/C++", "C/C++ hasil rekompilasi"),
-                body: tx("Translated code, built with a modern desktop toolchain", "Kode terjemahan, di-build dengan toolchain desktop modern"),
-              },
-              {
-                icon: "layers",
-                title: "Platform layer",
-                body: tx("Windowing, input and file I/O replace iOS services", "Windowing, input, dan file I/O menggantikan layanan iOS"),
-              },
-              {
-                icon: "monitor",
-                title: tx("Native Windows build", "Build Windows native"),
-                body: tx("Shipped as the v1.0.0 release", "Dirilis sebagai versi v1.0.0"),
-              },
-            ],
-          },
           {
             type: "cards",
             items: [
               {
-                icon: "cube",
-                title: "OpenGL ES 1.1/2.0 → desktop",
+                icon: "terminal",
+                title: tx("Static recompilation", "Rekompilasi statis"),
                 body: tx(
-                  "The game's original OpenGL ES 1.1/2.0 calls are served on the desktop through ANGLE or a desktop OpenGL context, so the renderer keeps its behaviour.",
-                  "Panggilan OpenGL ES 1.1/2.0 asli dari game dilayani di desktop melalui ANGLE atau konteks OpenGL desktop, sehingga perilaku renderer tetap terjaga.",
+                  "23,873 ARM and Thumb functions (1.8 million instructions) are discovered and translated to one C function each, then compiled for x86. Every instruction form is tested against a Cortex-A8 reference.",
+                  "23.873 fungsi ARM dan Thumb (1,8 juta instruksi) ditemukan dan diterjemahkan masing-masing menjadi satu fungsi C, lalu dikompilasi untuk x86. Setiap bentuk instruksi diuji terhadap referensi Cortex-A8.",
+                ),
+              },
+              {
+                icon: "layers",
+                title: tx("iOS host layer", "Host layer iOS"),
+                body: tx(
+                  "The Objective-C runtime, Foundation, UIKit, OpenAL and the other imported iOS libraries are replaced by host shims; SDL3 provides the window, input and audio on both platforms.",
+                  "Runtime Objective-C, Foundation, UIKit, OpenAL, dan pustaka iOS lain yang diimpor digantikan host shim; SDL3 menyediakan jendela, input, dan audio di kedua platform.",
                 ),
               },
               {
                 icon: "shader",
-                title: tx("Custom shaders & PostFX", "Shader kustom & PostFX"),
+                title: tx("OpenGL ES translation", "Translasi OpenGL ES"),
                 body: tx(
-                  "Rewritten OpenGL ES shaders add bloom, specular tuning and motion blur. Each setting applies instantly, without a restart.",
-                  "Shader OpenGL ES yang ditulis ulang menambahkan bloom, penyesuaian specular, dan motion blur. Setiap pengaturan langsung berlaku tanpa restart.",
+                  "OpenGL ES 1.1/2.0 runs on desktop OpenGL 2.1: GLSL ES shaders are rewritten to GLSL 1.20, and the four PVRTC formats are decoded to RGBA at upload.",
+                  "OpenGL ES 1.1/2.0 berjalan di OpenGL 2.1 desktop: shader GLSL ES ditulis ulang ke GLSL 1.20, dan empat format PVRTC didekode ke RGBA saat diunggah.",
                 ),
               },
               {
-                icon: "chip",
-                title: tx("PVRTC texture decoding", "Dekode tekstur PVRTC"),
+                icon: "monitor",
+                title: tx("PostFX & display", "PostFX & tampilan"),
                 body: tx(
-                  "PowerVR-only PVRTC textures are decoded so any desktop GPU can render the original assets.",
-                  "Tekstur PVRTC khusus PowerVR didekode agar GPU desktop apa pun bisa merender aset aslinya.",
+                  "PostFX (`GT_POSTFX=4`, Enhanced by default), motion blur, MSAA and anisotropic filtering change without a restart. Widescreen UI scaling keeps menus and HUD in shape at 16:10, 16:9 and 21:9.",
+                  "PostFX (`GT_POSTFX=4`, Enhanced sebagai default), motion blur, MSAA, dan anisotropic filtering berubah tanpa restart. Skala UI layar lebar menjaga menu dan HUD tetap proporsional di 16:10, 16:9, dan 21:9.",
                 ),
               },
               {
-                icon: "gamepad",
-                title: tx("Input modernization", "Modernisasi input"),
+                icon: "keyboard",
+                title: tx("Input & add-ons", "Input & add-on"),
                 body: tx(
-                  "Touch and tilt controls become fully remappable keyboard and gamepad bindings, with menu snap navigation.",
-                  "Kontrol sentuh dan kemiringan diubah menjadi binding keyboard dan gamepad yang sepenuhnya bisa diatur ulang, dengan navigasi menu snap.",
+                  "Keyboard, mouse and Xbox or PlayStation controllers with remappable keys. Add-on vehicles built from Android editions the user owns load from an `add-on` folder.",
+                  "Keyboard, mouse, serta controller Xbox atau PlayStation dengan tombol yang bisa diatur ulang. Kendaraan add-on yang dibuat dari edisi Android milik pengguna dimuat dari folder `add-on`.",
                 ),
+              },
+              {
+                icon: "cloud",
+                title: tx("Leaderboard", "Leaderboard"),
+                body: tx(
+                  "The Red Bull leaderboard is kept locally and shared through `gt-redbull-board`, a Cloudflare Worker backed by D1, replacing the shut-down original servers.",
+                  "Leaderboard Red Bull disimpan lokal dan dibagikan lewat `gt-redbull-board`, Cloudflare Worker berbasis D1, menggantikan server asli yang sudah dimatikan.",
+                ),
+              },
+            ],
+          },
+          {
+            type: "architecture",
+            legacy: {
+              icon: "server",
+              title: tx("Original online servers", "Server online asli"),
+              body: tx("Shut down; the original online features cannot connect.", "Sudah dimatikan; fitur online aslinya tidak bisa terhubung."),
+            },
+            nodes: [
+              {
+                icon: "monitor",
+                title: tx("PC client", "Klien PC"),
+                body: tx("Submits and reads lap times over HTTPS", "Mengirim dan membaca waktu lap melalui HTTPS"),
+              },
+              {
+                icon: "cloud",
+                title: "Cloudflare Worker",
+                body: tx("`gt-redbull-board` API for submissions and queries", "API `gt-redbull-board` untuk pengiriman dan kueri"),
+              },
+              {
+                icon: "database",
+                title: "Cloudflare D1",
+                body: tx("Serverless SQLite storing leaderboard entries", "SQLite serverless yang menyimpan entri leaderboard"),
               },
             ],
           },
         ],
       },
       {
-        id: "leaderboard",
-        title: tx("Cloud Leaderboard Restoration", "Pemulihan Leaderboard Cloud"),
+        id: "controls",
+        title: tx("Default controls", "Kontrol default"),
         intro: tx(
-          "The original online leaderboards depended on servers that no longer exist. Rather than leave them dead, the PC release talks to a new serverless backend, `gt-redbull-board`, running on Cloudflare's edge.",
-          "Leaderboard online aslinya bergantung pada server yang sudah tidak ada. Alih-alih membiarkannya mati, rilis PC berkomunikasi dengan backend serverless baru, `gt-redbull-board`, yang berjalan di edge Cloudflare.",
+          "Defaults from the release. Every key can be remapped in Options > Controls.",
+          "Default dari rilis. Setiap tombol bisa diatur ulang di Options > Controls.",
         ),
         blocks: [
           {
-            type: "architecture",
-            legacy: {
-              icon: "server",
-              title: tx("Legacy game servers", "Server game lama"),
-              body: tx("Shut down. Original online features can't connect.", "Sudah dimatikan. Fitur online asli tidak bisa terhubung."),
-            },
-            nodes: [
-              {
-                icon: "monitor",
-                title: tx("GT Racing PC client", "Klien GT Racing PC"),
-                body: tx("v1.0.0 sends and reads leaderboard times over HTTPS", "v1.0.0 mengirim dan membaca waktu leaderboard melalui HTTPS"),
-              },
-              {
-                icon: "cloud",
-                title: "Cloudflare Worker",
-                body: tx(
-                  "`gt-redbull-board` edge API for score submission and queries",
-                  "API edge `gt-redbull-board` untuk pengiriman dan kueri skor",
-                ),
-              },
-              {
-                icon: "database",
-                title: "Cloudflare D1",
-                body: tx("Serverless SQLite database storing leaderboard entries", "Database SQLite serverless yang menyimpan entri leaderboard"),
-              },
-            ],
-          },
-          {
-            type: "cards",
-            items: [
-              {
-                icon: "cloud",
-                title: "Edge-first",
-                body: tx(
-                  "Workers run close to every player, so the leaderboard responds quickly wherever it's requested from.",
-                  "Worker berjalan dekat dengan setiap pemain, sehingga leaderboard merespons cepat dari mana pun diakses.",
-                ),
-              },
-              {
-                icon: "database",
-                title: tx("Serverless storage", "Penyimpanan serverless"),
-                body: tx(
-                  "D1 removes the need for a database server to provision, patch or keep online.",
-                  "D1 menghilangkan kebutuhan akan server database yang harus disiapkan, di-patch, atau dijaga tetap online.",
-                ),
-              },
-              {
-                icon: "shield",
-                title: tx("Built to outlive its maker", "Dibuat untuk bertahan lama"),
-                body: tx(
-                  "There's no dedicated server to shut down, which is how the original leaderboard was lost.",
-                  "Tidak ada server khusus yang bisa dimatikan — hal yang dulu membuat leaderboard aslinya hilang.",
-                ),
-              },
+            type: "table",
+            caption: tx("Default control bindings", "Binding kontrol default"),
+            columns: [tx("Action", "Aksi"), "Keyboard", "Controller"],
+            rows: [
+              [tx("Steer", "Kemudi"), "A / D, ← / →", tx("Left stick", "Stik kiri")],
+              [tx("Throttle / brake", "Gas / rem"), "W / S, ↑ / ↓", "RT / LT (R2 / L2)"],
+              [tx("Gear up / down", "Naik / turun gigi"), "Shift / Ctrl", "A / X (Cross / Square)"],
+              [tx("Change camera", "Ganti kamera"), "C", "RB (R1)"],
+              [tx("Look back", "Lihat belakang"), tx("V (hold)", "V (tahan)"), tx("LB (L1), hold", "LB (L1), tahan")],
+              [tx("Pause", "Jeda"), "Esc", "Menu (Options)"],
+              [tx("Full screen / window", "Layar penuh / jendela"), "Alt+Enter", "—"],
             ],
           },
         ],
       },
       {
         id: "release",
-        title: tx("Controls & Release Info", "Kontrol & Info Rilis"),
-        intro: tx(
-          "Every binding below is a default. Keyboard and gamepad controls can be remapped in-game.",
-          "Setiap binding di bawah adalah default. Kontrol keyboard dan gamepad bisa diatur ulang di dalam game.",
-        ),
+        title: tx("Release", "Rilis"),
         blocks: [
           {
-            type: "table",
-            caption: tx("Default control bindings", "Binding kontrol default"),
-            // Defaults shown on the site. Update them if your release's defaults differ.
-            columns: [tx("Action", "Aksi"), "Keyboard", "Gamepad"],
-            rows: [
-              [tx("Steer", "Kemudi"), tx("A / D or ← / →", "A / D atau ← / →"), tx("Left stick", "Stik kiri")],
-              [tx("Accelerate", "Akselerasi"), tx("W or ↑", "W atau ↑"), tx("Right trigger", "Trigger kanan")],
-              [tx("Brake / reverse", "Rem / mundur"), tx("S or ↓", "S atau ↓"), tx("Left trigger", "Trigger kiri")],
-              [tx("Navigate menus", "Navigasi menu"), tx("Arrow keys", "Tombol panah"), "D-pad (menu snap)"],
-              [tx("Confirm", "Konfirmasi"), "Enter", "A / Cross"],
-              [tx("Back / pause", "Kembali / jeda"), "Esc", "B / Circle · Start"],
+            type: "checklist",
+            title: tx("What a release contains", "Isi setiap rilis"),
+            items: [
+              tx(
+                "Windows x86 .zip and Linux x86 .tar.gz archives, each with a published SHA-256 checksum",
+                "Arsip .zip Windows x86 dan .tar.gz Linux x86, masing-masing dengan checksum SHA-256 yang dipublikasikan",
+              ),
+              tx(
+                "No assets or code of the original application: the port runs from the user's own copy of the iPad release 1.3.4b",
+                "Tanpa aset atau kode aplikasi asli: port berjalan dari salinan rilis iPad 1.3.4b milik pengguna sendiri",
+              ),
+              tx(
+                "No build-machine paths; the leaderboard receives only a random player number, the name, the vehicle and the lap time",
+                "Tanpa path mesin build; leaderboard hanya menerima nomor pemain acak, nama, kendaraan, dan waktu lap",
+              ),
             ],
           },
           {
-            type: "checklist",
-            title: tx("Shipped in v1.0.0", "Yang dirilis di v1.0.0"),
-            items: [
-              tx(
-                "Native Windows executable built by static recompilation, no emulator",
-                "Executable Windows native hasil rekompilasi statis, tanpa emulator",
-              ),
-              tx("Instant-apply PostFX, specular and motion blur settings", "Pengaturan PostFX, specular, dan motion blur yang langsung berlaku"),
-              tx("Full keyboard and gamepad remapping with menu snap navigation", "Remapping keyboard dan gamepad penuh dengan navigasi menu snap"),
-              tx("Restored online leaderboard on Cloudflare Workers + D1", "Leaderboard online yang dipulihkan di Cloudflare Workers + D1"),
-              tx("Privacy-hardened, clean public release build", "Build rilis publik yang bersih dan diperkuat privasinya"),
+            type: "code",
+            caption: tx("Verify a download", "Verifikasi unduhan"),
+            snippets: [
+              { label: "Windows", code: "certutil -hashfile <archive>.zip SHA256" },
+              { label: "Linux", code: "sha256sum <archive>.tar.gz" },
             ],
+            note: tx(
+              "Compare the result with the SHA-256 listed in PATCHNOTES.md for that release.",
+              "Bandingkan hasilnya dengan SHA-256 yang tercantum di PATCHNOTES.md untuk rilis tersebut.",
+            ),
           },
           {
             type: "links",
             items: [
-              {
-                label: tx("Read the v1.0.0 release notes", "Baca catatan rilis v1.0.0"),
-                href: links.gtRacingReleases,
-                icon: "tag",
-                primary: true,
-              },
+              { release: "gt-racing", label: DOWNLOAD_RELEASE, href: links.gtRacingReleases, icon: "tag", primary: true },
               { label: BROWSE_SOURCE, href: links.gtRacingRepo, icon: "github" },
             ],
           },
@@ -956,32 +900,32 @@ export const caseStudies = {
 
   gangstar: {
     projectId: "gangstar",
-    eyebrow: tx("Case Study · 32-Bit Mac Preservation", "Studi Kasus · Preservasi Mac 32-Bit"),
-    title: "Gangstar: Miami Vindication",
-    repoName: "Gangstar: Miami Vindication PC Port",
+    eyebrow: tx("Case Study · 32-Bit Mac Software Preservation", "Studi Kasus · Preservasi Software Mac 32-Bit"),
+    title: "Gangstar: Miami Vindication — PC Port",
+    repoName: `${githubUser}/${GANGSTAR_REPO}`,
     summary: tx(
-      "How the desktop edition of an open-world action classic, stranded when macOS Catalina removed 32-bit support, was analysed and ported to Windows x86 and Linux as a verified V1.0.0 release.",
-      "Bagaimana edisi desktop dari game aksi open-world klasik — yang terdampar sejak macOS Catalina menghapus dukungan 32-bit — dianalisis dan di-port ke Windows x86 dan Linux sebagai rilis V1.0.0 yang terverifikasi.",
+      "A Windows and Linux x86 port of the 32-bit Mac (i386 OS X) application, stranded since macOS Catalina removed 32-bit support. The original code is already x86, so a custom Mach-O loader runs the official executable at its own addresses while host shims supply the macOS libraries it imports, with no CPU emulation.",
+      "Port Windows dan Linux x86 dari aplikasi Mac 32-bit (i386 OS X) yang terhenti sejak macOS Catalina menghapus dukungan 32-bit. Kode aslinya sudah x86, sehingga loader Mach-O kustom menjalankan executable resminya di alamat aslinya, sementara host shim menyediakan pustaka macOS yang diimpornya, tanpa emulasi CPU.",
     ),
     art: "miami",
     image: null,
     facts: [
-      { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit Mac · OS X" },
-      { id: "binary", label: tx("Binary", "Biner"), value: "x86 Mach-O" },
-      { id: "lost", label: tx("Lost with", "Hilang sejak"), value: "macOS Catalina 10.15" },
-      { id: "preserved", label: tx("Preserved as", "Dipreservasi sebagai"), value: "Windows x86 & Linux · V1.0.0" },
+      { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit Mac · i386 OS X" },
+      { id: "lost", label: tx("Stopped running on", "Berhenti berjalan di"), value: "macOS 10.15 (2019)" },
+      { id: "approach", label: tx("Approach", "Pendekatan"), value: tx("Custom Mach-O loader", "Loader Mach-O kustom") },
+      { id: "preserved", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
       { label: GITHUB_REPOSITORY, href: links.gangstarRepo, icon: "github" },
-      links.gangstarReleases && { label: tx("V1.0.0 Releases", "Rilis V1.0.0"), href: links.gangstarReleases, icon: "tag" },
-    ].filter(Boolean),
+      { release: "gangstar", label: RELEASE_TAG, href: links.gangstarReleases, icon: "tag" },
+    ],
     sections: [
       {
-        id: "why-lost",
-        title: tx("Why It Was Lost", "Mengapa Game Ini Hilang"),
+        id: "context",
+        title: tx("Why it stopped running", "Mengapa aplikasi ini berhenti berjalan"),
         intro: tx(
-          "The Mac edition only ever shipped as a 32-bit x86 binary. Once macOS dropped 32-bit support entirely, every modern Mac refused to open it.",
-          "Edisi Mac hanya pernah dirilis sebagai biner x86 32-bit. Begitu macOS menghapus dukungan 32-bit sepenuhnya, setiap Mac modern menolak membukanya.",
+          "The Mac edition shipped only as a 32-bit i386 Mach-O binary. Once macOS dropped 32-bit support, every current Mac refused to open it.",
+          "Edisi Mac hanya dirilis sebagai biner Mach-O i386 32-bit. Begitu macOS menghapus dukungan 32-bit, setiap Mac terbaru menolak membukanya.",
         ),
         blocks: [
           {
@@ -990,137 +934,106 @@ export const caseStudies = {
               {
                 when: tx("OS X era", "Era OS X"),
                 title: tx("Shipped as 32-bit x86", "Dirilis sebagai x86 32-bit"),
-                body: tx("Built for Intel Macs as a legacy 32-bit Mach-O application.", "Dibuat untuk Mac Intel sebagai aplikasi Mach-O 32-bit lama."),
+                body: tx("Built for Intel Macs as an i386 Mach-O application.", "Dibuat untuk Mac Intel sebagai aplikasi Mach-O i386."),
               },
               {
                 when: "macOS 10.13.4 · 2018",
                 title: tx("Compatibility warnings", "Peringatan kompatibilitas"),
-                body: tx(
-                  'macOS starts warning that 32-bit apps "are not optimized for your Mac".',
-                  'macOS mulai memperingatkan bahwa aplikasi 32-bit "tidak dioptimalkan untuk Mac Anda".',
-                ),
+                body: tx('macOS warns that 32-bit apps "are not optimized for your Mac".', 'macOS memperingatkan bahwa aplikasi 32-bit "tidak dioptimalkan untuk Mac Anda".'),
               },
               {
                 when: "macOS 10.14 · 2018",
-                title: tx("Last version to run it", "Versi terakhir yang bisa menjalankannya"),
-                body: tx(
-                  "Mojave is the final macOS release that can still launch 32-bit apps.",
-                  "Mojave adalah rilis macOS terakhir yang masih bisa menjalankan aplikasi 32-bit.",
-                ),
+                title: tx("Last version to run it", "Versi terakhir yang menjalankannya"),
+                body: tx("Mojave is the final macOS release that launches 32-bit apps.", "Mojave adalah rilis macOS terakhir yang menjalankan aplikasi 32-bit."),
               },
               {
                 when: "macOS 10.15 · 2019",
-                title: tx("Catalina removes 32-bit", "Catalina menghapus 32-bit"),
-                body: tx(
-                  "Catalina and every later macOS release refuse to launch the game.",
-                  "Catalina dan semua rilis macOS setelahnya menolak menjalankan game ini.",
-                ),
-              },
-            ],
-          },
-          {
-            type: "cards",
-            items: [
-              {
-                icon: "broken",
-                title: tx("64-bit only macOS", "macOS khusus 64-bit"),
-                body: tx(
-                  "Catalina removed the 32-bit runtime itself, so the original binary can't be worked around on modern Macs.",
-                  "Catalina menghapus runtime 32-bit itu sendiri, sehingga biner aslinya tidak bisa diakali di Mac modern.",
-                ),
-              },
-              {
-                icon: "laptop",
-                title: tx("Apple Silicon makes it worse", "Apple Silicon memperparahnya"),
-                body: tx(
-                  "Newer ARM Macs add another architecture gap on top of the 32-bit removal.",
-                  "Mac ARM yang lebih baru menambah celah arsitektur lain di atas penghapusan 32-bit.",
-                ),
-              },
-              {
-                icon: "shield",
-                title: tx("A port beats a VM", "Port lebih baik daripada VM"),
-                body: tx(
-                  "A native build runs well on ordinary PCs without keeping an old macOS install alive.",
-                  "Build native berjalan lancar di PC biasa tanpa harus mempertahankan instalasi macOS lama.",
-                ),
+                title: tx("32-bit support removed", "Dukungan 32-bit dihapus"),
+                body: tx("Catalina and every later release refuse to launch it.", "Catalina dan semua rilis setelahnya menolak menjalankannya."),
               },
             ],
           },
         ],
       },
       {
-        id: "porting",
-        title: tx("Cross-Platform Windows & Linux Porting", "Porting Lintas Platform ke Windows & Linux"),
-        intro: tx(
-          "The 32-bit x86 binary was analysed and lifted, then rebuilt on a portable platform layer so the same game code targets both Windows and Linux.",
-          "Biner x86 32-bit dianalisis dan di-lift, lalu dibangun ulang di atas platform layer portabel sehingga kode game yang sama menargetkan Windows sekaligus Linux.",
-        ),
+        id: "comparison",
+        title: tx("Legacy target vs. native port", "Target lama vs. port native"),
+        blocks: [{ type: "comparison" }],
+      },
+      {
+        id: "approach",
+        title: tx("Porting approach", "Pendekatan porting"),
         blocks: [
           {
             type: "flow",
-            caption: tx("Porting pipeline", "Pipeline porting"),
+            caption: tx("From Mach-O executable to a native PC process", "Dari executable Mach-O ke proses PC native"),
             steps: [
               {
                 icon: "laptop",
-                title: "32-bit x86 Mach-O",
-                body: tx("Original OS X application and assets", "Aplikasi OS X asli beserta asetnya"),
+                title: "i386 Mach-O",
+                body: tx("The official Mac executable, read from the user's copy", "Executable Mac resmi, dibaca dari salinan milik pengguna"),
               },
               {
                 icon: "terminal",
-                title: tx("Binary analysis & lifting", "Analisis & lifting biner"),
-                body: tx("Map functions, data and OS dependencies", "Memetakan fungsi, data, dan dependensi OS"),
+                title: tx("Mach-O loader", "Loader Mach-O"),
+                body: tx("Maps the code at its original addresses", "Memetakan kode di alamat aslinya"),
               },
               {
                 icon: "layers",
-                title: tx("Portable platform layer", "Platform layer portabel"),
-                body: tx("Windowing, input and file system for both targets", "Windowing, input, dan file system untuk kedua target"),
+                title: tx("Host shims", "Host shim"),
+                body: tx("Stand in for the macOS libraries it imports", "Menggantikan pustaka macOS yang diimpornya"),
               },
               {
                 icon: "cube",
-                title: tx("Modernized OpenGL ES", "OpenGL ES termodernisasi"),
-                body: tx("Rendering fixes and performance passes", "Perbaikan rendering dan optimasi performa"),
+                title: "SDL3 + OpenGL 2.1",
+                body: tx("Window, input, audio and rendering", "Jendela, input, audio, dan rendering"),
               },
               {
                 icon: "monitor",
-                title: "Windows x86 & Linux",
-                body: tx("Native builds for the V1.0.0 release", "Build native untuk rilis V1.0.0"),
+                title: "Windows & Linux x86",
+                body: tx("One code base for both targets", "Satu basis kode untuk kedua target"),
               },
             ],
           },
+        ],
+      },
+      {
+        id: "fixes",
+        title: tx("Key engineering fixes", "Perbaikan teknis utama"),
+        blocks: [
           {
             type: "cards",
             items: [
               {
-                icon: "terminal",
-                title: "Binary lifting",
-                body: tx(
-                  "Recovering the game's logic from the shipped x86 binary so it can be rebuilt against non-Apple platforms.",
-                  "Memulihkan logika game dari biner x86 yang dirilis agar bisa dibangun ulang untuk platform non-Apple.",
-                ),
-              },
-              {
                 icon: "shader",
-                title: tx("Multi-pass MSAA depth resolves", "Depth resolve MSAA multi-pass"),
+                title: tx("Graphics & visibility", "Grafis & visibilitas"),
                 body: tx(
-                  "Fixes depth-dependent effects so anti-aliasing and the original render passes work together correctly.",
-                  "Memperbaiki efek yang bergantung pada depth sehingga anti-aliasing dan render pass aslinya bekerja bersama dengan benar.",
+                  "MSAA with alpha to coverage, FXAA drawn under the HUD, ambient occlusion and dynamic shadows. Checkpoint domes and markers no longer bloom over the road, and the car and sea reflection passes were corrected.",
+                  "MSAA dengan alpha to coverage, FXAA yang digambar di bawah HUD, ambient occlusion, dan bayangan dinamis. Kubah dan penanda checkpoint tidak lagi menimbulkan bloom di atas jalan, dan pass refleksi mobil serta laut telah diperbaiki.",
                 ),
               },
               {
                 icon: "cube",
-                title: "VBO caching",
+                title: tx("Physics & entities", "Fisika & entitas"),
                 body: tx(
-                  "Geometry is kept in GPU vertex buffers instead of re-uploaded each frame, removing a major desktop bottleneck.",
-                  "Geometri disimpan di vertex buffer GPU alih-alih diunggah ulang setiap frame, sehingga menghilangkan bottleneck utama di desktop.",
+                  "Stuck traffic backs up or is removed instead of gridlocking, helicopter rotor wear follows the physics tick rate (`PHYSICS_SYNC`), collision near the map centre holds at longer draw distances, and AI vehicles no longer weave on straight roads.",
+                  "Lalu lintas yang macet mundur atau dihapus alih-alih terkunci, keausan rotor helikopter mengikuti laju tick fisika (`PHYSICS_SYNC`), tabrakan di pusat peta tetap berfungsi pada jarak pandang lebih jauh, dan kendaraan AI tidak lagi berkelok di jalan lurus.",
                 ),
               },
               {
-                icon: "keyboard",
-                title: tx("Input adaptation", "Adaptasi input"),
+                icon: "chip",
+                title: tx("Performance", "Performa"),
                 body: tx(
-                  "Controls are adapted for desktop keyboards and controllers on both Windows and Linux.",
-                  "Kontrol disesuaikan untuk keyboard dan controller desktop di Windows maupun Linux.",
+                  "Static geometry stays on the GPU (`STATIC_VBO`), cutting time inside draw calls from 185 to 77 ms per second. The frame rate is configurable up to 400 fps, with 60 fps by default.",
+                  "Geometri statis tetap berada di GPU (`STATIC_VBO`), memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik. Frame rate bisa diatur hingga 400 fps, dengan default 60 fps.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: tx("Original mode", "Mode asli"),
+                body: tx(
+                  "`ORIGINAL_MAC_EXPERIENCE=1` turns every enhancement off and runs the application as the Mac edition did.",
+                  "`ORIGINAL_MAC_EXPERIENCE=1` mematikan semua peningkatan dan menjalankan aplikasi seperti edisi Mac aslinya.",
                 ),
               },
             ],
@@ -1129,71 +1042,38 @@ export const caseStudies = {
       },
       {
         id: "release",
-        title: tx("Release Packaging (V1.0.0)", "Paket Rilis (V1.0.0)"),
-        intro: tx(
-          "V1.0.0 ships as two archives, one per platform. Each is published with a SHA-256 checksum, so anyone can verify their download is byte-for-byte the official build.",
-          "V1.0.0 dirilis dalam dua arsip, satu untuk setiap platform. Masing-masing dipublikasikan dengan checksum SHA-256 sehingga siapa pun bisa memverifikasi bahwa unduhannya identik byte demi byte dengan build resmi.",
-        ),
+        title: tx("Release", "Rilis"),
         blocks: [
           {
-            type: "cards",
+            type: "checklist",
+            title: tx("What a release contains", "Isi setiap rilis"),
             items: [
-              {
-                icon: "monitor",
-                title: "Windows x86 · .zip",
-                body: tx(
-                  "Native Windows build. Extract and play, no installer required.",
-                  "Build Windows native. Ekstrak lalu mainkan, tanpa perlu installer.",
-                ),
-              },
-              {
-                icon: "terminal",
-                title: "Linux · tarball",
-                body: tx("Native Linux build packaged as a compressed .tar archive.", "Build Linux native yang dikemas sebagai arsip .tar terkompresi."),
-              },
-              {
-                icon: "shield",
-                title: tx("SHA-256 checksums", "Checksum SHA-256"),
-                body: tx(
-                  "Published hashes for each archive so downloads can be verified before running.",
-                  "Hash yang dipublikasikan untuk setiap arsip agar unduhan bisa diverifikasi sebelum dijalankan.",
-                ),
-              },
+              tx(
+                "Windows x86 .zip and Linux x86 .tar.gz archives, listed with their hashes in SHA256SUMS.txt",
+                "Arsip .zip Windows x86 dan .tar.gz Linux x86, dengan hash masing-masing di SHA256SUMS.txt",
+              ),
+              tx(
+                "No files of the original application: the port runs from the user's own copy of the Mac release 1.0.0",
+                "Tanpa berkas aplikasi asli: port berjalan dari salinan rilis Mac 1.0.0 milik pengguna sendiri",
+              ),
             ],
           },
           {
             type: "code",
             caption: tx("Verify a download", "Verifikasi unduhan"),
             snippets: [
-              { label: "Windows (PowerShell)", code: "Get-FileHash .\\<archive>.zip -Algorithm SHA256" },
-              { label: "Linux", code: "sha256sum <archive>.tar.gz" },
+              { label: "Windows", code: "certutil -hashfile <file> SHA256" },
+              { label: "Linux", code: "sha256sum -c SHA256SUMS.txt --ignore-missing" },
             ],
             note: tx(
-              "Compare the printed hash with the one published next to the release.",
-              "Bandingkan hash yang tercetak dengan hash yang dipublikasikan di samping rilis.",
+              "On Windows, compare the result with the matching line of SHA256SUMS.txt.",
+              "Di Windows, bandingkan hasilnya dengan baris yang sesuai di SHA256SUMS.txt.",
             ),
-          },
-          {
-            type: "checklist",
-            title: tx("Release hygiene", "Kebersihan rilis"),
-            items: [
-              tx("Clean, telemetry-free release packaging", "Paket rilis yang bersih dan bebas telemetri"),
-              tx("Development artifacts stripped from production builds", "Artefak pengembangan dihapus dari build produksi"),
-              tx("Separate verified archives for Windows x86 and Linux", "Arsip terverifikasi terpisah untuk Windows x86 dan Linux"),
-              tx("Rendering bottlenecks audited for smooth desktop gameplay", "Bottleneck rendering diaudit untuk gameplay desktop yang mulus"),
-            ],
           },
           {
             type: "links",
             items: [
-              {
-                label: links.gangstarReleases
-                  ? tx("Download V1.0.0 from GitHub Releases", "Unduh V1.0.0 dari GitHub Releases")
-                  : tx("Find the release on GitHub", "Temukan rilisnya di GitHub"),
-                href: links.gangstarReleases ?? links.gangstarRepo,
-                icon: "tag",
-                primary: true,
-              },
+              { release: "gangstar", label: DOWNLOAD_RELEASE, href: links.gangstarReleases, icon: "tag", primary: true },
               { label: BROWSE_SOURCE, href: links.gangstarRepo, icon: "github" },
             ],
           },
@@ -1204,14 +1084,15 @@ export const caseStudies = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                          Experience / milestones                           */
+/*                                  Experience                                */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Professional work experience on `/journey`, newest first. `logo` is a key of
- * `brandLogos` (official image, falling back to the drawn emblem, then `icon`).
- * `systems` lists production systems shown with their own logo.
- * Open-source projects live on `/projects`, not here.
+ * Professional work experience on `/journey`. `logo` is a key of `brandLogos`
+ * (official image, falling back to the drawn emblem, then `icon`). `breakdown`
+ * is the structured list of what the role covered (the "Operational
+ * Breakdown" tab and the résumé). `systems` lists production systems shown
+ * with their own logo. Projects live on `/projects`, not here.
  */
 export const expCards = [
   {
@@ -1222,9 +1103,9 @@ export const expCards = [
     period: "2024 – 2026",
     logo: "asdp",
     icon: "server",
-    review: tx(
-      "Managed mission-critical ferry ticketing infrastructure (`trip.ferizy.com`), hybrid cloud/on-premise port deployments across dozens of harbors, and industrial Omron barrier gate hardware integration.",
-      "Mengelola infrastruktur tiket kapal penyeberangan yang kritis (`trip.ferizy.com`), deployment hybrid cloud/on-premise di puluhan pelabuhan, serta integrasi perangkat keras barrier gate industri Omron.",
+    summary: tx(
+      "Operational support for the business applications behind national ferry ticketing: counter applications and backend services on harbor servers and in the cloud, automated gates in the field, and the online ticketing site trip.ferizy.com.",
+      "Dukungan operasional untuk aplikasi bisnis di balik tiket kapal penyeberangan nasional: aplikasi loket dan layanan backend di server pelabuhan maupun cloud, gate otomatis di lapangan, dan situs tiket online trip.ferizy.com.",
     ),
     platformsLabel: tx("Systems & Operations", "Sistem & Operasional"),
     platforms: [
@@ -1232,21 +1113,41 @@ export const expCards = [
       "Hybrid Cloud",
       tx("On-Prem Harbor Servers", "Server Pelabuhan On-Prem"),
       tx("Omron Barrier Gates", "Barrier Gate Omron"),
-      tx("Production Ops", "Operasional Produksi"),
+      tx("Production Support", "Dukungan Produksi"),
     ],
-    responsibilities: [
-      tx(
-        "Deployed ticketing services and counter applications across both local harbor servers and cloud infrastructure spanning dozens of ferry ports nationwide.",
-        "Men-deploy layanan tiket dan aplikasi loket di server lokal pelabuhan maupun infrastruktur cloud yang mencakup puluhan pelabuhan penyeberangan di seluruh Indonesia.",
-      ),
-      tx(
-        "Installed, configured, and integrated Omron-based automated barrier gate hardware systems at the Surabaya port.",
-        "Memasang, mengonfigurasi, dan mengintegrasikan sistem perangkat keras barrier gate otomatis berbasis Omron di Pelabuhan Surabaya.",
-      ),
-      tx(
-        "Maintained high availability and operational stability for `trip.ferizy.com`, ensuring smooth, uninterrupted online ferry ticket transactions.",
-        "Menjaga ketersediaan tinggi dan stabilitas operasional `trip.ferizy.com`, memastikan transaksi tiket kapal online berjalan lancar tanpa gangguan.",
-      ),
+    breakdown: [
+      {
+        id: "deployments",
+        icon: "server",
+        title: tx("Harbor & Cloud Deployments", "Deployment Pelabuhan & Cloud"),
+        body: tx(
+          "Counter applications and backend services deployed across local port servers and cloud infrastructure in dozens of harbors.",
+          "Aplikasi loket dan layanan backend di-deploy ke server lokal pelabuhan dan infrastruktur cloud di puluhan pelabuhan.",
+        ),
+        tags: ["Hybrid Cloud", tx("On-Prem Servers", "Server On-Prem"), tx("Counter Apps", "Aplikasi Loket")],
+      },
+      {
+        id: "hardware",
+        icon: "lock",
+        title: tx("Hardware Integration", "Integrasi Perangkat Keras"),
+        body: tx(
+          "Installation and configuration of Omron automated barrier gate systems at Surabaya port.",
+          "Pemasangan dan konfigurasi sistem barrier gate otomatis Omron di Pelabuhan Surabaya.",
+        ),
+        tags: ["Omron PLC", "Barrier Gate", tx("Field Integration", "Integrasi Lapangan")],
+      },
+      {
+        id: "ticketing",
+        icon: "shield",
+        brand: "ferizy",
+        title: tx("Production Ticketing Operations", "Operasional Tiket Produksi"),
+        body: tx(
+          "Operational stability and transaction continuity for trip.ferizy.com.",
+          "Stabilitas operasional dan kelangsungan transaksi untuk trip.ferizy.com.",
+        ),
+        tags: [tx("Production Support", "Dukungan Produksi"), tx("Online Ticketing", "Tiket Online")],
+        link: { label: "trip.ferizy.com", href: links.ferizy },
+      },
     ],
     systems: [
       {
@@ -1326,71 +1227,17 @@ export const techStackIcons = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*                       Operational impact highlights                        */
-/* -------------------------------------------------------------------------- */
-
-/** Production outcomes from PT ASDP, shown as GlowCards on `/journey`. */
-export const highlights = [
-  {
-    id: "rollouts",
-    icon: "server",
-    title: tx("Nationwide port rollouts", "Rollout pelabuhan skala nasional"),
-    project: "PT ASDP Indonesia Ferry (Persero)",
-    release: tx("Deployment · Dozens of Ports", "Deployment · Puluhan Pelabuhan"),
-    summary: tx(
-      "Ticketing services and counter applications rolled out to local harbor servers and cloud infrastructure across dozens of ferry ports nationwide.",
-      "Layanan tiket dan aplikasi loket di-rollout ke server lokal pelabuhan dan infrastruktur cloud di puluhan pelabuhan penyeberangan di seluruh Indonesia.",
-    ),
-    tags: ["Hybrid Cloud", tx("On-Prem Servers", "Server On-Prem"), tx("Counter Apps", "Aplikasi Loket")],
-    link: null,
-  },
-  {
-    id: "gates",
-    icon: "lock",
-    title: tx("Surabaya barrier gate integration", "Integrasi barrier gate Surabaya"),
-    project: "PT ASDP Indonesia Ferry (Persero)",
-    release: tx("Hardware · Surabaya Port", "Perangkat Keras · Pelabuhan Surabaya"),
-    summary: tx(
-      "Omron-based automated barrier gate hardware installed, configured and integrated on site at the Surabaya port.",
-      "Perangkat keras barrier gate otomatis berbasis Omron dipasang, dikonfigurasi, dan diintegrasikan langsung di lokasi Pelabuhan Surabaya.",
-    ),
-    tags: ["Omron PLC", "Barrier Gate", tx("Field Integration", "Integrasi Lapangan")],
-    link: null,
-  },
-  {
-    id: "ferizy",
-    icon: "shield",
-    brand: "ferizy",
-    title: tx("trip.ferizy.com reliability", "Keandalan trip.ferizy.com"),
-    project: "PT ASDP Indonesia Ferry (Persero)",
-    release: tx("Availability · Online Ticketing", "Ketersediaan · Tiket Online"),
-    summary: tx(
-      "High availability and operational stability maintained for `trip.ferizy.com`, keeping online ferry ticket transactions smooth and uninterrupted.",
-      "Ketersediaan tinggi dan stabilitas operasional `trip.ferizy.com` terus terjaga, membuat transaksi tiket kapal online tetap lancar tanpa gangguan.",
-    ),
-    tags: ["High Availability", "Production Support", "Uptime"],
-    link: { label: "trip.ferizy.com", href: links.ferizy },
-  },
-];
-
-/* -------------------------------------------------------------------------- */
 /*                            Contact & community                             */
 /* -------------------------------------------------------------------------- */
 
 export const communityLinks = [
   { id: "profile", name: tx("GitHub Profile", "Profil GitHub"), handle: `@${githubUser}`, icon: "github", url: links.githubProfile },
+  { id: "niskala", name: "Niskala Utilities", handle: NISKALA_REPO, icon: "terminal", url: links.niskalaRepo },
   { id: "sidaf", name: "SIDAF", handle: "sidaf", icon: "code", url: links.sidafRepo },
   { id: "vr-airport", name: "VR Simulation Airport", handle: "VR-Simulation-Airport", icon: "cube", url: links.vrAirportRepo },
-  { id: "war-plane", name: "War Plane 1945", handle: "War-Plane-1945", icon: "gamepad", url: links.warPlaneRepo },
-  { id: "gt-racing", name: "GT Racing Recomp", handle: GT_RACING_REPO, icon: "flag", url: links.gtRacingRepo },
-  { id: "gangstar", name: "Gangstar PC Port", handle: GANGSTAR_REPO ?? "Miami Vindication", icon: "city", url: links.gangstarRepo },
-  {
-    id: "gt-notes",
-    name: tx("GT Racing Release Notes", "Catatan Rilis GT Racing"),
-    handle: "v1.0.0",
-    icon: "tag",
-    url: links.gtRacingReleases,
-  },
+  { id: "war-plane", name: "War Plane 1945", handle: "War-Plane-1945", icon: "controller", url: links.warPlaneRepo },
+  { id: "gt-racing", name: "GT Racing PC Port", handle: GT_RACING_REPO, icon: "flag", url: links.gtRacingRepo },
+  { id: "gangstar", name: "Gangstar PC Port", handle: GANGSTAR_REPO, icon: "city", url: links.gangstarRepo },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -1408,10 +1255,17 @@ export const socialLinks = [
 /* -------------------------------------------------------------------------- */
 
 /**
- * Articles on `/notes` and `/notes/:slug`. Sections reuse the case-study block
- * types (`prose`, `cards`, `flow`, `checklist`, ...). `related` links point at
+ * Articles on `/notes` and `/notes/:slug`, each in three parts: Context,
+ * Engineering Approach, Outcome. Sections reuse the case-study block types
+ * (`prose`, `cards`, `flow`, `checklist`, ...). `related` links point at
  * internal routes. Reading time is estimated from the text.
  */
+const NOTE_PARTS = {
+  context: tx("Context", "Konteks"),
+  approach: tx("Engineering Approach", "Pendekatan Teknis"),
+  outcome: tx("Outcome", "Hasil"),
+};
+
 export const engineeringNotes = [
   {
     slug: "gles-ipad-to-windows",
@@ -1419,130 +1273,114 @@ export const engineeringNotes = [
     published: "2026-11-20",
     kicker: tx("Graphics · Preservation", "Grafis · Preservasi"),
     title: tx(
-      "Translating 32-Bit iPad OpenGL ES 1.1/2.0 Pipelines to Native Windows",
-      "Menerjemahkan Pipeline OpenGL ES 1.1/2.0 iPad 32-Bit ke Windows Native",
+      "Translating 32-Bit iPad OpenGL ES 1.1/2.0 Pipelines to Native Windows & Linux",
+      "Menerjemahkan Pipeline OpenGL ES 1.1/2.0 iPad 32-Bit ke Windows & Linux Native",
     ),
     summary: tx(
-      "What has to change when a renderer written for PowerVR iPads runs on a desktop GPU: PVRTC texture decoding, VBO caching, multi-pass MSAA depth resolves and instant-apply PostFX, from GTRacingMotorAcademyRecomp and the Gangstar port that shares its problems.",
-      "Apa saja yang harus berubah saat renderer yang ditulis untuk iPad ber-GPU PowerVR dijalankan di GPU desktop: dekode tekstur PVRTC, VBO caching, depth resolve MSAA multi-pass, dan PostFX yang langsung berlaku, dari GTRacingMotorAcademyRecomp dan port Gangstar yang menghadapi masalah serupa.",
+      "How the GT Racing: Motor Academy port serves an iPad-era OpenGL ES renderer on desktop OpenGL 2.1: shader rewriting, PVRTC decoding and live PostFX, plus the vertex-buffer work shared with the Gangstar port.",
+      "Bagaimana port GT Racing: Motor Academy menjalankan renderer OpenGL ES era iPad di OpenGL 2.1 desktop: penulisan ulang shader, dekode PVRTC, dan PostFX yang langsung berlaku, ditambah pekerjaan vertex buffer yang juga dipakai di port Gangstar.",
     ),
-    tags: ["OpenGL ES 1.1/2.0", "PVRTC", "VBO", "MSAA", "PostFX"],
+    tags: ["OpenGL ES 1.1/2.0", "GLSL 1.20", "PVRTC", "VBO"],
     related: [
       { label: tx("GT Racing case study", "Studi kasus GT Racing"), to: routes.gtRacing },
       { label: tx("Gangstar case study", "Studi kasus Gangstar"), to: routes.gangstar },
     ],
     sections: [
       {
-        id: "starting-point",
-        title: tx("The starting point", "Titik awal"),
+        id: "context",
+        title: NOTE_PARTS.context,
         blocks: [
           {
             type: "prose",
             paragraphs: [
               tx(
-                "GT Racing: Motor Academy was written for early iPads: a 32-bit ARMv7 binary, a PowerVR GPU and a renderer that speaks OpenGL ES 1.1 and 2.0. Static recompilation turns the ARM code into native Windows code, but it doesn't touch the assumptions baked into the rendering: which texture formats exist, how geometry reaches the GPU, and how many passes a frame takes.",
-                "GT Racing: Motor Academy dibuat untuk iPad generasi awal: biner ARMv7 32-bit, GPU PowerVR, dan renderer yang berbicara dengan OpenGL ES 1.1 dan 2.0. Rekompilasi statis mengubah kode ARM menjadi kode Windows native, tetapi tidak menyentuh asumsi yang tertanam di rendering-nya: format tekstur apa yang tersedia, bagaimana geometri sampai ke GPU, dan berapa pass yang dibutuhkan satu frame.",
+                "Static recompilation turns the application's ARMv7 code into x86 code, but the recompiled code still issues OpenGL ES 1.1 and 2.0 calls written for PowerVR iPad GPUs. Desktop drivers offer neither PVRTC textures nor the GLSL ES dialect, and they pay far more for geometry sent from client memory on every draw.",
+                "Rekompilasi statis mengubah kode ARMv7 aplikasi menjadi kode x86, tetapi kode hasil rekompilasi tetap memanggil OpenGL ES 1.1 dan 2.0 yang ditulis untuk GPU PowerVR di iPad. Driver desktop tidak menyediakan tekstur PVRTC maupun dialek GLSL ES, dan jauh lebih mahal untuk geometri yang dikirim dari memori klien di setiap draw.",
               ),
               tx(
-                "Those assumptions are what this note is about. The goal throughout is to keep the original renderer's behaviour, not to rewrite it.",
-                "Asumsi-asumsi itulah yang dibahas catatan ini. Tujuannya sejak awal adalah mempertahankan perilaku renderer aslinya, bukan menulis ulang.",
+                "The constraint was to keep the original renderer's behaviour: no draw call rewritten by hand and no asset re-authored.",
+                "Batasannya adalah mempertahankan perilaku renderer aslinya: tidak ada draw call yang ditulis ulang manual dan tidak ada aset yang dibuat ulang.",
               ),
             ],
           },
           {
             type: "flow",
-            caption: tx("Where a frame goes on the desktop", "Perjalanan satu frame di desktop"),
+            caption: tx("Path of one frame on the desktop", "Perjalanan satu frame di desktop"),
             steps: [
               {
                 icon: "code",
-                title: tx("Recompiled game code", "Kode game hasil rekompilasi"),
-                body: tx("Still issues the original GL ES 1.1/2.0 calls", "Tetap memanggil GL ES 1.1/2.0 seperti aslinya"),
+                title: tx("Recompiled code", "Kode hasil rekompilasi"),
+                body: tx("Issues the original GL ES 1.1/2.0 calls", "Memanggil GL ES 1.1/2.0 seperti aslinya"),
               },
               {
                 icon: "layers",
-                title: tx("GL ES on desktop", "GL ES di desktop"),
-                body: tx("Served through ANGLE or a desktop OpenGL context", "Dilayani lewat ANGLE atau konteks OpenGL desktop"),
+                title: tx("GL ES shim", "Shim GL ES"),
+                body: tx("Translates state, shaders and textures", "Menerjemahkan state, shader, dan tekstur"),
               },
               {
                 icon: "chip",
-                title: tx("Texture path", "Jalur tekstur"),
-                body: tx("PVRTC assets decoded for any desktop GPU", "Aset PVRTC didekode untuk GPU desktop apa pun"),
-              },
-              {
-                icon: "cube",
-                title: tx("Geometry path", "Jalur geometri"),
-                body: tx("Static geometry kept in GPU vertex buffers", "Geometri statis disimpan di vertex buffer GPU"),
+                title: "OpenGL 2.1",
+                body: tx("Any desktop GPU on Windows or Linux", "GPU desktop apa pun di Windows atau Linux"),
               },
               {
                 icon: "shader",
                 title: "PostFX",
-                body: tx("Bloom, specular and motion blur, applied live", "Bloom, specular, dan motion blur, langsung berlaku"),
+                body: tx("Bloom and motion blur, applied live", "Bloom dan motion blur, langsung berlaku"),
+              },
+              {
+                icon: "monitor",
+                title: "SDL3",
+                body: tx("Window, input and audio", "Jendela, input, dan audio"),
               },
             ],
           },
         ],
       },
       {
-        id: "gl-calls",
-        title: tx("Keeping the OpenGL ES calls intact", "Menjaga panggilan OpenGL ES tetap utuh"),
+        id: "approach",
+        title: NOTE_PARTS.approach,
         blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "The recompiled game still issues OpenGL ES 1.1/2.0 calls. Rather than rewriting each draw call, they're served on the desktop through ANGLE or a desktop OpenGL context, so state changes, blending and draw order behave the way the original renderer expects.",
-                "Game hasil rekompilasi tetap memanggil OpenGL ES 1.1/2.0. Alih-alih menulis ulang setiap draw call, panggilan itu dilayani di desktop melalui ANGLE atau konteks OpenGL desktop, sehingga perubahan state, blending, dan urutan gambar berperilaku seperti yang diharapkan renderer aslinya.",
-              ),
-              tx(
-                "The two API versions need different care. ES 1.1 is fixed-function: lighting, texture combiners and the matrix stack are part of the API rather than shaders, so that state machine has to be reproduced faithfully. ES 2.0 content brings its own GLSL ES shaders, which have to compile cleanly on desktop drivers that are stricter or looser than PowerVR's in different places.",
-                "Dua versi API ini perlu perlakuan berbeda. ES 1.1 bersifat fixed-function: lighting, texture combiner, dan matrix stack adalah bagian dari API, bukan shader, sehingga state machine itu harus direproduksi dengan setia. Konten ES 2.0 membawa shader GLSL ES sendiri, yang harus bisa dikompilasi dengan bersih di driver desktop yang di beberapa bagian lebih ketat, di bagian lain lebih longgar, dibanding PowerVR.",
-              ),
-            ],
-          },
-        ],
-      },
-      {
-        id: "pvrtc",
-        title: tx("PVRTC: textures only PowerVR could read", "PVRTC: tekstur yang hanya bisa dibaca PowerVR"),
-        blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "PVRTC is PowerVR's texture compression. Block formats such as DXT/BC compress each 4×4 tile on its own. PVRTC instead stores two low-resolution colour images plus a per-pixel modulation value, and rebuilds each texel by blending between upscaled versions of the two. That's why it looks smooth at 2 or 4 bits per pixel, and why no desktop GPU can sample it directly.",
-                "PVRTC adalah kompresi tekstur milik PowerVR. Format blok seperti DXT/BC mengompresi setiap tile 4×4 secara terpisah. PVRTC justru menyimpan dua citra warna beresolusi rendah ditambah nilai modulasi per piksel, lalu membangun ulang setiap texel dengan memadukan versi yang diperbesar dari keduanya. Itulah sebabnya PVRTC tampak halus pada 2 atau 4 bit per piksel, dan sebabnya tidak ada GPU desktop yang bisa membacanya langsung.",
-              ),
-              tx(
-                "So the port decodes PVRTC textures for the desktop. The original compressed assets stay untouched, and any desktop GPU receives data it can render.",
-                "Karena itu port ini mendekode tekstur PVRTC untuk desktop. Aset terkompresi aslinya tetap utuh, dan GPU desktop apa pun menerima data yang bisa dirender.",
-              ),
-            ],
-          },
           {
             type: "cards",
             items: [
               {
-                icon: "archive",
-                title: tx("Decode, don't re-author", "Dekode, jangan dibuat ulang"),
-                body: tx(
-                  "The shipped assets remain the source of truth. No texture is repainted or swapped for a remaster.",
-                  "Aset yang dirilis tetap menjadi sumber kebenaran. Tidak ada tekstur yang dilukis ulang atau diganti versi remaster.",
-                ),
-              },
-              {
-                icon: "shield",
-                title: tx("Watch the alpha", "Perhatikan alpha"),
-                body: tx(
-                  "PVRTC's blended reconstruction crosses texel boundaries, so alpha edges (foliage, UI, decals) are the first place a wrong decoder shows.",
-                  "Rekonstruksi PVRTC yang dipadukan melewati batas texel, sehingga tepi alpha (dedaunan, UI, decal) menjadi tempat pertama kesalahan decoder terlihat.",
-                ),
-              },
-              {
                 icon: "layers",
-                title: tx("Square, power-of-two", "Persegi, pangkat dua"),
+                title: tx("ES 1.1 and 2.0 on desktop GL 2.1", "ES 1.1 dan 2.0 di GL 2.1 desktop"),
                 body: tx(
-                  "PVRTC textures on iOS are square and power-of-two. Keeping those sizes after decoding avoids mip-chain and sampling surprises.",
-                  "Tekstur PVRTC di iOS berbentuk persegi dan berukuran pangkat dua. Mempertahankan ukuran itu setelah didekode menghindari kejutan pada mip-chain dan sampling.",
+                  "OpenGL 2.1 still has a fixed-function pipeline, so ES 1.1 lighting, texture combiners and the matrix stack map onto it, while ES 2.0 content goes through shaders.",
+                  "OpenGL 2.1 masih memiliki pipeline fixed-function, sehingga lighting, texture combiner, dan matrix stack ES 1.1 bisa dipetakan ke sana, sementara konten ES 2.0 melewati shader.",
+                ),
+              },
+              {
+                icon: "code",
+                title: tx("Shader dialect", "Dialek shader"),
+                body: tx(
+                  "GLSL ES shaders are rewritten to GLSL 1.20 and OES names are mapped. Shader patches register through the host's GL header, so the shim itself knows no application shader.",
+                  "Shader GLSL ES ditulis ulang ke GLSL 1.20 dan nama OES dipetakan. Patch shader didaftarkan melalui header GL milik host, sehingga shim itu sendiri tidak mengenal shader aplikasi mana pun.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: tx("PVRTC decoding", "Dekode PVRTC"),
+                body: tx(
+                  "The four PVRTC formats (2 and 4 bits per pixel, RGB and RGBA) are decoded to RGBA in software at upload. The shipped assets stay the source of truth.",
+                  "Empat format PVRTC (2 dan 4 bit per piksel, RGB dan RGBA) didekode ke RGBA secara software saat diunggah. Aset yang dirilis tetap menjadi sumber kebenaran.",
+                ),
+              },
+              {
+                icon: "cube",
+                title: tx("Geometry and driver syncs", "Geometri dan sinkronisasi driver"),
+                body: tx(
+                  "GL state and vertex arrays are cached and streamed through VBOs to avoid driver syncs. The Gangstar port keeps static geometry in GPU buffers for the same reason.",
+                  "State GL dan vertex array di-cache dan dialirkan melalui VBO untuk menghindari sinkronisasi driver. Port Gangstar menyimpan geometri statis di buffer GPU dengan alasan yang sama.",
+                ),
+              },
+              {
+                icon: "shader",
+                title: tx("PostFX as shader inputs", "PostFX sebagai input shader"),
+                body: tx(
+                  "Effect strengths are inputs to the shaders, not constants compiled into them. `GT_POSTFX=0` is the as-shipped image and `4` (Enhanced) is the default.",
+                  "Kekuatan efek menjadi input shader, bukan konstanta yang dikompilasi ke dalamnya. `GT_POSTFX=0` adalah gambar seperti rilis aslinya dan `4` (Enhanced) adalah default.",
                 ),
               },
             ],
@@ -1550,68 +1388,26 @@ export const engineeringNotes = [
         ],
       },
       {
-        id: "vbo",
-        title: tx("Geometry: caching vertex buffers", "Geometri: caching vertex buffer"),
+        id: "outcome",
+        title: NOTE_PARTS.outcome,
         blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "Mobile renderers of that era often sent vertex data from client memory on every draw. That's cheap on an iPad, where CPU and GPU share memory, and expensive on a PC, where every upload crosses the bus and the driver.",
-                "Renderer mobile pada era itu kerap mengirim data vertex dari memori klien di setiap draw. Itu murah di iPad, tempat CPU dan GPU berbagi memori, tetapi mahal di PC, tempat setiap unggahan harus melewati bus dan driver.",
-              ),
-              tx(
-                "In the Gangstar: Miami Vindication port, geometry that doesn't change is kept in GPU vertex buffers (VBOs) instead of being re-uploaded every frame, which removed one of the biggest desktop bottlenecks. What makes caching safe is invalidation: a cached buffer is only valid while its source data is unchanged, so genuinely dynamic geometry keeps its streaming path.",
-                "Di port Gangstar: Miami Vindication, geometri yang tidak berubah disimpan di vertex buffer GPU (VBO) alih-alih diunggah ulang setiap frame, sehingga salah satu bottleneck terbesar di desktop hilang. Kunci agar caching aman adalah invalidasi: buffer yang di-cache hanya valid selama data sumbernya tidak berubah, sehingga geometri yang memang dinamis tetap memakai jalur streaming.",
-              ),
-            ],
-          },
-        ],
-      },
-      {
-        id: "msaa",
-        title: tx("Multi-pass MSAA depth resolves", "Depth resolve MSAA multi-pass"),
-        blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "Turning on MSAA for a renderer that was never designed for it breaks things quietly. A later pass that reads the depth buffer expects one depth value per pixel; a multisampled depth buffer holds several, and can't be sampled like an ordinary texture.",
-                "Mengaktifkan MSAA pada renderer yang tidak pernah dirancang untuknya merusak hal-hal secara diam-diam. Pass berikutnya yang membaca depth buffer mengharapkan satu nilai depth per piksel, sedangkan depth buffer multisample menyimpan beberapa nilai dan tidak bisa dibaca seperti tekstur biasa.",
-              ),
-              tx(
-                "The fix is to resolve depth explicitly between passes, so every depth-dependent pass reads a single-sample depth image while colour still gets anti-aliased. In the Gangstar port, that's what lets anti-aliasing and the original render passes work together.",
-                "Solusinya adalah me-resolve depth secara eksplisit di antara pass, sehingga setiap pass yang bergantung pada depth membaca citra depth single-sample, sementara warna tetap mendapat anti-aliasing. Di port Gangstar, inilah yang membuat anti-aliasing dan render pass aslinya bisa bekerja bersama.",
-              ),
-            ],
-          },
-        ],
-      },
-      {
-        id: "postfx",
-        title: tx("PostFX tuning that applies instantly", "Penyesuaian PostFX yang langsung berlaku"),
-        blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "On the GT Racing port, rewritten OpenGL ES shaders add bloom, specular tuning and motion blur on top of the original image. Every setting applies instantly: change a value in the menu and the next frame shows it, with no restart.",
-                "Di port GT Racing, shader OpenGL ES yang ditulis ulang menambahkan bloom, penyesuaian specular, dan motion blur di atas gambar aslinya. Setiap pengaturan langsung berlaku: ubah nilainya di menu dan frame berikutnya sudah menampilkannya, tanpa restart.",
-              ),
-              tx(
-                "Two rules keep that manageable. Effect strengths are inputs to the shaders rather than constants compiled into them, and the original look is the zero point: with every effect at its minimum, the game should still look like the iPad version.",
-                "Dua aturan membuat hal ini tetap terkendali. Kekuatan efek menjadi input bagi shader, bukan konstanta yang dikompilasi ke dalamnya, dan tampilan asli menjadi titik nol: dengan semua efek di nilai minimum, game harus tetap terlihat seperti versi iPad-nya.",
-              ),
-            ],
-          },
           {
             type: "checklist",
-            title: tx("Lessons I'd reuse", "Pelajaran yang akan saya pakai lagi"),
+            title: tx("Result", "Hasil"),
             items: [
-              tx("Treat the original renderer's look as the reference, effect by effect", "Jadikan tampilan renderer asli sebagai acuan, efek demi efek"),
-              tx("Fix the data paths (textures, buffers) before tuning effects", "Perbaiki jalur data (tekstur, buffer) sebelum menyetel efek"),
-              tx("Make every quality setting instant and reversible", "Buat setiap pengaturan kualitas langsung berlaku dan bisa dikembalikan"),
-              tx("Measure first: on desktop, uploads cost more than shading", "Ukur dulu: di desktop, unggahan data lebih mahal daripada shading"),
+              tx("The original assets are untouched: decoding happens at upload", "Aset asli tetap utuh: dekode terjadi saat diunggah"),
+              tx(
+                "PostFX, motion blur, MSAA and anisotropic filtering change live; only resolution and aspect ratio need a restart",
+                "PostFX, motion blur, MSAA, dan anisotropic filtering berubah langsung; hanya resolusi dan rasio aspek yang perlu restart",
+              ),
+              tx(
+                "One code path for Windows and Linux; Linux adds a small platform layer",
+                "Satu jalur kode untuk Windows dan Linux; Linux hanya menambahkan platform layer kecil",
+              ),
+              tx(
+                "In the Gangstar port, static VBOs cut time inside draw calls from 185 to 77 ms per second",
+                "Di port Gangstar, VBO statis memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik",
+              ),
             ],
           },
         ],
@@ -1628,26 +1424,26 @@ export const engineeringNotes = [
       "Arsitektur Hybrid Server Pelabuhan Lokal & Cloud untuk Tiket Kapal Bertrafik Tinggi",
     ),
     summary: tx(
-      "Operational lessons from PT ASDP Indonesia Ferry (Persero): deploying ticketing services and counter applications to harbor servers and the cloud across dozens of ports, keeping trip.ferizy.com stable, and integrating Omron barrier gates at the Surabaya port.",
-      "Pelajaran operasional dari PT ASDP Indonesia Ferry (Persero): men-deploy layanan tiket dan aplikasi loket ke server pelabuhan dan cloud di puluhan pelabuhan, menjaga stabilitas trip.ferizy.com, dan mengintegrasikan barrier gate Omron di Pelabuhan Surabaya.",
+      "Operating practice from PT ASDP Indonesia Ferry (Persero): deploying counter applications and backend services to harbor servers and the cloud across dozens of ports, integrating Omron barrier gates at Surabaya, and keeping trip.ferizy.com stable.",
+      "Praktik operasional dari PT ASDP Indonesia Ferry (Persero): deployment aplikasi loket dan layanan backend ke server pelabuhan dan cloud di puluhan pelabuhan, integrasi barrier gate Omron di Surabaya, dan menjaga stabilitas trip.ferizy.com.",
     ),
     tags: ["Hybrid Cloud", tx("Harbor Servers", "Server Pelabuhan"), "trip.ferizy.com", "Omron PLC"],
     related: [{ label: tx("Work experience", "Pengalaman kerja"), to: routes.journey }],
     sections: [
       {
-        id: "two-places",
-        title: tx("Two places a ticket gets sold", "Dua tempat tiket dijual"),
+        id: "context",
+        title: NOTE_PARTS.context,
         blocks: [
           {
             type: "prose",
             paragraphs: [
               tx(
-                "Ferry ticketing at ASDP runs in two places at once. Online, `trip.ferizy.com` sells tickets to the public. At the ports, counter applications serve the passengers and vehicles in the queue, running on local harbor servers as well as cloud infrastructure. My work covered deploying ticketing services and counter applications to both, across dozens of ferry ports.",
-                "Tiket kapal penyeberangan di ASDP berjalan di dua tempat sekaligus. Secara online, `trip.ferizy.com` menjual tiket ke publik. Di pelabuhan, aplikasi loket melayani penumpang dan kendaraan yang mengantre, berjalan di server lokal pelabuhan maupun infrastruktur cloud. Pekerjaan saya mencakup deployment layanan tiket dan aplikasi loket ke keduanya, di puluhan pelabuhan penyeberangan.",
+                "Ferry tickets are sold in two places. Online, `trip.ferizy.com` serves the public. At the ports, counter applications serve the queue, running on local harbor servers as well as cloud infrastructure, and at Surabaya automated barrier gates control entry. Every harbor is its own environment, with its own hardware, network conditions and departure schedule.",
+                "Tiket kapal dijual di dua tempat. Secara online, `trip.ferizy.com` melayani publik. Di pelabuhan, aplikasi loket melayani antrean, berjalan di server lokal pelabuhan maupun infrastruktur cloud, dan di Surabaya barrier gate otomatis mengatur akses masuk. Setiap pelabuhan adalah lingkungan tersendiri, dengan perangkat keras, kondisi jaringan, dan jadwal keberangkatan masing-masing.",
               ),
               tx(
-                "That split is the heart of the architecture. The cloud carries the national, always-on storefront; the harbor side sits next to the counters and gates it serves. Production details such as hostnames and topology are left out on purpose: this note is about operating practice, not the internals of a state-owned company's systems.",
-                "Pembagian itulah inti arsitekturnya. Cloud menjalankan etalase nasional yang selalu aktif, sedangkan sisi pelabuhan berada dekat dengan loket dan gate yang dilayaninya. Detail produksi seperti hostname dan topologi sengaja tidak dicantumkan: catatan ini membahas praktik operasional, bukan bagian dalam sistem milik BUMN.",
+                "Production details such as hostnames and topology are left out on purpose: this note covers operating practice, not the internals of a state-owned company's systems.",
+                "Detail produksi seperti hostname dan topologi sengaja tidak dicantumkan: catatan ini membahas praktik operasional, bukan bagian dalam sistem milik BUMN.",
               ),
             ],
           },
@@ -1657,35 +1453,26 @@ export const engineeringNotes = [
               {
                 icon: "cloud",
                 title: tx("Cloud ticketing", "Tiket berbasis cloud"),
-                body: tx("`trip.ferizy.com` online sales, kept highly available", "Penjualan online `trip.ferizy.com`, dijaga tetap berketersediaan tinggi"),
+                body: tx("`trip.ferizy.com` online sales", "Penjualan online `trip.ferizy.com`"),
               },
               {
                 icon: "server",
                 title: tx("Harbor servers", "Server pelabuhan"),
-                body: tx("Ticketing and counter apps on-prem at dozens of ports", "Aplikasi tiket dan loket on-prem di puluhan pelabuhan"),
+                body: tx("Counter applications on-prem at dozens of ports", "Aplikasi loket on-prem di puluhan pelabuhan"),
               },
               {
                 icon: "lock",
                 title: tx("Barrier gates", "Barrier gate"),
-                body: tx("Omron-based automated gates at the Surabaya port", "Gate otomatis berbasis Omron di Pelabuhan Surabaya"),
+                body: tx("Omron-based automated gates at Surabaya port", "Gate otomatis berbasis Omron di Pelabuhan Surabaya"),
               },
             ],
           },
         ],
       },
       {
-        id: "rollouts",
-        title: tx("Rolling out to dozens of ports", "Rollout ke puluhan pelabuhan"),
+        id: "approach",
+        title: NOTE_PARTS.approach,
         blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "A rollout across dozens of ports isn't one deployment repeated. Every harbor is its own environment, with its own hardware, network conditions and operating hours. These are the habits I'd recommend to anyone doing the same.",
-                "Rollout ke puluhan pelabuhan bukanlah satu deployment yang diulang-ulang. Setiap pelabuhan adalah lingkungan tersendiri, dengan perangkat keras, kondisi jaringan, dan jam operasional masing-masing. Berikut kebiasaan yang saya sarankan bagi siapa pun yang melakukan hal serupa.",
-              ),
-            ],
-          },
           {
             type: "cards",
             items: [
@@ -1693,68 +1480,48 @@ export const engineeringNotes = [
                 icon: "layers",
                 title: tx("Same steps at every port", "Langkah yang sama di setiap pelabuhan"),
                 body: tx(
-                  "Install and configure each harbor the same way, so a problem at one port can be compared with a known-good one.",
-                  "Pasang dan konfigurasikan setiap pelabuhan dengan cara yang sama, agar masalah di satu pelabuhan bisa dibandingkan dengan pelabuhan yang sudah berjalan baik.",
+                  "Each harbor is installed and configured the same way, so a fault at one port can be compared with a known-good one.",
+                  "Setiap pelabuhan dipasang dan dikonfigurasi dengan cara yang sama, sehingga gangguan di satu pelabuhan bisa dibandingkan dengan pelabuhan yang berjalan normal.",
                 ),
               },
               {
                 icon: "shield",
                 title: tx("Verify before handover", "Verifikasi sebelum serah terima"),
                 body: tx(
-                  "Run a ticket through the counter application end to end before the shift that depends on it begins.",
-                  "Jalankan satu tiket melalui aplikasi loket dari awal sampai akhir sebelum shift yang bergantung padanya dimulai.",
+                  "A ticket goes through the counter application end to end before the shift that depends on it begins.",
+                  "Satu tiket dijalankan melalui aplikasi loket dari awal sampai akhir sebelum shift yang bergantung padanya dimulai.",
                 ),
               },
               {
                 icon: "flag",
-                title: tx("Work around the timetable", "Menyesuaikan jadwal kapal"),
+                title: tx("Changes follow the timetable", "Perubahan mengikuti jadwal"),
                 body: tx(
-                  "Ports run on departures. Changes go into the quieter windows, never the other way round.",
-                  "Pelabuhan berjalan mengikuti jadwal keberangkatan. Perubahan dilakukan di jam yang lebih sepi, bukan sebaliknya.",
+                  "Ports run on departures, so changes go into the quieter windows.",
+                  "Pelabuhan berjalan mengikuti keberangkatan, sehingga perubahan dilakukan di jam yang lebih sepi.",
                 ),
               },
-            ],
-          },
-        ],
-      },
-      {
-        id: "stability",
-        title: tx("Keeping trip.ferizy.com stable", "Menjaga trip.ferizy.com tetap stabil"),
-        blocks: [
-          {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "For `trip.ferizy.com`, the job was high availability and operational stability, so online ticket transactions stay smooth and uninterrupted. Most of that work is unglamorous: watching the system, catching problems before passengers do, and resolving production incidents quickly and calmly when they happen.",
-                "Untuk `trip.ferizy.com`, tugasnya adalah menjaga ketersediaan tinggi dan stabilitas operasional, agar transaksi tiket online tetap lancar tanpa gangguan. Sebagian besar pekerjaan itu tidak glamor: memantau sistem, menemukan masalah sebelum penumpang merasakannya, dan menyelesaikan insiden produksi dengan cepat dan tenang saat terjadi.",
-              ),
-            ],
-          },
-          {
-            type: "cards",
-            items: [
               {
                 icon: "monitor",
-                title: tx("Know what normal looks like", "Pahami kondisi normal"),
+                title: tx("A baseline for peaks", "Baseline untuk masa puncak"),
                 body: tx(
-                  "Ferry travel has strong seasonal peaks, such as the Lebaran holidays. A baseline makes it obvious whether a spike is demand or a fault.",
-                  "Perjalanan kapal punya puncak musiman yang tajam, seperti libur Lebaran. Dengan baseline, mudah terlihat apakah lonjakan berasal dari permintaan atau gangguan.",
+                  "Ferry travel has seasonal peaks such as the Lebaran holidays. A known baseline shows whether a spike is demand or a fault.",
+                  "Perjalanan kapal punya puncak musiman seperti libur Lebaran. Baseline yang jelas menunjukkan apakah lonjakan berasal dari permintaan atau gangguan.",
                 ),
               },
               {
                 icon: "terminal",
-                title: tx("Calm, visible incident handling", "Penanganan insiden yang tenang dan terlihat"),
+                title: tx("Incident updates first", "Kabar insiden lebih dulu"),
                 body: tx(
-                  "Say what's affected, what's being done and when the next update comes, even before the cause is known.",
-                  "Sampaikan apa yang terdampak, apa yang sedang dikerjakan, dan kapan kabar berikutnya, bahkan sebelum penyebabnya diketahui.",
+                  "State what is affected, what is being done and when the next update comes, even before the cause is known; fix the cause afterwards.",
+                  "Sampaikan apa yang terdampak, apa yang sedang dikerjakan, dan kapan kabar berikutnya, bahkan sebelum penyebabnya diketahui; perbaiki akar masalahnya sesudahnya.",
                 ),
               },
               {
-                icon: "shield",
-                title: tx("Fix the cause afterwards", "Perbaiki akar masalah sesudahnya"),
+                icon: "lock",
+                title: tx("Predictable gates", "Gate yang dapat diprediksi"),
                 body: tx(
-                  "Restoring service is step one. The follow-up that stops it recurring is the part that raises availability.",
-                  "Memulihkan layanan adalah langkah pertama. Tindak lanjut yang mencegahnya terulang adalah bagian yang benar-benar menaikkan ketersediaan.",
+                  "A gate opens for a valid ticket, stays closed otherwise, and behaves predictably when an upstream system is unavailable.",
+                  "Gate terbuka untuk tiket yang valid, tetap tertutup jika tidak, dan berperilaku dapat diprediksi saat sistem di hulu tidak tersedia.",
                 ),
               },
             ],
@@ -1762,26 +1529,29 @@ export const engineeringNotes = [
         ],
       },
       {
-        id: "barrier-gates",
-        title: tx("Integrating Omron barrier gates in Surabaya", "Integrasi barrier gate Omron di Surabaya"),
+        id: "outcome",
+        title: NOTE_PARTS.outcome,
         blocks: [
           {
-            type: "prose",
-            paragraphs: [
-              tx(
-                "At the Surabaya port I installed, configured and integrated Omron-based automated barrier gate hardware. Field integration is where software meets physical constraints: a gate has to open for a valid ticket, stay closed otherwise, and behave predictably when something upstream is unavailable.",
-                "Di Pelabuhan Surabaya saya memasang, mengonfigurasi, dan mengintegrasikan perangkat keras barrier gate otomatis berbasis Omron. Integrasi lapangan adalah titik pertemuan perangkat lunak dengan batasan fisik: gate harus terbuka untuk tiket yang valid, tetap tertutup jika tidak, dan berperilaku dapat diprediksi saat ada sistem di hulu yang tidak tersedia.",
-              ),
-            ],
-          },
-          {
             type: "checklist",
-            title: tx("What carries over to any hybrid system", "Yang berlaku untuk sistem hybrid mana pun"),
+            title: tx("Result", "Hasil"),
             items: [
-              tx("Keep the critical path close to the people who are waiting", "Dekatkan jalur kritis dengan orang-orang yang sedang menunggu"),
-              tx("Make every deployment repeatable and verifiable", "Buat setiap deployment dapat diulang dan diverifikasi"),
-              tx("Plan for peaks as events, not surprises", "Rencanakan masa puncak sebagai agenda, bukan kejutan"),
-              tx("Agree on hardware failure modes before go-live", "Sepakati mode kegagalan perangkat keras sebelum go-live"),
+              tx(
+                "Counter applications and backend services deployed to harbor servers and the cloud across dozens of ports",
+                "Aplikasi loket dan layanan backend ter-deploy ke server pelabuhan dan cloud di puluhan pelabuhan",
+              ),
+              tx(
+                "Omron barrier gates installed, configured and integrated at Surabaya port",
+                "Barrier gate Omron terpasang, terkonfigurasi, dan terintegrasi di Pelabuhan Surabaya",
+              ),
+              tx(
+                "Operational stability and transaction continuity maintained for trip.ferizy.com",
+                "Stabilitas operasional dan kelangsungan transaksi trip.ferizy.com tetap terjaga",
+              ),
+              tx(
+                "Repeatable, verifiable deployments as the habit that carries over to any hybrid system",
+                "Deployment yang dapat diulang dan diverifikasi sebagai kebiasaan yang berlaku untuk sistem hybrid mana pun",
+              ),
             ],
           },
         ],
@@ -1830,8 +1600,8 @@ export const resume = {
   role: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),
   location: "Semarang, Indonesia",
   summary: tx(
-    "Systems & Application Operations Engineer with production experience at PT ASDP Indonesia Ferry (Persero): high-availability national ferry ticketing (trip.ferizy.com), hybrid cloud and harbor server deployments across dozens of ports, and Omron barrier gate integration. Alongside operations, I build native C/C++ software, including static recompilation of legacy 32-bit iPad and Mac games into native Windows and Linux releases.",
-    "Engineer Sistem & Operasional Aplikasi dengan pengalaman produksi di PT ASDP Indonesia Ferry (Persero): tiket kapal penyeberangan nasional berketersediaan tinggi (trip.ferizy.com), deployment hybrid cloud dan server pelabuhan di puluhan pelabuhan, serta integrasi barrier gate Omron. Di luar operasional, saya membangun perangkat lunak native C/C++, termasuk rekompilasi statis game iPad dan Mac 32-bit lama menjadi rilis Windows dan Linux native.",
+    "Business Application Operational Support Staff at PT ASDP Indonesia Ferry (Persero), 2024–2026: counter application and backend deployments to harbor servers and the cloud across dozens of ports, Omron barrier gate integration at Surabaya port, and production support for trip.ferizy.com. Independently builds Windows system utilities (Niskala Utilities) and native PC ports of 32-bit legacy software by static binary recompilation.",
+    "Staf Dukungan Operasional Aplikasi Bisnis di PT ASDP Indonesia Ferry (Persero), 2024–2026: deployment aplikasi loket dan layanan backend ke server pelabuhan dan cloud di puluhan pelabuhan, integrasi barrier gate Omron di Pelabuhan Surabaya, serta dukungan produksi untuk trip.ferizy.com. Secara independen mengembangkan utilitas sistem Windows (Niskala Utilities) dan port PC native untuk perangkat lunak klasik 32-bit melalui rekompilasi biner statis.",
   ),
   skills: [
     {
@@ -1852,12 +1622,12 @@ export const resume = {
     {
       id: "native",
       title: tx("Systems programming", "Pemrograman sistem"),
-      items: ["C / C++", "Win32 API", tx("Static recompilation", "Rekompilasi statis"), "ARMv7 / x86", "OpenGL ES"],
+      items: ["C / C++", "C# / .NET", "Win32 API / ETW", tx("Static recompilation", "Rekompilasi statis"), "ARMv7 / x86", "OpenGL ES"],
     },
     {
       id: "web",
       title: tx("Web, cloud & tools", "Web, cloud & tools"),
-      items: ["Cloudflare Workers & D1", "PHP & CodeIgniter", "JavaScript / React", "Unity (C#)", "GameMaker", "Git & CI/CD"],
+      items: ["Cloudflare Workers & D1", "PHP & CodeIgniter", "JavaScript / React", "Unity (C#)", "GML", "Git & CI/CD"],
     },
   ],
 };

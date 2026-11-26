@@ -7,12 +7,10 @@ import { ToneMappingMode } from "postprocessing";
 import { useMediaQuery } from "react-responsive";
 
 import HeroLights from "./HeroLights.jsx";
-import Particles from "./Particles.jsx";
 import DeveloperRoom, { ROOM_LAYOUT } from "./DeveloperRoom.jsx";
 import DeveloperAvatar from "./DeveloperAvatar.jsx";
 import WorkstationHotspots from "./WorkstationHotspots.jsx";
 import CameraRig, { OVERVIEW } from "./CameraRig.jsx";
-import { useGreetingBubble } from "./useGreetingBubble.js";
 import GltfModel from "../Models/GltfModel.jsx";
 import { Icon } from "../Icons.jsx";
 import { useLocalized } from "../../context/LanguageContext.jsx";
@@ -43,8 +41,9 @@ const PRESETS = [
 ];
 
 /**
- * Hero 3D workstation: the procedural room (or an optional `.glb`), a seated
- * developer avatar who waves to visitors, screens previewing (and opening)
+ * Hero 3D workstation, kept as a quiet studio render: the procedural room (or
+ * an optional `.glb`), a seated developer avatar who waves when greeted
+ * (hover, click or "Wave back"), screens previewing (and opening)
  * `/journey`, `/projects` and `/notes`, a desk tablet that opens `/contact`,
  * and three camera presets. `theme` ("dark" |
  * "light") selects the room shell and lighting palette.
@@ -62,10 +61,7 @@ const HeroExperience = ({ theme = "dark" }) => {
   const [preset, setPreset] = useState("overview");
   const [waveSignal, setWaveSignal] = useState(0);
 
-  // Greeting bubble: shown whenever the avatar greets, hidden a few seconds later.
-  const { bubbleRef, greeting, greet } = useGreetingBubble();
-
-  // Hotspot tooltip, following the pointer.
+  // Hotspot tooltip, following the pointer (the only text drawn over the scene).
   const tipRef = useRef(null);
   const [tip, setTip] = useState(null);
   const showTip = useCallback((label, x = 0, y = 0) => {
@@ -89,7 +85,6 @@ const HeroExperience = ({ theme = "dark" }) => {
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <HeroLights palette={palette} />
-          <Particles count={isMobile ? 18 : 36} tone={palette.particles} />
 
           {/* On phones the canvas stays non-interactive for dragging so page scrolling works. */}
           {!isMobile && (
@@ -124,8 +119,6 @@ const HeroExperience = ({ theme = "dark" }) => {
                 <DeveloperAvatar
                   position={ROOM_LAYOUT.seat.position}
                   rotation={[0, ROOM_LAYOUT.seat.rotation[1] + Math.PI, 0]}
-                  onGreet={greet}
-                  bubbleRef={bubbleRef}
                   waveSignal={waveSignal}
                 />
                 <WorkstationHotspots text={text} onNavigate={onNavigate} onTip={showTip} />
@@ -142,19 +135,13 @@ const HeroExperience = ({ theme = "dark" }) => {
         </Canvas>
       </div>
 
-      {/* HTML pinned to the scene: positions are written each frame by ScreenAnchor / the hotspots. */}
-      <div ref={bubbleRef} className="scene-anchor" aria-live="polite">
-        <p className={`avatar-bubble ${greeting ? "is-visible" : ""}`} aria-hidden={!greeting}>
-          {text.greeting}
-        </p>
-      </div>
+      {/* Hover tooltip for the screens and the tablet; its position is written by `showTip`. */}
       <div ref={tipRef} className="scene-anchor is-tip" aria-hidden="true">
         {tip && <span className="scene-tooltip">{tip}</span>}
       </div>
 
       <div className="scene-controls">
         <button type="button" className="scene-pill is-wave" onClick={() => setWaveSignal((value) => value + 1)}>
-          <span aria-hidden="true">👋</span>
           {text.waveBack}
         </button>
         <div className="scene-presets" role="group" aria-label={text.presetsLabel}>

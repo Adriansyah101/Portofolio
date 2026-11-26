@@ -34,7 +34,6 @@ jobs:
         run: npm run build
         env:
           VITE_GITHUB_USERNAME: ${{ vars.VITE_GITHUB_USERNAME }}
-          VITE_GANGSTAR_REPO: ${{ vars.VITE_GANGSTAR_REPO }}
           VITE_TWITTER_HANDLE: ${{ vars.VITE_TWITTER_HANDLE }}
 
       - name: Configure Pages

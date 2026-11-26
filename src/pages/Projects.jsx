@@ -1,11 +1,19 @@
 import { useId, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import PageHeader from "../components/PageHeader.jsx";
 import GitHubStats from "../components/GitHubStats.jsx";
 import ProjectPreview from "../components/ProjectPreview.jsx";
 import { ArrowRightIcon, Icon } from "../components/Icons.jsx";
-import { KindBadge, OriginTarget, PlatformBadge, ProjectActions, ProjectTags } from "../components/ProjectBits.jsx";
+import {
+  ComparisonTable,
+  KindBadge,
+  OriginTarget,
+  PlatformBadge,
+  ProjectActions,
+  ProjectTags,
+  ReleaseBadge,
+} from "../components/ProjectBits.jsx";
 import { TabList, TabPanel } from "../components/Tabs.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import {
@@ -22,10 +30,12 @@ import { usePageTitle } from "../utils/hooks.js";
 /**
  * One project. `compact` (the "All" overview on desktop) trims the card to a
  * scannable tile: shorter artwork, a two-line summary and no tag list. The
- * category views and every screen under 1024px show the full card.
+ * category views and every screen under 1024px show the full card. A
+ * `featured` project spans its row, with the artwork beside the text from
+ * tablet width up, and carries a "Featured Project" marker.
  */
 const ArchiveCard = ({ project, badge, text, compact }) => (
-  <article className={`archive-card ${compact ? "is-compact" : ""}`}>
+  <article className={`archive-card ${compact ? "is-compact" : ""} ${project.featured ? "is-featured" : ""}`}>
     <ProjectPreview
       art={project.art}
       image={project.image}
@@ -36,6 +46,12 @@ const ArchiveCard = ({ project, badge, text, compact }) => (
     />
     <div className="archive-body">
       <div className="flex flex-wrap items-center gap-2">
+        {project.featured && (
+          <span className="featured-badge">
+            <Icon name="flag" className="size-3.5" />
+            {text.featured}
+          </span>
+        )}
         <KindBadge kind={project.category} badge={badge} className="archive-kind" />
         {/* Originals name their discipline; preservation ports name the legacy platform they rescue. */}
         {project.category === "original" ? (
@@ -43,6 +59,7 @@ const ArchiveCard = ({ project, badge, text, compact }) => (
         ) : (
           <PlatformBadge project={project} className="w-fit" />
         )}
+        <ReleaseBadge projectId={project.id} />
       </div>
       <div>
         <h3 className="archive-title">{softBreak(project.shortTitle)}</h3>
@@ -57,55 +74,6 @@ const ArchiveCard = ({ project, badge, text, compact }) => (
         <ProjectActions project={project} />
       </div>
     </div>
-  </article>
-);
-
-/** "Before / after" table for one preservation project. */
-const ComparisonTable = ({ project, text, readCaseStudy }) => (
-  <article className="card-border overflow-hidden rounded-2xl">
-    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black-50 px-5 py-4 md:px-8">
-      <div className="flex min-w-0 items-center gap-3">
-        <PlatformBadge project={project} />
-        <h4 className="min-w-0 text-lg font-semibold wrap-break-word">{project.shortTitle}</h4>
-      </div>
-      {project.caseStudy && (
-        <Link to={project.caseStudy} className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-cyan hover:text-white">
-          {readCaseStudy}
-          <ArrowRightIcon className="size-4" />
-        </Link>
-      )}
-    </div>
-    <table className="compare-table">
-      <caption className="sr-only">{format(text.compareCaption, { title: project.shortTitle })}</caption>
-      <thead>
-        <tr>
-          <th scope="col" className="w-[24%]">
-            {text.aspect}
-          </th>
-          <th scope="col">
-            <span className="inline-flex items-center gap-1.5 text-rose-300">
-              <Icon name="broken" className="size-4 flex-none" />
-              {text.legacyTarget}
-            </span>
-          </th>
-          <th scope="col">
-            <span className="inline-flex items-center gap-1.5 text-emerald-300">
-              <Icon name="shield" className="size-4 flex-none" />
-              {text.nativePort}
-            </span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {project.comparison.map((row) => (
-          <tr key={row.id}>
-            <th scope="row">{row.aspect}</th>
-            <td className="text-white-50/60">{row.original}</td>
-            <td className="text-white-50">{row.modern}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
   </article>
 );
 
@@ -133,7 +101,7 @@ const Comparison = ({ projects, text, readCaseStudy }) => {
         className="mt-5"
       />
       <TabPanel base={base} value={project.id} className="mt-4">
-        <ComparisonTable project={project} text={text} readCaseStudy={readCaseStudy} />
+        <ComparisonTable project={project} readCaseStudy={readCaseStudy} />
       </TabPanel>
     </div>
   );
@@ -167,10 +135,11 @@ const CatalogSection = ({ id, section, items, text, compact, children = null }) 
 );
 
 /**
- * `/projects`: Original Projects and 32-Bit Game Preservation as two clearly
+ * `/projects`: Original Software and 32-Bit Software Preservation as two clearly
  * separated groups, filterable with `All / Original / 32-Bit` pills
- * (`?category=original|preservation`). From 1024px up "All" is a one-screen
- * overview of compact tiles in two side-by-side groups; a category shows its
+ * (`?category=original|preservation`), with Niskala Utilities first as the
+ * featured project. From 1024px up "All" is a one-screen overview of compact
+ * tiles in two side-by-side groups; a category shows its
  * full cards (the preservation view adds the legacy-vs-native comparison
  * beside them), and the catalog pane scrolls on its own if it has to.
  */
@@ -198,7 +167,6 @@ const Projects = () => {
 
   return (
     <div className="page-shell page-enter">
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame">
         <PageHeader
           eyebrow={text.eyebrow}

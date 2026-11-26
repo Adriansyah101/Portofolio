@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 import { ArrowRightIcon, Icon } from "./Icons.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { ui } from "../constants/index.js";
+import { useRelease, useResolvedLinks, withTag } from "../hooks/useGitHubReleases.js";
+import { format } from "../utils/i18n.js";
 
-/** Pill naming where a project comes from: "32-Bit iPad", or "Original Project". */
+/** Pill naming where a project comes from: "32-Bit iPad", or "Original Software". */
 export const PlatformBadge = ({ project, className = "" }) => (
   <span className={`platform-badge ${className}`}>
     <Icon name={project.platformIcon} className="size-3.5" />
@@ -19,14 +21,51 @@ export const KindBadge = ({ kind, badge, className = "" }) => (
   </span>
 );
 
-/** Origin platform → modern target, e.g. "32-bit iPad → Native Windows". */
-export const OriginTarget = ({ project }) => (
-  <p className="origin-target">
-    <span className="text-rose-200/80">{project.origin}</span>
-    <ArrowRightIcon className="size-4 flex-none text-accent-cyan" />
-    <span className="text-emerald-200/90">{project.target}</span>
-  </p>
-);
+/**
+ * Monospace tag of a project's latest GitHub release (`V1.0.1`), linking to
+ * that release. `detailed` adds the publish date and the number of files.
+ * Renders nothing for projects without a repository in `releaseSources`.
+ */
+export const ReleaseBadge = ({ projectId, detailed = false, className = "" }) => {
+  const release = useRelease(projectId);
+  const { release: text } = useLocalized(ui);
+  if (!release) return null;
+
+  const details = detailed
+    ? [release.publishedAt && format(text.published, { date: release.publishedAt }), release.assets && format(text.files, { n: release.assets })]
+    : [];
+
+  return (
+    <a
+      href={release.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`release-badge ${className}`}
+      title={`${text.latest}: ${release.tag}`}
+    >
+      <Icon name="tag" className="size-3.5 flex-none" />
+      <span className="sr-only">{text.latest}: </span>
+      {release.tag}
+      {details.filter(Boolean).map((detail) => (
+        <span key={detail} className="release-badge-detail">
+          {detail}
+        </span>
+      ))}
+    </a>
+  );
+};
+
+/** Origin platform → modern target, e.g. "32-bit iPad → Windows & Linux x86 · V1.0.1". */
+export const OriginTarget = ({ project }) => {
+  const release = useRelease(project.id);
+  return (
+    <p className="origin-target">
+      <span className="text-rose-200/80">{project.origin}</span>
+      <ArrowRightIcon className="size-4 flex-none text-accent-cyan" />
+      <span className="text-emerald-200/90">{withTag(project.target, release)}</span>
+    </p>
+  );
+};
 
 export const ProjectTags = ({ tags }) => {
   const { common } = useLocalized(ui);
@@ -50,6 +89,7 @@ export const ProjectTags = ({ tags }) => {
  */
 export const ProjectActions = ({ project }) => {
   const { common } = useLocalized(ui);
+  const projectLinks = useResolvedLinks(project.links);
   return (
     <div className="project-actions">
       {project.caseStudy && (
@@ -58,9 +98,9 @@ export const ProjectActions = ({ project }) => {
           <ArrowRightIcon className="project-link-arrow size-4" />
         </Link>
       )}
-      {project.links.map((link, index) => (
+      {projectLinks.map((link, index) => (
         <a
-          key={link.href}
+          key={link.href + index}
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
@@ -73,5 +113,63 @@ export const ProjectActions = ({ project }) => {
         </a>
       ))}
     </div>
+  );
+};
+
+/**
+ * Legacy 32-bit target vs. native port for one preservation project, as a
+ * table. `readCaseStudy` adds a link to the case study in the header (used on
+ * `/projects`; the case study itself leaves it out).
+ */
+export const ComparisonTable = ({ project, readCaseStudy = null }) => {
+  const { projects: text } = useLocalized(ui);
+  const release = useRelease(project.id);
+
+  return (
+    <article className="card-border overflow-hidden rounded-xl">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black-50 px-5 py-4 md:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <PlatformBadge project={project} />
+          <h4 className="min-w-0 text-lg font-semibold wrap-break-word">{project.shortTitle}</h4>
+        </div>
+        {readCaseStudy && project.caseStudy && (
+          <Link to={project.caseStudy} className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-cyan hover:text-white">
+            {readCaseStudy}
+            <ArrowRightIcon className="size-4" />
+          </Link>
+        )}
+      </div>
+      <table className="compare-table">
+        <caption className="sr-only">{format(text.compareCaption, { title: project.shortTitle })}</caption>
+        <thead>
+          <tr>
+            <th scope="col" className="w-[24%]">
+              {text.aspect}
+            </th>
+            <th scope="col">
+              <span className="inline-flex items-center gap-1.5 text-rose-300">
+                <Icon name="broken" className="size-4 flex-none" />
+                {text.legacyTarget}
+              </span>
+            </th>
+            <th scope="col">
+              <span className="inline-flex items-center gap-1.5 text-emerald-300">
+                <Icon name="shield" className="size-4 flex-none" />
+                {text.nativePort}
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {project.comparison.map((row) => (
+            <tr key={row.id}>
+              <th scope="row">{row.aspect}</th>
+              <td className="text-white-50/60">{row.original}</td>
+              <td className="text-white-50">{withTag(row.modern, release)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </article>
   );
 };

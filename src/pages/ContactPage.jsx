@@ -13,7 +13,6 @@ const ContactPage = () => {
 
   return (
     <div className="page-shell page-enter">
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame">
         <Contact intro={<PageHeader eyebrow={text.eyebrow} title={text.title} description={text.description} />}>
           <section aria-labelledby="community-title">

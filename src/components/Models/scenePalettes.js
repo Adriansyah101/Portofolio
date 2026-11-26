@@ -22,7 +22,6 @@ export const heroPalettes = {
     cool: { color: "#94a3b8", intensity: 2.5 },
     hemisphere: { color: "#e2e8f0", groundColor: "#141416", intensity: 1.5 },
     ambient: { color: "#52525b", intensity: 0.45 },
-    particles: { color: "#e4e4e7", opacity: 0.3 },
   },
   light: {
     floor: "#b9b6b1",
@@ -38,7 +37,6 @@ export const heroPalettes = {
     cool: { color: "#cbd5e1", intensity: 2 },
     hemisphere: { color: "#f8fafc", groundColor: "#8b8f97", intensity: 1.6 },
     ambient: { color: "#e2e8f0", intensity: 0.55 },
-    particles: { color: "#64748b", opacity: 0.22 },
   },
 };
 

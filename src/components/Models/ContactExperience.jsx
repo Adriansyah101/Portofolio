@@ -5,7 +5,6 @@ import { useMediaQuery } from "react-responsive";
 
 import GltfModel from "./GltfModel.jsx";
 import DeveloperAvatar from "../HeroModels/DeveloperAvatar.jsx";
-import { useGreetingBubble } from "../HeroModels/useGreetingBubble.js";
 import {
   Chair,
   Desk,
@@ -95,62 +94,50 @@ const Studio = ({ palette }) => {
 /**
  * Contact desk with the seated developer avatar, who waves on load, when
  * hovered or clicked, and whenever `waveSignal` increments (the visitor
- * reaches for one of the Gmail options), with a bilingual greeting bubble. `theme`
- * ("dark" | "light") selects the studio palette.
+ * reaches for one of the Gmail options). No text is drawn over the scene.
+ * `theme` ("dark" | "light") selects the studio palette.
  */
 const ContactExperience = ({ theme = "dark", waveSignal = 0 }) => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { contact: text } = useLocalized(ui);
-  const { bubbleRef, greeting, greet } = useGreetingBubble();
 
   return (
-    <>
-      {/* `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly. */}
-      <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]} aria-label={text.sceneLabel}>
-        <Studio palette={paletteFor(contactPalettes, theme)} />
+    // `flat` disables tone mapping so the fog and floor match the CSS panel colour exactly.
+    <Canvas shadows flat camera={{ position: [0, 3, 7], fov: 45 }} dpr={[1, 1.5]} aria-label={text.sceneLabel}>
+      <Studio palette={paletteFor(contactPalettes, theme)} />
 
-        {!isMobile && (
-          <OrbitControls
-            enablePan={false}
-            enableZoom={false}
-            minPolarAngle={Math.PI / 5}
-            maxPolarAngle={Math.PI / 2}
-            minAzimuthAngle={-Math.PI / 3}
-            maxAzimuthAngle={Math.PI / 3}
+      {!isMobile && (
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          minPolarAngle={Math.PI / 5}
+          maxPolarAngle={Math.PI / 2}
+          minAzimuthAngle={-Math.PI / 3}
+          maxAzimuthAngle={Math.PI / 3}
+        />
+      )}
+
+      <Suspense fallback={null}>
+        <group position={[0, FLOOR_Y, 0]} rotation={[0, -0.45, 0]} scale={isMobile ? 0.85 : 1}>
+          <GltfModel
+            url={assetUrl(contactScene.modelPath)}
+            scale={contactScene.scale}
+            position={contactScene.position}
+            rotation={contactScene.rotation}
+            shadows
+            fallback={<ContactDesk />}
           />
-        )}
-
-        <Suspense fallback={null}>
-          <group position={[0, FLOOR_Y, 0]} rotation={[0, -0.45, 0]} scale={isMobile ? 0.85 : 1}>
-            <GltfModel
-              url={assetUrl(contactScene.modelPath)}
-              scale={contactScene.scale}
-              position={contactScene.position}
-              rotation={contactScene.rotation}
-              shadows
-              fallback={<ContactDesk />}
-            />
-            <DeveloperAvatar
-              position={SEAT.position}
-              rotation={SEAT.rotation}
-              screenYaw={SEAT.screenYaw}
-              onGreet={greet}
-              bubbleRef={bubbleRef}
-              waveSignal={waveSignal}
-            >
-              <Chair rotation={[0, Math.PI, 0]} color="#2f2d2a" accent="#57534e" />
-            </DeveloperAvatar>
-          </group>
-        </Suspense>
-      </Canvas>
-
-      {/* Greeting bubble, pinned above the avatar's head by its ScreenAnchor. */}
-      <div ref={bubbleRef} className="scene-anchor" aria-live="polite">
-        <p className={`avatar-bubble ${greeting ? "is-visible" : ""}`} aria-hidden={!greeting}>
-          {text.greeting}
-        </p>
-      </div>
-    </>
+          <DeveloperAvatar
+            position={SEAT.position}
+            rotation={SEAT.rotation}
+            screenYaw={SEAT.screenYaw}
+            waveSignal={waveSignal}
+          >
+            <Chair rotation={[0, Math.PI, 0]} color="#2f2d2a" accent="#57534e" />
+          </DeveloperAvatar>
+        </group>
+      </Suspense>
+    </Canvas>
   );
 };
 

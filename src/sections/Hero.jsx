@@ -5,23 +5,22 @@ import { useGSAP } from "@gsap/react";
 
 import AnimatedCounter from "../components/AnimatedCounter.jsx";
 import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
-import { ArrowRightIcon, Icon } from "../components/Icons.jsx";
+import { ArrowRightIcon } from "../components/Icons.jsx";
 import { CvButton } from "../components/Resume.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
-import { heroContent as heroSource, routes, ui, words as wordSource } from "../constants/index.js";
-import { renderInlineCode } from "../utils/text.jsx";
+import { heroContent as heroSource, routes, ui } from "../constants/index.js";
 
 /**
  * Home command center. From 1024px up it is one split screen between the
- * navbar and the footer: copy, metrics and calls to action on the left, the
+ * navbar and the footer: name, role, a two-sentence bio, metrics and calls to
+ * action on the left, the
  * full-height 3D workstation (whose screens and tablet open the other pages)
  * on the right. Below 1024px the two stack and the page scrolls.
  */
 const Hero = () => {
   const sectionRef = useRef(null);
   const heroContent = useLocalized(heroSource);
-  const words = useLocalized(wordSource);
   const { hero } = useLocalized(ui);
   const { theme } = useTheme();
 
@@ -41,42 +40,21 @@ const Hero = () => {
     { scope: sectionRef },
   );
 
-  // The list is rendered twice so the CSS slider can loop without a jump.
-  const sliderWords = [...words, ...words];
-
   return (
     <section id="hero" ref={sectionRef} className="hero">
-      <div className="hero-bg" aria-hidden="true" />
-
       <header className="hero-header scroll-pane">
         <div className="hero-copy">
-          <p className="hero-eyebrow hero-reveal">
-            <span className="size-1.5 flex-none rounded-full bg-emerald-400/80" aria-hidden="true" />
-            {heroContent.eyebrow}
-          </p>
+          <p className="hero-eyebrow hero-reveal">{heroContent.eyebrow}</p>
           <div className="hero-text">
-            <h1>{heroContent.headline}</h1>
-            <p className="hero-focus">
-              <span className="sr-only">
-                {heroContent.focusLabel} {words.map((word) => word.text).join(", ")}
-              </span>
-              <span aria-hidden="true">{heroContent.focusLabel} </span>
-              <span className="slide" aria-hidden="true">
-                <span className="slide-wrapper">
-                  {sliderWords.map((word, index) => (
-                    <span key={`${word.id}-${index}`} className="slide-item">
-                      <span className="slide-icon">
-                        <Icon name={word.icon} className="size-full" strokeWidth={2.4} />
-                      </span>
-                      <span className="slide-text">{word.text}</span>
-                    </span>
-                  ))}
-                </span>
-              </span>
+            <h1>{heroContent.name}</h1>
+            <p className="hero-role">
+              <span>{heroContent.role}</span>
+              <span className="sr-only"> · </span>
+              <span className="hero-focus">{heroContent.focus}</span>
             </p>
           </div>
 
-          <p className="hero-bio hero-reveal">{renderInlineCode(heroContent.bio)}</p>
+          <p className="hero-bio hero-reveal">{heroContent.bio}</p>
 
           <AnimatedCounter className="hero-reveal" />
 

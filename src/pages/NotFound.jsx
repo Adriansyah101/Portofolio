@@ -10,7 +10,6 @@ const NotFound = () => {
 
   return (
     <div className="page-shell page-enter min-h-[70vh] lg:min-h-0">
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame lg:justify-center">
         <PageHeader
           eyebrow={text.eyebrow}

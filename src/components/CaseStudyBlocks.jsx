@@ -3,6 +3,7 @@ import { ArrowRightIcon, Icon } from "./Icons.jsx";
 import { renderInlineCode } from "../utils/text.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { ui } from "../constants/index.js";
+import { useResolvedLinks } from "../hooks/useGitHubReleases.js";
 
 /* -------------------------------------------------------------------------- */
 /*                         Case-study content blocks                          */
@@ -210,22 +211,26 @@ const Code = ({ caption, snippets, note }) => (
   </div>
 );
 
-const Links = ({ items }) => (
-  <div className="flex flex-wrap gap-3">
-    {items.map((item) => (
-      <a
-        key={item.href}
-        href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`project-link ${item.primary ? "primary" : "secondary"}`}
-      >
-        <Icon name={item.icon} className="size-4" />
-        {item.label}
-      </a>
-    ))}
-  </div>
-);
+/** External links; one with `release` follows that repository's latest release. */
+const Links = ({ items }) => {
+  const resolved = useResolvedLinks(items);
+  return (
+    <div className="flex flex-wrap gap-3">
+      {resolved.map((item) => (
+        <a
+          key={item.href + item.label}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`project-link ${item.primary ? "primary" : "secondary"}`}
+        >
+          <Icon name={item.icon} className="size-4" />
+          {item.label}
+        </a>
+      ))}
+    </div>
+  );
+};
 
 const Prose = ({ paragraphs }) => (
   <div className="flex max-w-3xl flex-col gap-4 text-lg leading-relaxed text-body">

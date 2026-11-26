@@ -5,21 +5,21 @@ import PageHeader from "../components/PageHeader.jsx";
 import { ArrowRightIcon } from "../components/Icons.jsx";
 import { CvButton } from "../components/Resume.jsx";
 import { TabList, TabPanel } from "../components/Tabs.jsx";
-import { EnterpriseStack, ExperiencePanel, ImpactGrid, TechCards } from "../sections/JourneyPanels.jsx";
+import { EnterpriseStack, ExperiencePanel, OperationalBreakdown, TechCards } from "../sections/JourneyPanels.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { routes, ui } from "../constants/index.js";
 import { usePageTitle } from "../utils/hooks.js";
 
 const TABS = [
-  { id: "impact", icon: "shield", Panel: ImpactGrid },
-  { id: "stack", icon: "layers", Panel: EnterpriseStack },
+  { id: "impact", icon: "layers", Panel: OperationalBreakdown },
+  { id: "stack", icon: "server", Panel: EnterpriseStack },
   { id: "tech3d", icon: "cube", Panel: TechCards },
 ];
 
 /**
- * `/journey`: professional work experience (preservation work lives on
- * `/projects`). The PT ASDP experience card sits beside a tabbed panel
- * (Operational Impact · Enterprise Stack · 3D Tech Cards); from 1024px up the
+ * `/journey`: work experience only (projects and preservation work live on
+ * `/projects`). The PT ASDP executive summary sits beside a tabbed panel
+ * (Operational Breakdown · Enterprise Stack · 3D Tech Cards); from 1024px up the
  * two share one viewport and each scrolls on its own if it has to.
  */
 const Journey = () => {
@@ -32,7 +32,6 @@ const Journey = () => {
 
   return (
     <div className="page-shell page-enter">
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame">
         <PageHeader
           eyebrow={text.eyebrow}

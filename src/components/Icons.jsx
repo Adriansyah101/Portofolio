@@ -50,7 +50,7 @@ export const CubeIcon = (props) => (
   </Stroke>
 );
 
-export const GamepadIcon = (props) => (
+export const ControllerIcon = (props) => (
   <Stroke {...props}>
     <path d="M7 7h10a5 5 0 0 1 4.9 6l-.8 4a2.5 2.5 0 0 1-4.3 1.2L14.6 16H9.4l-2.2 2.2A2.5 2.5 0 0 1 2.9 17l-.8-4A5 5 0 0 1 7 7Z" />
     <path d="M7.5 10v4M5.5 12h4" />
@@ -293,7 +293,7 @@ export const iconMap = {
   shader: ShaderIcon,
   chip: ChipIcon,
   cube: CubeIcon,
-  gamepad: GamepadIcon,
+  controller: ControllerIcon,
   cloud: CloudIcon,
   flag: FlagIcon,
   city: CityIcon,

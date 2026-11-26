@@ -129,7 +129,6 @@ const Notes = () => {
 
   return (
     <div className="page-shell page-enter">
-      <div className="hero-bg" aria-hidden="true" />
       <div className="page-frame">
         <div className="notes-layout">
           <aside className={`notes-sidebar scroll-pane ${slug ? "hidden lg:flex" : "flex"}`} aria-label={text.pageTitle}>
