@@ -47,7 +47,7 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | `#/notes`, `#/notes/:slug` | Engineering Notes   | Note list and reading pane side by side on desktop; list and article pages on phones. Each note is Context → Engineering Approach → Outcome |
 | `#/contact`           | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
-Routing uses `HashRouter`, so every URL looks like `https://adriansyah101.github.io/Portofolio/#/projects`.
+Routing uses `HashRouter`, so every URL looks like `https://adriansyahpn.com/#/projects`.
 Reloading or sharing any page always loads `index.html`, so GitHub Pages never returns a 404.
 Because the hash belongs to the router, in-page jumps use buttons that scroll, not `#anchor` links.
 
@@ -123,11 +123,21 @@ npm run dev
 2. In **Settings → Pages**, set **Source** to **GitHub Actions**.
 3. Optionally, in **Settings → Secrets and variables → Actions**, add the **variables**
    `VITE_TWITTER_HANDLE` and `VITE_GITHUB_USERNAME`.
-4. Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
-   which builds the site and publishes `dist/` to `https://<username>.github.io/<repo-name>/`.
+4. In **Settings → Pages → Custom domain**, enter `adriansyahpn.com`, save, and tick
+   **Enforce HTTPS** once the certificate is issued. With the GitHub Actions source this setting
+   is what binds the domain; `public/CNAME` (copied to `dist/CNAME`) keeps the same value in
+   every build.
+5. At the DNS provider, point the apex `adriansyahpn.com` at GitHub Pages: `A` records
+   `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (and optionally
+   the `AAAA` records `2606:50c0:8000::153` … `8003::153`), plus a `CNAME` for `www` →
+   `adriansyah101.github.io`.
+6. Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml),
+   which builds the site and publishes `dist/` to `https://adriansyahpn.com/`.
 
-`vite.config.js` uses `base: "./"`, so all asset paths are relative and work under any
-repository sub-path.
+`vite.config.js` uses `base: "/"` because the site is served from the root of the custom domain.
+Routing is hash-based, so the document is always `/index.html` and root-relative asset paths
+resolve on every route. Absolute URLs for crawlers (`canonical`, `og:*`, `twitter:*` in
+`index.html`) and `siteUrl` in `src/constants/index.js` all use `https://adriansyahpn.com/`.
 
 ## Editing content
 

@@ -1,6 +1,6 @@
 /**
- * Resolves a path inside `/public` against Vite's configured base URL so the
- * asset loads correctly on GitHub Pages sub-paths. Returns `null` for empty
+ * Resolves a path inside `/public` against Vite's configured base URL (`/` on
+ * the custom domain), so the asset loads from any route. Returns `null` for empty
  * input, which components treat as "use the built-in fallback".
  */
 export const assetUrl = (path) => {

@@ -24,7 +24,7 @@ const env = import.meta.env;
 /* -------------------------------------------------------------------------- */
 
 /** Public address of the deployed site (canonical URL, OpenGraph, résumé footer). */
-export const siteUrl = "https://adriansyah101.github.io/Portofolio/";
+export const siteUrl = "https://adriansyahpn.com/";
 
 /** GitHub account that owns every repository linked from the site. */
 export const githubUser = env.VITE_GITHUB_USERNAME?.trim() || "Adriansyah101";

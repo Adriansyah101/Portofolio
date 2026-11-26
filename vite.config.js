@@ -2,10 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-// `base: "./"` makes every built asset path relative, so the site works
-// unchanged at https://<username>.github.io/<repo-name>/ (or any sub-path).
+// The site is served from the root of its custom domain, https://adriansyahpn.com/
+// (public/CNAME), so every built asset path starts at "/". Routing is hash-based,
+// so the document itself is always /index.html and root paths resolve on every route.
 export default defineConfig({
-  base: "./",
+  base: "/",
   plugins: [react(), tailwindcss()],
   build: {
     outDir: "dist",
