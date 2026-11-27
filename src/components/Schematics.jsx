@@ -203,77 +203,86 @@ export const WarplaneSchematic = ({ label }) => {
   );
 };
 
-/** 32-bit iOS loader: code recompiled at build time, data loaded and bound at run time. */
-export const IosLoaderSchematic = ({ label }) => (
-  <Frame label={label} caption="iOS LOADER · ARMv7 MACH-O → x86" note="0x11000 – 0x8B5000">
-    <Tag x="40" y="118">
-      BUILD TIME
+/**
+ * The two loaders share one three-stage layout: the legacy 32-bit input on the
+ * left, the translation layer in the middle (accent), the native target on the
+ * right, two rows each, with a figure from the repository top right.
+ */
+const LoaderFlow = ({ label, caption, stat, rows, link }) => (
+  <Frame label={label} caption={caption} note="NO CPU EMULATION">
+    <Tag x="760" y="58" anchor="end">
+      {stat}
     </Tag>
-    <Tag x="40" y="300">
-      RUN TIME
+    <Tag x="40" y="128">
+      LEGACY 32-BIT
     </Tag>
-    <path d="M40 262H760" stroke={C.stroke} strokeWidth="1" />
-
-    <Node x={40} y={136} w={150} h={76} label="__TEXT" sub="ARM · Thumb" dashed />
-    <Node x={240} y={136} w={150} h={76} label="recomp/" sub="ARM → C" dashed />
-    <Node x={440} y={136} w={150} h={76} label="F_<addr>" sub="(CPU *c)" dashed />
-    <Node x={640} y={136} w={120} h={76} label="x86" sub="exe · ELF" dashed />
-    <Arrow points={[[190, 174], [240, 174]]} dashed />
-    <Arrow points={[[390, 174], [440, 174]]} dashed />
-    <Arrow points={[[590, 174], [640, 174]]} dashed />
-
-    <Node x={40} y={318} w={150} h={76} label="__DATA" sub="symbols · objc" />
-    <Node x={240} y={318} w={150} h={76} label="LOADER" sub="map · bind" accent />
-    <Node x={440} y={318} w={150} h={76} label="BRIDGES" sub="r0–r3 · sp" />
-    <Node x={640} y={318} w={120} h={76} label="SHIMS" sub="UIKit · GL ES" />
-    <Arrow points={[[190, 356], [240, 356]]} />
-    <Arrow points={[[390, 356], [440, 356]]} />
-    <Arrow points={[[590, 356], [640, 356]]} />
-
-    <Arrow points={[[515, 212], [515, 318]]} color={C.accent} />
-    <Tag x="525" y="284" color={C.accent}>
-      calls
+    <Tag x="290" y="128">
+      TRANSLATION
     </Tag>
+    <Tag x="560" y="128">
+      NATIVE TARGET
+    </Tag>
+    {rows.map(([from, via, to], index) => {
+      const y = 146 + index * 126;
+      const mid = y + 42;
+      return (
+        <g key={via.label}>
+          <Node x={40} y={y} w={200} h={84} label={from.label} sub={from.sub} />
+          <Node x={290} y={y} w={220} h={84} label={via.label} sub={via.sub} accent dashed={via.dashed} />
+          <Node x={560} y={y} w={200} h={84} label={to.label} sub={to.sub} />
+          <Arrow points={[[240, mid], [290, mid]]} />
+          <Arrow points={[[510, mid], [560, mid]]} color={C.accent} />
+        </g>
+      );
+    })}
+    <Arrow points={[[400, 230], [400, 272]]} color={C.accent} />
+    <Tag x="410" y="256" color={C.accent}>
+      {link}
+    </Tag>
+    <path d="M40 410H760" stroke={C.stroke} strokeWidth="1" strokeDasharray="2 6" />
   </Frame>
 );
 
-/** 32-bit Mac loader: the reserved address range beside the load sequence and the host shims. */
-export const MacLoaderSchematic = ({ label }) => {
-  const shims = ["libSystem", "libobjc", "AppKit", "OpenGL", "AudioUnit"];
-  return (
-    <Frame label={label} caption="MAC LOADER · i386 MACH-O" note="NO CPU EMULATION">
-      <Tag x="40" y="104">
-        RESERVED RANGE
-      </Tag>
-      <Node x={40} y={118} w={170} h={54} label="LOW COPY" sub="0xC70000" accent />
-      <Node x={40} y={180} w={170} h={64} label="__DATA" sub="4,243 bind slots" />
-      <Node x={40} y={252} w={170} h={104} label="__TEXT" sub="i386 code" />
-      <Node x={40} y={364} w={170} h={54} label="PE HEADER" sub="0x10000" />
+/** 32-bit iOS loader: ARMv7 Mach-O + OpenGL ES → static recompiler & runtime bridge → native x86 / OpenGL 2.1. */
+export const IosLoaderSchematic = ({ label }) => (
+  <LoaderFlow
+    label={label}
+    caption="iOS LOADER · ARMv7 → x86"
+    stat="23,873 FUNCTIONS"
+    link="calls"
+    rows={[
+      [
+        { label: "ARMv7 MACH-O", sub: "32-bit iPad · Thumb" },
+        { label: "STATIC RECOMPILER", sub: "ARM → C · build time", dashed: true },
+        { label: "NATIVE x86", sub: "Windows · Linux" },
+      ],
+      [
+        { label: "OPENGL ES", sub: "1.1 / 2.0 · PVRTC" },
+        { label: "RUNTIME BRIDGE", sub: "map · bind · ARM ABI" },
+        { label: "OPENGL 2.1", sub: "GLSL 1.20 · RGBA" },
+      ],
+    ]}
+  />
+);
 
-      <Node x={262} y={222} w={112} h={64} label="PARSE" sub="LC_*" />
-      <Node x={392} y={222} w={112} h={64} label="COPY" sub="segments" />
-      <Node x={522} y={222} w={112} h={64} label="PATCH" sub="4,360" accent />
-      <Node x={652} y={222} w={108} h={64} label="BIND" sub="dyld info" />
-      <Arrow points={[[374, 254], [392, 254]]} />
-      <Arrow points={[[504, 254], [522, 254]]} />
-      <Arrow points={[[634, 254], [652, 254]]} />
-      <Arrow points={[[578, 222], [578, 145], [210, 145]]} color={C.accent} />
-      <Tag x="590" y="176" color={C.accent}>
-        low range
-      </Tag>
-
-      <Arrow points={[[706, 286], [706, 340]]} />
-      <Tag x="262" y="334">
-        HOST SHIMS
-      </Tag>
-      {shims.map((name, index) => (
-        <g key={name} fontFamily={MONO}>
-          <rect x={262 + index * 100} y={346} width="90" height="34" rx="17" fill={C.node} stroke={C.stroke} />
-          <text x={307 + index * 100} y={368} fontSize="11.5" fill={C.label} textAnchor="middle">
-            {name}
-          </text>
-        </g>
-      ))}
-    </Frame>
-  );
-};
+/** 32-bit Mac loader: i386 Mach-O / dyld → user-space loader & ABI shim → Windows / Linux x86. */
+export const MacLoaderSchematic = ({ label }) => (
+  <LoaderFlow
+    label={label}
+    caption="MAC LOADER · i386 → x86"
+    stat="4,243 BIND SLOTS"
+    link="imports"
+    rows={[
+      [
+        { label: "i386 MACH-O", sub: "non-PIE · 0x1000" },
+        { label: "USER-SPACE LOADER", sub: "map · patch · bind" },
+        { label: "WINDOWS x86", sub: "PE · 0x10000" },
+      ],
+      [
+        { label: "dyld INFO", sub: "bind · lazy · weak" },
+        { label: "ABI SHIM", sub: "syscalls · Cocoa · GL" },
+        { label: "LINUX x86", sub: "ELF · 0x08048000" },
+      ],
+    ]}
+  />
+);

@@ -35,7 +35,7 @@ const StudyLink = ({ link, primary }) => {
 
 /**
  * `/projects/:slug`: technical specification of one project (Niskala
- * Utilities, the two preservation ports and their two loaders). From 1024px up
+ * Utilities and the two 32-bit binary loaders). From 1024px up
  * the intro (back link, title, live release badge, Copy Link, summary, links,
  * artwork) stays on the left and the facts, numbered sections and the
  * Previous / Next links read in a pane on the right that scrolls on its own;
@@ -96,7 +96,7 @@ const CaseStudy = () => {
                   // Screenshots and the loader schematics carry their own caption up top, so the badge moves to the open bottom corner.
                   <PlatformBadge
                     project={project}
-                    className={`pointer-events-none absolute left-3 z-10 ${study.image || project.runtime ? "bottom-3" : "top-3"}`}
+                    className={`pointer-events-none absolute left-3 z-10 ${study.image || project.category === "preservation" ? "bottom-3" : "top-3"}`}
                   />
                 }
               />

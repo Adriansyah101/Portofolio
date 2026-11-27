@@ -42,8 +42,7 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
   const { cv: text } = useLocalized(ui);
   const data = useLocalized(resume);
   const experience = useLocalized(expCards);
-  // The loaders are part of their ports, so the résumé lists the ports only.
-  const work = useLocalized(projects).filter((project) => !project.runtime);
+  const work = useLocalized(projects);
 
   useEffect(() => {
     const dialog = dialogRef.current;

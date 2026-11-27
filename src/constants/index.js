@@ -10,7 +10,7 @@
  * shows the same text in both languages.
  *
  * Optional assets: drop files into `/public` and reference them with a path
- * relative to `/public` (for example `images/gtracing-pc.png` or
+ * relative to `/public` (for example `images/niskala.png` or
  * `models/room.glb`). Leave a value as `null` to use the built-in procedural
  * artwork / 3D meshes instead.
  */
@@ -31,8 +31,9 @@ export const githubUser = env.VITE_GITHUB_USERNAME?.trim() || "Adriansyah101";
 
 const GITHUB = `https://github.com/${githubUser}`;
 const NISKALA_REPO = "NiskalaUtilities";
-const GT_RACING_REPO = "GTRacingMotorAcademy-PC-Port";
-const GANGSTAR_REPO = "GangstarMiamiVindication-PC-Port";
+// The two loaders live in these repositories (host/core), with their releases.
+const IOS_LOADER_REPO = "GTRacingMotorAcademy-PC-Port";
+const MAC_LOADER_REPO = "GangstarMiamiVindication-PC-Port";
 const TWITTER_HANDLE = env.VITE_TWITTER_HANDLE?.trim().replace(/^@/, "") || null;
 
 /** Public contact address. The contact page and the footer link to it. */
@@ -51,14 +52,13 @@ export const links = {
   vrAirportRepo: `${GITHUB}/VR-Simulation-Airport`,
   warPlaneRepo: `${GITHUB}/War-Plane-1945`,
   warPlaneWeb: "https://gx.games/games/t2k4q0/war-plane-1945/tracks/b60326ee-2d4f-4321-91a8-59299f6f4831",
-  gtRacingRepo: `${GITHUB}/${GT_RACING_REPO}`,
-  gtRacingReleases: `${GITHUB}/${GT_RACING_REPO}/releases`,
-  gangstarRepo: `${GITHUB}/${GANGSTAR_REPO}`,
-  gangstarReleases: `${GITHUB}/${GANGSTAR_REPO}/releases`,
-  // The loaders live inside the two port repositories, in host/core.
-  iosLoaderSource: `${GITHUB}/${GT_RACING_REPO}/tree/main/host/core`,
-  macLoaderSource: `${GITHUB}/${GANGSTAR_REPO}/tree/main/host/core`,
-  macLoaderNotes: `${GITHUB}/${GANGSTAR_REPO}/blob/main/docs/NOTES.md`,
+  iosLoaderRepo: `${GITHUB}/${IOS_LOADER_REPO}`,
+  iosLoaderReleases: `${GITHUB}/${IOS_LOADER_REPO}/releases`,
+  iosLoaderSource: `${GITHUB}/${IOS_LOADER_REPO}/tree/main/host/core`,
+  macLoaderRepo: `${GITHUB}/${MAC_LOADER_REPO}`,
+  macLoaderReleases: `${GITHUB}/${MAC_LOADER_REPO}/releases`,
+  macLoaderSource: `${GITHUB}/${MAC_LOADER_REPO}/tree/main/host/core`,
+  macLoaderNotes: `${GITHUB}/${MAC_LOADER_REPO}/blob/main/docs/NOTES.md`,
   twitter: TWITTER_HANDLE ? `https://x.com/${TWITTER_HANDLE}` : null,
   ferizy: "https://trip.ferizy.com",
 };
@@ -71,8 +71,8 @@ export const links = {
  */
 export const releaseSources = {
   niskala: { repo: `${githubUser}/${NISKALA_REPO}`, fallbackTag: "V0.1.0", fallbackUrl: links.niskalaReleases },
-  "gt-racing": { repo: `${githubUser}/${GT_RACING_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.gtRacingReleases },
-  gangstar: { repo: `${githubUser}/${GANGSTAR_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.gangstarReleases },
+  "ios-loader": { repo: `${githubUser}/${IOS_LOADER_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.iosLoaderReleases },
+  "mac-loader": { repo: `${githubUser}/${MAC_LOADER_REPO}`, fallbackTag: "V1.0.1", fallbackUrl: links.macLoaderReleases },
 };
 
 /**
@@ -107,13 +107,21 @@ export const routes = {
   home: "/",
   projects: "/projects",
   niskala: "/projects/niskala",
-  gtRacing: "/projects/gt-racing",
-  gangstar: "/projects/gangstar",
   iosLoader: "/projects/ios-loader",
   macLoader: "/projects/mac-loader",
   journey: "/journey",
   notes: "/notes",
   contact: "/contact",
+};
+
+/**
+ * Retired case-study addresses and where they now live: the two port pages
+ * were folded into the loader case studies, so old links redirect instead of
+ * showing the 404 page.
+ */
+export const legacyRedirects = {
+  "/projects/gt-racing": "/projects/ios-loader",
+  "/projects/gangstar": "/projects/mac-loader",
 };
 
 /** "Projects" stays active on its case-study sub-routes (`/projects/*`). */
@@ -260,11 +268,10 @@ export const ui = {
     eyebrow: tx("Projects", "Proyek"),
     title: tx("Original software & 32-bit preservation", "Software original & preservasi 32-bit"),
     description: tx(
-      "Four original applications built from scratch, and two native PC ports of 32-bit iPad and Mac software with the loader layer behind each. The case studies cover them in technical detail.",
-      "Empat aplikasi original yang dibangun dari nol, serta dua port PC native untuk software iPad dan Mac 32-bit beserta lapisan loader di baliknya. Studi kasus membahasnya secara teknis.",
+      "Four original applications built from scratch, and two binary loaders that run 32-bit iPad and Mac software natively on Windows and Linux x86. The case studies cover them in technical detail.",
+      "Empat aplikasi original yang dibangun dari nol, serta dua loader biner yang menjalankan software iPad dan Mac 32-bit secara native di Windows dan Linux x86. Studi kasus membahasnya secara teknis.",
     ),
     featured: tx("Featured Project", "Proyek Unggulan"),
-    loaderLabel: tx("Loader case study", "Studi kasus loader"),
     catalogTitle: tx("Project catalog", "Katalog proyek"),
     filterLabel: tx("Filter projects by category", "Filter proyek berdasarkan kategori"),
     showing: tx("Showing {n} of {total} projects", "Menampilkan {n} dari {total} proyek"),
@@ -274,8 +281,8 @@ export const ui = {
       "iPad/Mac 32-Bit Lama vs. Port Native Windows/Linux",
     ),
     compareDescription: tx(
-      "What each application was built for, and what it runs on now.",
-      "Untuk apa setiap aplikasi dibuat, dan di mana aplikasi itu berjalan sekarang.",
+      "What each loader's input was built for, and what it runs on now.",
+      "Untuk apa input setiap loader dibuat, dan di mana ia berjalan sekarang.",
     ),
     aspect: tx("Aspect", "Aspek"),
     legacyTarget: tx("Legacy 32-bit target", "Target 32-bit lama"),
@@ -407,8 +414,8 @@ export const projectSections = {
     title: tx("32-Bit Software Preservation", "Preservasi Software 32-Bit"),
     badge: { label: tx("32-Bit Preservation", "Preservasi 32-Bit"), icon: "archive" },
     description: tx(
-      "Native PC ports of 32-bit iPad (ARMv7) and Mac (x86) applications that current iOS and macOS no longer run, and the Mach-O loaders underneath them.",
-      "Port PC native untuk aplikasi iPad (ARMv7) dan Mac (x86) 32-bit yang tidak lagi bisa dijalankan iOS dan macOS terbaru, beserta loader Mach-O di baliknya.",
+      "Two Mach-O loaders that run 32-bit iPad (ARMv7) and Mac (i386) binaries natively on Windows and Linux x86, after current iOS and macOS dropped them.",
+      "Dua loader Mach-O yang menjalankan biner iPad (ARMv7) dan Mac (i386) 32-bit secara native di Windows dan Linux x86, setelah iOS dan macOS terbaru meninggalkannya.",
     ),
   },
 };
@@ -517,33 +524,33 @@ export const originalProjects = [
 ];
 
 /**
- * Category B: 32-bit software preservation. `comparison` feeds the "Legacy
- * 32-bit target vs. native port" table on `/projects` and in each case study.
- * `{tag}` is the repository's latest release tag.
+ * Category B: 32-bit software preservation, the two binary loaders.
+ * `comparison` feeds the "Legacy 32-bit target vs. native port" table on
+ * `/projects` and in each case study. `{tag}` is the repository's latest
+ * release tag. `iconOnly` links show as compact icon buttons on the card (the
+ * label stays for screen readers and as a tooltip).
  */
 export const preservationProjects = [
   {
-    id: "gt-racing",
+    id: "ios-loader",
     category: "preservation",
-    caseStudy: routes.gtRacing,
-    shortTitle: "GT Racing: Motor Academy",
-    subtitle: tx("Native PC Software Port · Static Binary Recompilation", "Port Software PC Native · Rekompilasi Biner Statis"),
+    caseStudy: routes.iosLoader,
+    shortTitle: tx("32-Bit iOS (ARMv7) Binary Loader", "Loader iOS 32-Bit"),
+    subtitle: tx("Static Recompiler & OpenGL ES Runtime Bridge", "Rekompiler Statis & Runtime Bridge OpenGL ES"),
     platform: "32-Bit iPad",
     platformIcon: "tablet",
-    origin: "32-bit iPad · ARMv7 / iOS",
+    origin: "32-bit iPad · ARMv7 Mach-O",
     target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "Static binary recompilation of the 32-bit iPad (ARMv7) application into native Windows and Linux x86 builds, with no emulation at run time. Adds an OpenGL ES translation layer with live PostFX and motion blur, widescreen UI scaling, MSAA, remappable controls and a Cloudflare Workers + D1 leaderboard.",
-      "Rekompilasi biner statis aplikasi iPad 32-bit (ARMv7) menjadi build Windows dan Linux x86 native, tanpa emulasi saat runtime. Dilengkapi lapisan translasi OpenGL ES dengan PostFX dan motion blur yang langsung berlaku, skala UI layar lebar, MSAA, kontrol yang bisa diatur ulang, serta leaderboard Cloudflare Workers + D1.",
+      "Static binary recompilation and OpenGL ES to desktop OpenGL 2.1 runtime bridge enabling 32-bit iPad (ARMv7) Mach-O binaries to execute natively on Windows and Linux x86.",
+      "Rekompilasi biner statis dan jembatan runtime OpenGL ES ke desktop OpenGL 2.1 agar biner 32-bit iPad (ARMv7) Mach-O berjalan native di Windows dan Linux x86.",
     ),
-    tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7 → x86", "OpenGL ES", "Cloudflare D1"],
-    art: "racing",
-    image: "images/gtracing-pc.jpg", // thumbnail of the recording below
-    imagePosition: "left center", // keeps the title text whole when the 16:9 thumbnail is cropped to 8:5
-    video: { youtubeId: "cn-nsNnlO7E", title: "GT Racing Motor Academy PC Port - Ferrari 288 GTO" },
+    tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7 → x86", "Mach-O", "OpenGL ES → GL 2.1"],
+    art: "iosloader",
+    image: null,
     links: [
-      { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { release: "gt-racing", label: RELEASE_TAG, href: links.gtRacingReleases, icon: "tag" },
+      { label: GITHUB_REPOSITORY, href: links.iosLoaderRepo, icon: "github", iconOnly: true },
+      { release: "ios-loader", label: RELEASE_TAG, href: links.iosLoaderReleases, icon: "tag", iconOnly: true },
     ],
     comparison: [
       { id: "platform", aspect: "Platform", original: "32-bit iPad / iOS", modern: "Windows & Linux (x86)" },
@@ -592,25 +599,25 @@ export const preservationProjects = [
     ],
   },
   {
-    id: "gangstar",
+    id: "mac-loader",
     category: "preservation",
-    caseStudy: routes.gangstar,
-    shortTitle: "Gangstar: Miami Vindication",
-    subtitle: tx("Native PC Software Port · Mach-O Loader & Graphics Modernization", "Port Software PC Native · Loader Mach-O & Modernisasi Grafis"),
+    caseStudy: routes.macLoader,
+    shortTitle: tx("32-Bit Mac (i386) Native Loader", "Loader Mac 32-Bit"),
+    subtitle: tx("User-Space Mach-O Loader & ABI/Syscall Shim", "Loader Mach-O User-Space & Shim ABI/Syscall"),
     platform: "32-Bit Mac",
     platformIcon: "laptop",
-    origin: tx("32-bit Mac · x86 OS X (i386)", "Mac 32-bit · x86 OS X (i386)"),
+    origin: tx("32-bit Mac · i386 Mach-O", "Mac 32-bit · Mach-O i386"),
     target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "Native Windows and Linux x86 port of the 32-bit Mac (i386 OS X) application: a custom Mach-O loader runs the original executable while host shims replace the macOS libraries it imports. Adds MSAA, VBO caching, bloom and reflection fixes, and SHA-256 verified release archives.",
-      "Port native Windows dan Linux x86 dari aplikasi Mac 32-bit (i386 OS X): loader Mach-O kustom menjalankan executable aslinya, sementara host shim menggantikan pustaka macOS yang diimpornya. Dilengkapi MSAA, VBO caching, perbaikan bloom dan refleksi, serta arsip rilis terverifikasi SHA-256.",
+      "Custom user-space Mach-O loader and ABI/syscall shim running legacy 32-bit OS X (i386) binaries natively on Windows x86 and Linux without CPU emulation.",
+      "Loader Mach-O user-space kustom dan jembatan ABI/syscall untuk menjalankan biner klasik 32-bit OS X (i386) secara native di Windows x86 dan Linux tanpa emulasi CPU.",
     ),
-    tags: [tx("Mach-O Loader", "Loader Mach-O"), "x86", "OpenGL 2.1", "SHA-256"],
-    art: "miami",
-    image: null, // drop a 16:9 capture at public/images/gangstar-mv-pc.png, then set "images/gangstar-mv-pc.png"
+    tags: [tx("Mach-O Loader", "Loader Mach-O"), "i386 ABI", tx("dyld binding", "Binding dyld"), "SHA-256"],
+    art: "macloader",
+    image: null,
     links: [
-      { label: GITHUB_REPOSITORY, href: links.gangstarRepo, icon: "github" },
-      { release: "gangstar", label: RELEASE_TAG, href: links.gangstarReleases, icon: "tag" },
+      { label: GITHUB_REPOSITORY, href: links.macLoaderRepo, icon: "github", iconOnly: true },
+      { release: "mac-loader", label: RELEASE_TAG, href: links.macLoaderReleases, icon: "tag", iconOnly: true },
     ],
     comparison: [
       { id: "platform", aspect: "Platform", original: "32-bit Mac (OS X)", modern: "Windows & Linux (x86)" },
@@ -652,59 +659,10 @@ export const preservationProjects = [
       },
     ],
   },
-  {
-    id: "ios-loader",
-    category: "preservation",
-    runtime: true,
-    caseStudy: routes.iosLoader,
-    shortTitle: tx("32-Bit iOS Loader", "Loader iOS 32-Bit"),
-    subtitle: tx("ARMv7 Mach-O Loader & Runtime Bridge · GT Racing port", "Loader Mach-O ARMv7 & Runtime Bridge · port GT Racing"),
-    platform: "32-Bit iPad",
-    platformIcon: "tablet",
-    origin: "ARMv7 Mach-O · iOS ARM ABI",
-    target: tx("x86 host bridges · Windows & Linux", "Host bridge x86 · Windows & Linux"),
-    description: tx(
-      "The runtime layer under the GT Racing port: it maps the 32-bit iOS Mach-O at its own addresses, binds every import to an ARM-ABI host bridge and registers the Objective-C metadata for the recompiled code.",
-      "Lapisan runtime di balik port GT Racing: memetakan Mach-O iOS 32-bit di alamat aslinya, menautkan setiap import ke host bridge ber-ABI ARM, dan mendaftarkan metadata Objective-C untuk kode hasil rekompilasi.",
-    ),
-    tags: ["Mach-O", "ARMv7 ABI", "Objective-C", "C"],
-    art: "iosloader",
-    image: null,
-    links: [{ label: tx("Source: host/core", "Source: host/core"), href: links.iosLoaderSource, icon: "github" }],
-    comparison: null,
-  },
-  {
-    id: "mac-loader",
-    category: "preservation",
-    runtime: true,
-    caseStudy: routes.macLoader,
-    shortTitle: tx("32-Bit Mac Loader", "Loader Mac 32-Bit"),
-    subtitle: tx("i386 Mach-O Loader & ABI Bridge · Gangstar port", "Loader Mach-O i386 & ABI Bridge · port Gangstar"),
-    platform: "32-Bit Mac",
-    platformIcon: "laptop",
-    origin: "i386 Mach-O · OS X ABI",
-    target: tx("Host shims · Windows & Linux x86", "Host shim · Windows & Linux x86"),
-    description: tx(
-      "The user-space loader under the Gangstar port: it maps the non-PIE i386 Mach-O at its own addresses, patches the low range it cannot occupy, binds all 528 imports to host shims and runs the x86 code directly.",
-      "Loader user-space di balik port Gangstar: memetakan Mach-O i386 non-PIE di alamat aslinya, mem-patch rentang rendah yang tidak bisa ditempatinya, menautkan 528 import ke host shim, dan menjalankan kode x86 secara langsung.",
-    ),
-    tags: ["Mach-O", "i386 ABI", tx("dyld binding", "Binding dyld"), tx("Cocoa shims", "Shim Cocoa")],
-    art: "macloader",
-    image: null,
-    links: [{ label: tx("Source: host/core", "Source: host/core"), href: links.macLoaderSource, icon: "github" }],
-    comparison: null,
-  },
 ];
 
-/**
- * Every project, originals first: 4 original applications, 2 preservation
- * ports and the 2 loaders (`runtime: true`) the ports run on.
- */
+/** Every project, originals first: 4 original applications and the 2 binary loaders. */
 export const projects = [...originalProjects, ...preservationProjects];
-
-/** Projects counted on the Home metric strip: the loaders are part of their ports. */
-const countedProjects = projects.filter((project) => !project.runtime);
-const countedPorts = preservationProjects.filter((project) => !project.runtime);
 
 /* -------------------------------------------------------------------------- */
 /*                               Counter metrics                              */
@@ -725,12 +683,12 @@ export const counterItems = [
   },
   {
     id: "projects",
-    value: countedProjects.length,
+    value: projects.length,
     suffix: "",
     label: tx("Engineering projects", "Proyek engineering"),
     note: tx(
-      `${originalProjects.length} original · ${countedPorts.length} preservation ports`,
-      `${originalProjects.length} original · ${countedPorts.length} port preservasi`,
+      `${originalProjects.length} original · ${preservationProjects.length} preservation loaders`,
+      `${originalProjects.length} original · ${preservationProjects.length} loader preservasi`,
     ),
   },
   {
@@ -1031,27 +989,27 @@ export const caseStudies = {
     ],
   },
 
-  "gt-racing": {
-    projectId: "gt-racing",
-    eyebrow: tx("Case Study · 32-Bit iPad Software Preservation", "Studi Kasus · Preservasi Software iPad 32-Bit"),
-    title: "GT Racing: Motor Academy — PC Port",
-    repoName: `${githubUser}/${GT_RACING_REPO}`,
+  "ios-loader": {
+    projectId: "ios-loader",
+    eyebrow: tx("Case Study · 32-Bit iOS Software Preservation", "Studi Kasus · Preservasi Software iOS 32-Bit"),
+    title: tx("32-Bit iOS (ARMv7) Binary Loader & Runtime Bridge", "Loader Biner iOS 32-Bit (ARMv7) & Runtime Bridge"),
+    repoName: `${githubUser}/${IOS_LOADER_REPO}`,
     summary: tx(
-      "Static binary recompilation of a 32-bit iPad (ARMv7) application that iOS 11 and later no longer launch. Every function is translated ahead of time to C, built for x86 and linked with a host layer that replaces the iOS libraries, so the same code runs natively on Windows and Linux.",
-      "Rekompilasi biner statis untuk aplikasi iPad 32-bit (ARMv7) yang tidak lagi bisa dijalankan iOS 11 ke atas. Setiap fungsi diterjemahkan lebih dulu ke C, di-build untuk x86, dan ditautkan dengan host layer pengganti pustaka iOS, sehingga kode yang sama berjalan native di Windows dan Linux.",
+      "A static recompiler and runtime bridge that keeps a 32-bit iPad (ARMv7) application running after iOS 11 dropped 32-bit support. All 23,873 guest functions are translated ahead of time to C and built for x86; at start-up a loader maps the original Mach-O at its own addresses, binds every import to a host bridge that speaks the iOS ARM calling convention and registers the Objective-C metadata, while OpenGL ES runs on desktop OpenGL 2.1. No iOS and no CPU emulation run underneath.",
+      "Rekompiler statis dan runtime bridge yang membuat aplikasi iPad 32-bit (ARMv7) tetap berjalan setelah iOS 11 menghapus dukungan 32-bit. Ke-23.873 fungsi guest diterjemahkan lebih dulu ke C dan di-build untuk x86; saat start-up, loader memetakan Mach-O aslinya di alamat aslinya, menautkan setiap import ke host bridge yang memakai konvensi pemanggilan ARM iOS, dan mendaftarkan metadata Objective-C, sementara OpenGL ES berjalan di OpenGL 2.1 desktop. Tidak ada iOS maupun emulasi CPU di bawahnya.",
     ),
-    art: "racing",
-    image: "images/gtracing-pc.jpg",
+    art: "iosloader",
+    image: null,
     facts: [
       { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit iPad · ARMv7" },
-      { id: "lost", label: tx("Stopped running on", "Berhenti berjalan di"), value: "iOS 11 (2017)" },
       { id: "functions", label: tx("Recompiled functions", "Fungsi direkompilasi"), value: tx("23,873", "23.873") },
-      { id: "preserved", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
+      { id: "imports", label: tx("Import signatures", "Signature import"), value: "747 · imports.sig" },
+      { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
-      { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
-      { release: "gt-racing", label: RELEASE_TAG, href: links.gtRacingReleases, icon: "tag" },
-      { to: routes.iosLoader, label: tx("Loader & runtime bridge", "Loader & runtime bridge"), icon: "layers" },
+      { label: GITHUB_REPOSITORY, href: links.iosLoaderRepo, icon: "github" },
+      { release: "ios-loader", label: RELEASE_TAG, href: links.iosLoaderReleases, icon: "tag" },
+      { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "code" },
     ],
     sections: [
       {
@@ -1092,369 +1050,6 @@ export const caseStudies = {
         title: tx("Legacy target vs. native port", "Target lama vs. port native"),
         blocks: [{ type: "comparison" }],
       },
-      {
-        id: "engineering",
-        title: tx("Key engineering work", "Pekerjaan teknis utama"),
-        blocks: [
-          {
-            type: "cards",
-            items: [
-              {
-                icon: "terminal",
-                title: tx("Static recompilation", "Rekompilasi statis"),
-                body: tx(
-                  "23,873 ARM and Thumb functions (1.8 million instructions) are discovered and translated to one C function each, then compiled for x86. Every instruction form is tested against a Cortex-A8 reference.",
-                  "23.873 fungsi ARM dan Thumb (1,8 juta instruksi) ditemukan dan diterjemahkan masing-masing menjadi satu fungsi C, lalu dikompilasi untuk x86. Setiap bentuk instruksi diuji terhadap referensi Cortex-A8.",
-                ),
-              },
-              {
-                icon: "layers",
-                title: tx("iOS host layer", "Host layer iOS"),
-                body: tx(
-                  "The Objective-C runtime, Foundation, UIKit, OpenAL and the other imported iOS libraries are replaced by host shims; SDL3 provides the window, input and audio on both platforms.",
-                  "Runtime Objective-C, Foundation, UIKit, OpenAL, dan pustaka iOS lain yang diimpor digantikan host shim; SDL3 menyediakan jendela, input, dan audio di kedua platform.",
-                ),
-              },
-              {
-                icon: "shader",
-                title: tx("OpenGL ES translation", "Translasi OpenGL ES"),
-                body: tx(
-                  "OpenGL ES 1.1/2.0 runs on desktop OpenGL 2.1: GLSL ES shaders are rewritten to GLSL 1.20, and the four PVRTC formats are decoded to RGBA at upload.",
-                  "OpenGL ES 1.1/2.0 berjalan di OpenGL 2.1 desktop: shader GLSL ES ditulis ulang ke GLSL 1.20, dan empat format PVRTC didekode ke RGBA saat diunggah.",
-                ),
-              },
-              {
-                icon: "monitor",
-                title: tx("PostFX & display", "PostFX & tampilan"),
-                body: tx(
-                  "PostFX (`GT_POSTFX=4`, Enhanced by default), motion blur, MSAA and anisotropic filtering change without a restart. Widescreen UI scaling keeps menus and HUD in shape at 16:10, 16:9 and 21:9.",
-                  "PostFX (`GT_POSTFX=4`, Enhanced sebagai default), motion blur, MSAA, dan anisotropic filtering berubah tanpa restart. Skala UI layar lebar menjaga menu dan HUD tetap proporsional di 16:10, 16:9, dan 21:9.",
-                ),
-              },
-              {
-                icon: "keyboard",
-                title: tx("Input & add-ons", "Input & add-on"),
-                body: tx(
-                  "Keyboard, mouse and Xbox or PlayStation controllers with remappable keys. Add-on vehicles built from Android editions the user owns load from an `add-on` folder.",
-                  "Keyboard, mouse, serta controller Xbox atau PlayStation dengan tombol yang bisa diatur ulang. Kendaraan add-on yang dibuat dari edisi Android milik pengguna dimuat dari folder `add-on`.",
-                ),
-              },
-              {
-                icon: "cloud",
-                title: tx("Leaderboard", "Leaderboard"),
-                body: tx(
-                  "The Red Bull leaderboard is kept locally and shared through `gt-redbull-board`, a Cloudflare Worker backed by D1, replacing the shut-down original servers.",
-                  "Leaderboard Red Bull disimpan lokal dan dibagikan lewat `gt-redbull-board`, Cloudflare Worker berbasis D1, menggantikan server asli yang sudah dimatikan.",
-                ),
-              },
-            ],
-          },
-          {
-            type: "architecture",
-            legacy: {
-              icon: "server",
-              title: tx("Original online servers", "Server online asli"),
-              body: tx("Shut down; the original online features cannot connect.", "Sudah dimatikan; fitur online aslinya tidak bisa terhubung."),
-            },
-            nodes: [
-              {
-                icon: "monitor",
-                title: tx("PC client", "Klien PC"),
-                body: tx("Submits and reads lap times over HTTPS", "Mengirim dan membaca waktu lap melalui HTTPS"),
-              },
-              {
-                icon: "cloud",
-                title: "Cloudflare Worker",
-                body: tx("`gt-redbull-board` API for submissions and queries", "API `gt-redbull-board` untuk pengiriman dan kueri"),
-              },
-              {
-                icon: "database",
-                title: "Cloudflare D1",
-                body: tx("Serverless SQLite storing leaderboard entries", "SQLite serverless yang menyimpan entri leaderboard"),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "controls",
-        title: tx("Default controls", "Kontrol default"),
-        intro: tx(
-          "Defaults from the release. Every key can be remapped in Options > Controls.",
-          "Default dari rilis. Setiap tombol bisa diatur ulang di Options > Controls.",
-        ),
-        blocks: [
-          {
-            type: "table",
-            caption: tx("Default control bindings", "Binding kontrol default"),
-            columns: [tx("Action", "Aksi"), "Keyboard", "Controller"],
-            rows: [
-              [tx("Steer", "Kemudi"), "A / D, ← / →", tx("Left stick", "Stik kiri")],
-              [tx("Throttle / brake", "Gas / rem"), "W / S, ↑ / ↓", "RT / LT (R2 / L2)"],
-              [tx("Gear up / down", "Naik / turun gigi"), "Shift / Ctrl", "A / X (Cross / Square)"],
-              [tx("Change camera", "Ganti kamera"), "C", "RB (R1)"],
-              [tx("Look back", "Lihat belakang"), tx("V (hold)", "V (tahan)"), tx("LB (L1), hold", "LB (L1), tahan")],
-              [tx("Pause", "Jeda"), "Esc", "Menu (Options)"],
-              [tx("Full screen / window", "Layar penuh / jendela"), "Alt+Enter", "—"],
-            ],
-          },
-        ],
-      },
-      {
-        id: "release",
-        title: tx("Release", "Rilis"),
-        blocks: [
-          {
-            type: "checklist",
-            title: tx("What a release contains", "Isi setiap rilis"),
-            items: [
-              tx(
-                "Windows x86 .zip and Linux x86 .tar.gz archives, each with a published SHA-256 checksum",
-                "Arsip .zip Windows x86 dan .tar.gz Linux x86, masing-masing dengan checksum SHA-256 yang dipublikasikan",
-              ),
-              tx(
-                "No assets or code of the original application: the port runs from the user's own copy of the iPad release 1.3.4b",
-                "Tanpa aset atau kode aplikasi asli: port berjalan dari salinan rilis iPad 1.3.4b milik pengguna sendiri",
-              ),
-              tx(
-                "No build-machine paths; the leaderboard receives only a random player number, the name, the vehicle and the lap time",
-                "Tanpa path mesin build; leaderboard hanya menerima nomor pemain acak, nama, kendaraan, dan waktu lap",
-              ),
-            ],
-          },
-          {
-            type: "code",
-            caption: tx("Verify a download", "Verifikasi unduhan"),
-            snippets: [
-              { label: "Windows", code: "certutil -hashfile <archive>.zip SHA256" },
-              { label: "Linux", code: "sha256sum <archive>.tar.gz" },
-            ],
-            note: tx(
-              "Compare the result with the SHA-256 listed in PATCHNOTES.md for that release.",
-              "Bandingkan hasilnya dengan SHA-256 yang tercantum di PATCHNOTES.md untuk rilis tersebut.",
-            ),
-          },
-          {
-            type: "links",
-            items: [
-              { release: "gt-racing", label: DOWNLOAD_RELEASE, href: links.gtRacingReleases, icon: "tag", primary: true },
-              { label: BROWSE_SOURCE, href: links.gtRacingRepo, icon: "github" },
-              { to: routes.iosLoader, label: tx("How the loader works", "Cara kerja loader"), icon: "layers" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-
-  gangstar: {
-    projectId: "gangstar",
-    eyebrow: tx("Case Study · 32-Bit Mac Software Preservation", "Studi Kasus · Preservasi Software Mac 32-Bit"),
-    title: "Gangstar: Miami Vindication — PC Port",
-    repoName: `${githubUser}/${GANGSTAR_REPO}`,
-    summary: tx(
-      "A Windows and Linux x86 port of the 32-bit Mac (i386 OS X) application, stranded since macOS Catalina removed 32-bit support. The original code is already x86, so a custom Mach-O loader runs the official executable at its own addresses while host shims supply the macOS libraries it imports, with no CPU emulation.",
-      "Port Windows dan Linux x86 dari aplikasi Mac 32-bit (i386 OS X) yang terhenti sejak macOS Catalina menghapus dukungan 32-bit. Kode aslinya sudah x86, sehingga loader Mach-O kustom menjalankan executable resminya di alamat aslinya, sementara host shim menyediakan pustaka macOS yang diimpornya, tanpa emulasi CPU.",
-    ),
-    art: "miami",
-    image: null,
-    facts: [
-      { id: "platform", label: tx("Original platform", "Platform asli"), value: "32-bit Mac · i386 OS X" },
-      { id: "lost", label: tx("Stopped running on", "Berhenti berjalan di"), value: "macOS 10.15 (2019)" },
-      { id: "approach", label: tx("Approach", "Pendekatan"), value: tx("Custom Mach-O loader", "Loader Mach-O kustom") },
-      { id: "preserved", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
-    ],
-    links: [
-      { label: GITHUB_REPOSITORY, href: links.gangstarRepo, icon: "github" },
-      { release: "gangstar", label: RELEASE_TAG, href: links.gangstarReleases, icon: "tag" },
-      { to: routes.macLoader, label: tx("Mach-O loader & ABI bridge", "Loader Mach-O & ABI bridge"), icon: "layers" },
-    ],
-    sections: [
-      {
-        id: "context",
-        title: tx("Why it stopped running", "Mengapa aplikasi ini berhenti berjalan"),
-        intro: tx(
-          "The Mac edition shipped only as a 32-bit i386 Mach-O binary. Once macOS dropped 32-bit support, every current Mac refused to open it.",
-          "Edisi Mac hanya dirilis sebagai biner Mach-O i386 32-bit. Begitu macOS menghapus dukungan 32-bit, setiap Mac terbaru menolak membukanya.",
-        ),
-        blocks: [
-          {
-            type: "timeline",
-            items: [
-              {
-                when: tx("OS X era", "Era OS X"),
-                title: tx("Shipped as 32-bit x86", "Dirilis sebagai x86 32-bit"),
-                body: tx("Built for Intel Macs as an i386 Mach-O application.", "Dibuat untuk Mac Intel sebagai aplikasi Mach-O i386."),
-              },
-              {
-                when: "macOS 10.13.4 · 2018",
-                title: tx("Compatibility warnings", "Peringatan kompatibilitas"),
-                body: tx('macOS warns that 32-bit apps "are not optimized for your Mac".', 'macOS memperingatkan bahwa aplikasi 32-bit "tidak dioptimalkan untuk Mac Anda".'),
-              },
-              {
-                when: "macOS 10.14 · 2018",
-                title: tx("Last version to run it", "Versi terakhir yang menjalankannya"),
-                body: tx("Mojave is the final macOS release that launches 32-bit apps.", "Mojave adalah rilis macOS terakhir yang menjalankan aplikasi 32-bit."),
-              },
-              {
-                when: "macOS 10.15 · 2019",
-                title: tx("32-bit support removed", "Dukungan 32-bit dihapus"),
-                body: tx("Catalina and every later release refuse to launch it.", "Catalina dan semua rilis setelahnya menolak menjalankannya."),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "comparison",
-        title: tx("Legacy target vs. native port", "Target lama vs. port native"),
-        blocks: [{ type: "comparison" }],
-      },
-      {
-        id: "approach",
-        title: tx("Porting approach", "Pendekatan porting"),
-        blocks: [
-          {
-            type: "flow",
-            caption: tx("From Mach-O executable to a native PC process", "Dari executable Mach-O ke proses PC native"),
-            steps: [
-              {
-                icon: "laptop",
-                title: "i386 Mach-O",
-                body: tx("The official Mac executable, read from the user's copy", "Executable Mac resmi, dibaca dari salinan milik pengguna"),
-              },
-              {
-                icon: "terminal",
-                title: tx("Mach-O loader", "Loader Mach-O"),
-                body: tx("Maps the code at its original addresses", "Memetakan kode di alamat aslinya"),
-              },
-              {
-                icon: "layers",
-                title: tx("Host shims", "Host shim"),
-                body: tx("Stand in for the macOS libraries it imports", "Menggantikan pustaka macOS yang diimpornya"),
-              },
-              {
-                icon: "cube",
-                title: "SDL3 + OpenGL 2.1",
-                body: tx("Window, input, audio and rendering", "Jendela, input, audio, dan rendering"),
-              },
-              {
-                icon: "monitor",
-                title: "Windows & Linux x86",
-                body: tx("One code base for both targets", "Satu basis kode untuk kedua target"),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "fixes",
-        title: tx("Key engineering fixes", "Perbaikan teknis utama"),
-        blocks: [
-          {
-            type: "cards",
-            items: [
-              {
-                icon: "shader",
-                title: tx("Graphics & visibility", "Grafis & visibilitas"),
-                body: tx(
-                  "MSAA with alpha to coverage, FXAA drawn under the HUD, ambient occlusion and dynamic shadows. Checkpoint domes and markers no longer bloom over the road, and the car and sea reflection passes were corrected.",
-                  "MSAA dengan alpha to coverage, FXAA yang digambar di bawah HUD, ambient occlusion, dan bayangan dinamis. Kubah dan penanda checkpoint tidak lagi menimbulkan bloom di atas jalan, dan pass refleksi mobil serta laut telah diperbaiki.",
-                ),
-              },
-              {
-                icon: "cube",
-                title: tx("Physics & entities", "Fisika & entitas"),
-                body: tx(
-                  "Stuck traffic backs up or is removed instead of gridlocking, helicopter rotor wear follows the physics tick rate (`PHYSICS_SYNC`), collision near the map centre holds at longer draw distances, and AI vehicles no longer weave on straight roads.",
-                  "Lalu lintas yang macet mundur atau dihapus alih-alih terkunci, keausan rotor helikopter mengikuti laju tick fisika (`PHYSICS_SYNC`), tabrakan di pusat peta tetap berfungsi pada jarak pandang lebih jauh, dan kendaraan AI tidak lagi berkelok di jalan lurus.",
-                ),
-              },
-              {
-                icon: "chip",
-                title: tx("Performance", "Performa"),
-                body: tx(
-                  "Static geometry stays on the GPU (`STATIC_VBO`), cutting time inside draw calls from 185 to 77 ms per second. The frame rate is configurable up to 400 fps, with 60 fps by default.",
-                  "Geometri statis tetap berada di GPU (`STATIC_VBO`), memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik. Frame rate bisa diatur hingga 400 fps, dengan default 60 fps.",
-                ),
-              },
-              {
-                icon: "archive",
-                title: tx("Original mode", "Mode asli"),
-                body: tx(
-                  "`ORIGINAL_MAC_EXPERIENCE=1` turns every enhancement off and runs the application as the Mac edition did.",
-                  "`ORIGINAL_MAC_EXPERIENCE=1` mematikan semua peningkatan dan menjalankan aplikasi seperti edisi Mac aslinya.",
-                ),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "release",
-        title: tx("Release", "Rilis"),
-        blocks: [
-          {
-            type: "checklist",
-            title: tx("What a release contains", "Isi setiap rilis"),
-            items: [
-              tx(
-                "Windows x86 .zip and Linux x86 .tar.gz archives, listed with their hashes in SHA256SUMS.txt",
-                "Arsip .zip Windows x86 dan .tar.gz Linux x86, dengan hash masing-masing di SHA256SUMS.txt",
-              ),
-              tx(
-                "No files of the original application: the port runs from the user's own copy of the Mac release 1.0.0",
-                "Tanpa berkas aplikasi asli: port berjalan dari salinan rilis Mac 1.0.0 milik pengguna sendiri",
-              ),
-            ],
-          },
-          {
-            type: "code",
-            caption: tx("Verify a download", "Verifikasi unduhan"),
-            snippets: [
-              { label: "Windows", code: "certutil -hashfile <file> SHA256" },
-              { label: "Linux", code: "sha256sum -c SHA256SUMS.txt --ignore-missing" },
-            ],
-            note: tx(
-              "On Windows, compare the result with the matching line of SHA256SUMS.txt.",
-              "Di Windows, bandingkan hasilnya dengan baris yang sesuai di SHA256SUMS.txt.",
-            ),
-          },
-          {
-            type: "links",
-            items: [
-              { release: "gangstar", label: DOWNLOAD_RELEASE, href: links.gangstarReleases, icon: "tag", primary: true },
-              { label: BROWSE_SOURCE, href: links.gangstarRepo, icon: "github" },
-              { to: routes.macLoader, label: tx("How the loader works", "Cara kerja loader"), icon: "layers" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-
-  "ios-loader": {
-    projectId: "ios-loader",
-    eyebrow: tx("Case Study · Runtime Architecture · 32-Bit iOS", "Studi Kasus · Arsitektur Runtime · iOS 32-Bit"),
-    title: tx("32-Bit iOS ARMv7 Binary Loader & Runtime Bridge", "Loader Biner ARMv7 iOS 32-Bit & Runtime Bridge"),
-    repoName: `${githubUser}/${GT_RACING_REPO} · host/core`,
-    summary: tx(
-      "The runtime layer under the GT Racing: Motor Academy PC port. Its code is recompiled ahead of time from ARMv7 to C; at start-up a loader reads the original 32-bit iOS Mach-O, places its segments at their own addresses in a range the executable reserves, binds every import to a host bridge that speaks the iOS ARM calling convention and registers the Objective-C metadata. The recompiled code then runs as native x86 on Windows and Linux, with no iOS and no CPU emulation underneath.",
-      "Lapisan runtime di balik port PC GT Racing: Motor Academy. Kodenya direkompilasi lebih dulu dari ARMv7 ke C; saat start-up, loader membaca Mach-O iOS 32-bit aslinya, menempatkan segmennya di alamat aslinya dalam rentang yang dicadangkan executable, menautkan setiap import ke host bridge yang memakai konvensi pemanggilan ARM iOS, dan mendaftarkan metadata Objective-C. Kode hasil rekompilasi lalu berjalan sebagai x86 native di Windows dan Linux, tanpa iOS dan tanpa emulasi CPU di bawahnya.",
-    ),
-    art: "iosloader",
-    image: null,
-    facts: [
-      { id: "input", label: tx("Input", "Input"), value: "ARMv7 Mach-O · MH_MAGIC" },
-      { id: "range", label: tx("Image range", "Rentang image"), value: "0x11000 – 0x8B5000" },
-      { id: "imports", label: tx("Import signatures", "Signature import"), value: "747 · imports.sig" },
-      { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86" },
-    ],
-    links: [
-      { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "github" },
-      { to: routes.gtRacing, label: tx("GT Racing port case study", "Studi kasus port GT Racing"), icon: "tablet" },
-    ],
-    sections: [
       {
         id: "pipeline",
         title: tx("Hybrid loading pipeline", "Pipeline loading hybrid"),
@@ -1671,11 +1266,124 @@ export const caseStudies = {
               ),
             ],
           },
+        ],
+      },
+      {
+        id: "engineering",
+        title: tx("Port engineering on top of the loader", "Rekayasa port di atas loader"),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "terminal",
+                title: tx("Static recompilation", "Rekompilasi statis"),
+                body: tx(
+                  "23,873 ARM and Thumb functions (1.8 million instructions) are discovered and translated to one C function each, then compiled for x86. Every instruction form is tested against a Cortex-A8 reference.",
+                  "23.873 fungsi ARM dan Thumb (1,8 juta instruksi) ditemukan dan diterjemahkan masing-masing menjadi satu fungsi C, lalu dikompilasi untuk x86. Setiap bentuk instruksi diuji terhadap referensi Cortex-A8.",
+                ),
+              },
+              {
+                icon: "shader",
+                title: tx("OpenGL ES translation", "Translasi OpenGL ES"),
+                body: tx(
+                  "OpenGL ES 1.1/2.0 runs on desktop OpenGL 2.1: GLSL ES shaders are rewritten to GLSL 1.20, and the four PVRTC formats are decoded to RGBA at upload.",
+                  "OpenGL ES 1.1/2.0 berjalan di OpenGL 2.1 desktop: shader GLSL ES ditulis ulang ke GLSL 1.20, dan empat format PVRTC didekode ke RGBA saat diunggah.",
+                ),
+              },
+              {
+                icon: "monitor",
+                title: tx("PostFX & display", "PostFX & tampilan"),
+                body: tx(
+                  "PostFX (`GT_POSTFX=4`, Enhanced by default), motion blur, MSAA and anisotropic filtering change without a restart. Widescreen UI scaling keeps menus and HUD in shape at 16:10, 16:9 and 21:9.",
+                  "PostFX (`GT_POSTFX=4`, Enhanced sebagai default), motion blur, MSAA, dan anisotropic filtering berubah tanpa restart. Skala UI layar lebar menjaga menu dan HUD tetap proporsional di 16:10, 16:9, dan 21:9.",
+                ),
+              },
+              {
+                icon: "keyboard",
+                title: tx("Input & add-ons", "Input & add-on"),
+                body: tx(
+                  "Keyboard, mouse and Xbox or PlayStation controllers with remappable keys. Add-on content built from editions the user owns loads from an `add-on` folder.",
+                  "Keyboard, mouse, serta controller Xbox atau PlayStation dengan tombol yang bisa diatur ulang. Konten add-on yang dibuat dari edisi milik pengguna dimuat dari folder `add-on`.",
+                ),
+              },
+              {
+                icon: "cloud",
+                title: tx("Leaderboard", "Leaderboard"),
+                body: tx(
+                  "The in-app leaderboard is kept locally and shared through a Cloudflare Worker backed by D1, replacing the shut-down original servers.",
+                  "Leaderboard di aplikasi disimpan lokal dan dibagikan lewat Cloudflare Worker berbasis D1, menggantikan server asli yang sudah dimatikan.",
+                ),
+              },
+            ],
+          },
+          {
+            type: "architecture",
+            legacy: {
+              icon: "server",
+              title: tx("Original online servers", "Server online asli"),
+              body: tx("Shut down; the original online features cannot connect.", "Sudah dimatikan; fitur online aslinya tidak bisa terhubung."),
+            },
+            nodes: [
+              {
+                icon: "monitor",
+                title: tx("PC client", "Klien PC"),
+                body: tx("Submits and reads lap times over HTTPS", "Mengirim dan membaca waktu lap melalui HTTPS"),
+              },
+              {
+                icon: "cloud",
+                title: "Cloudflare Worker",
+                body: tx("Leaderboard API for submissions and queries", "API leaderboard untuk pengiriman dan kueri"),
+              },
+              {
+                icon: "database",
+                title: "Cloudflare D1",
+                body: tx("Serverless SQLite storing leaderboard entries", "SQLite serverless yang menyimpan entri leaderboard"),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "release",
+        title: tx("Reference implementation & release", "Implementasi referensi & rilis"),
+        blocks: [
+          {
+            type: "checklist",
+            title: tx("What a release contains", "Isi setiap rilis"),
+            items: [
+              tx(
+                "Windows x86 .zip and Linux x86 .tar.gz archives, each with a published SHA-256 checksum",
+                "Arsip .zip Windows x86 dan .tar.gz Linux x86, masing-masing dengan checksum SHA-256 yang dipublikasikan",
+              ),
+              tx(
+                "No assets or code of the original application: the port runs from the user's own copy of the iPad release 1.3.4b",
+                "Tanpa aset atau kode aplikasi asli: port berjalan dari salinan rilis iPad 1.3.4b milik pengguna sendiri",
+              ),
+              tx(
+                "No build-machine paths; the leaderboard receives only a random player number, the name, the vehicle and the lap time",
+                "Tanpa path mesin build; leaderboard hanya menerima nomor pemain acak, nama, kendaraan, dan waktu lap",
+              ),
+            ],
+          },
+          {
+            type: "code",
+            caption: tx("Verify a download", "Verifikasi unduhan"),
+            snippets: [
+              { label: "Windows", code: "certutil -hashfile <archive>.zip SHA256" },
+              { label: "Linux", code: "sha256sum <archive>.tar.gz" },
+            ],
+            note: tx(
+              "Compare the result with the SHA-256 listed in PATCHNOTES.md for that release.",
+              "Bandingkan hasilnya dengan SHA-256 yang tercantum di PATCHNOTES.md untuk rilis tersebut.",
+            ),
+          },
           {
             type: "links",
             items: [
-              { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "github", primary: true },
-              { to: routes.gtRacing, label: tx("GT Racing port case study", "Studi kasus port GT Racing"), icon: "tablet" },
+              { release: "ios-loader", label: DOWNLOAD_RELEASE, href: links.iosLoaderReleases, icon: "tag", primary: true },
+              { label: BROWSE_SOURCE, href: links.iosLoaderRepo, icon: "github" },
+              { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "code" },
               { to: routes.macLoader, label: tx("Compare: the 32-bit Mac loader", "Bandingkan: loader Mac 32-bit"), icon: "laptop" },
             ],
           },
@@ -1686,13 +1394,12 @@ export const caseStudies = {
 
   "mac-loader": {
     projectId: "mac-loader",
-    eyebrow: tx("Case Study · Runtime Architecture · 32-Bit Mac", "Studi Kasus · Arsitektur Runtime · Mac 32-Bit"),
-    // U+2011 (non-breaking hyphen) keeps "Mach-O" on one line in the page title.
-    title: tx("32-Bit OS X x86 Mach‑O Loader & ABI Bridge", "Loader Mach‑O x86 OS X 32-Bit & ABI Bridge"),
-    repoName: `${githubUser}/${GANGSTAR_REPO} · host/core`,
+    eyebrow: tx("Case Study · 32-Bit Mac Software Preservation", "Studi Kasus · Preservasi Software Mac 32-Bit"),
+    title: tx("32-Bit Mac (i386) Native Loader & ABI Bridge", "Loader Native Mac 32-Bit (i386) & ABI Bridge"),
+    repoName: `${githubUser}/${MAC_LOADER_REPO}`,
     summary: tx(
-      "The user-space loader under the Gangstar: Miami Vindication PC port. The application is a non-PIE i386 Mach-O linked at 0x1000 with no rebase information, so it must run at its own addresses. The host executable reserves that range, copies the segments in, patches the small low range it cannot occupy, binds every import itself and calls the original x86 code directly, with no CPU emulation and no macOS underneath.",
-      "Loader user-space di balik port PC Gangstar: Miami Vindication. Aplikasinya adalah Mach-O i386 non-PIE yang ditautkan di 0x1000 tanpa informasi rebase, sehingga harus berjalan di alamat aslinya. Executable host mencadangkan rentang itu, menyalin segmennya, mem-patch rentang rendah kecil yang tidak bisa ditempatinya, menautkan setiap import sendiri, dan memanggil kode x86 aslinya secara langsung, tanpa emulasi CPU dan tanpa macOS di bawahnya.",
+      "A user-space Mach-O loader and ABI/syscall shim that runs a 32-bit OS X (i386) application on Windows and Linux x86 after macOS Catalina removed 32-bit support. The executable is a non-PIE i386 Mach-O linked at 0x1000 with no rebase information, so the host reserves that range, copies the segments in, patches the small low range it cannot occupy, binds every import itself and calls the original x86 code directly, with no CPU emulation and no macOS underneath.",
+      "Loader Mach-O user-space dan shim ABI/syscall yang menjalankan aplikasi OS X 32-bit (i386) di Windows dan Linux x86 setelah macOS Catalina menghapus dukungan 32-bit. Executable-nya adalah Mach-O i386 non-PIE yang ditautkan di 0x1000 tanpa informasi rebase, sehingga host mencadangkan rentang itu, menyalin segmennya, mem-patch rentang rendah kecil yang tidak bisa ditempatinya, menautkan setiap import sendiri, dan memanggil kode x86 aslinya secara langsung, tanpa emulasi CPU dan tanpa macOS di bawahnya.",
     ),
     art: "macloader",
     image: null,
@@ -1700,13 +1407,54 @@ export const caseStudies = {
       { id: "input", label: tx("Input", "Input"), value: "i386 Mach-O · non-PIE" },
       { id: "binds", label: tx("Bind slots", "Slot bind"), value: tx("4,243 · 528 imports", "4.243 · 528 import") },
       { id: "shims", label: tx("Imports with a shim", "Import dengan shim"), value: tx("477 of 528", "477 dari 528") },
-      { id: "patches", label: tx("Low-range patches", "Patch rentang rendah"), value: tx("4,360", "4.360") },
+      { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
-      { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "github" },
-      { to: routes.gangstar, label: tx("Gangstar port case study", "Studi kasus port Gangstar"), icon: "laptop" },
+      { label: GITHUB_REPOSITORY, href: links.macLoaderRepo, icon: "github" },
+      { release: "mac-loader", label: RELEASE_TAG, href: links.macLoaderReleases, icon: "tag" },
+      { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "code" },
     ],
     sections: [
+      {
+        id: "context",
+        title: tx("Why it stopped running", "Mengapa aplikasi ini berhenti berjalan"),
+        intro: tx(
+          "The Mac edition shipped only as a 32-bit i386 Mach-O binary. Once macOS dropped 32-bit support, every current Mac refused to open it.",
+          "Edisi Mac hanya dirilis sebagai biner Mach-O i386 32-bit. Begitu macOS menghapus dukungan 32-bit, setiap Mac terbaru menolak membukanya.",
+        ),
+        blocks: [
+          {
+            type: "timeline",
+            items: [
+              {
+                when: tx("OS X era", "Era OS X"),
+                title: tx("Shipped as 32-bit x86", "Dirilis sebagai x86 32-bit"),
+                body: tx("Built for Intel Macs as an i386 Mach-O application.", "Dibuat untuk Mac Intel sebagai aplikasi Mach-O i386."),
+              },
+              {
+                when: "macOS 10.13.4 · 2018",
+                title: tx("Compatibility warnings", "Peringatan kompatibilitas"),
+                body: tx('macOS warns that 32-bit apps "are not optimized for your Mac".', 'macOS memperingatkan bahwa aplikasi 32-bit "tidak dioptimalkan untuk Mac Anda".'),
+              },
+              {
+                when: "macOS 10.14 · 2018",
+                title: tx("Last version to run it", "Versi terakhir yang menjalankannya"),
+                body: tx("Mojave is the final macOS release that launches 32-bit apps.", "Mojave adalah rilis macOS terakhir yang menjalankan aplikasi 32-bit."),
+              },
+              {
+                when: "macOS 10.15 · 2019",
+                title: tx("32-bit support removed", "Dukungan 32-bit dihapus"),
+                body: tx("Catalina and every later release refuse to launch it.", "Catalina dan semua rilis setelahnya menolak menjalankannya."),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "comparison",
+        title: tx("Legacy target vs. native port", "Target lama vs. port native"),
+        blocks: [{ type: "comparison" }],
+      },
       {
         id: "layout",
         title: tx("Memory layout & loading", "Layout memori & loading"),
@@ -1816,8 +1564,8 @@ export const caseStudies = {
                 icon: "shield",
                 title: tx("Missing imports", "Import yang hilang"),
                 body: tx(
-                  "The 49 functions without a shim get a thunk that logs `[MISSING] … unimplemented import <name>` and exits with code 3; the 2 data symbols get a no-access stand-in. A static audit of their callers found none reachable in this build.",
-                  "49 fungsi tanpa shim mendapat thunk yang mencatat `[MISSING] … unimplemented import <name>` lalu keluar dengan kode 3; 2 simbol data mendapat pengganti no-access. Audit statis terhadap pemanggilnya tidak menemukan satu pun yang bisa tercapai di build ini.",
+                  "The 49 functions without a shim get a thunk that logs `[MISSING]` `unimplemented import <name>` and exits with code 3; the 2 data symbols get a no-access stand-in. A static audit of their callers found none reachable in this build.",
+                  "49 fungsi tanpa shim mendapat thunk yang mencatat `[MISSING]` `unimplemented import <name>` lalu keluar dengan kode 3; 2 simbol data mendapat pengganti no-access. Audit statis terhadap pemanggilnya tidak menemukan satu pun yang bisa tercapai di build ini.",
                 ),
               },
               {
@@ -1934,12 +1682,88 @@ export const caseStudies = {
               },
             ],
           },
+        ],
+      },
+      {
+        id: "fixes",
+        title: tx("Engineering fixes in the port", "Perbaikan teknis di port"),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "shader",
+                title: tx("Graphics & visibility", "Grafis & visibilitas"),
+                body: tx(
+                  "MSAA with alpha to coverage, FXAA drawn under the HUD, ambient occlusion and dynamic shadows. Checkpoint domes and markers no longer bloom over the road, and the car and sea reflection passes were corrected.",
+                  "MSAA dengan alpha to coverage, FXAA yang digambar di bawah HUD, ambient occlusion, dan bayangan dinamis. Kubah dan penanda checkpoint tidak lagi menimbulkan bloom di atas jalan, dan pass refleksi mobil serta laut telah diperbaiki.",
+                ),
+              },
+              {
+                icon: "cube",
+                title: tx("Physics & entities", "Fisika & entitas"),
+                body: tx(
+                  "Stuck traffic backs up or is removed instead of gridlocking, helicopter rotor wear follows the physics tick rate (`PHYSICS_SYNC`), collision near the map centre holds at longer draw distances, and AI vehicles no longer weave on straight roads.",
+                  "Lalu lintas yang macet mundur atau dihapus alih-alih terkunci, keausan rotor helikopter mengikuti laju tick fisika (`PHYSICS_SYNC`), tabrakan di pusat peta tetap berfungsi pada jarak pandang lebih jauh, dan kendaraan AI tidak lagi berkelok di jalan lurus.",
+                ),
+              },
+              {
+                icon: "chip",
+                title: tx("Performance", "Performa"),
+                body: tx(
+                  "Static geometry stays on the GPU (`STATIC_VBO`), cutting time inside draw calls from 185 to 77 ms per second. The frame rate is configurable up to 400 fps, with 60 fps by default.",
+                  "Geometri statis tetap berada di GPU (`STATIC_VBO`), memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik. Frame rate bisa diatur hingga 400 fps, dengan default 60 fps.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: tx("Original mode", "Mode asli"),
+                body: tx(
+                  "`ORIGINAL_MAC_EXPERIENCE=1` turns every enhancement off and runs the application as the Mac edition did.",
+                  "`ORIGINAL_MAC_EXPERIENCE=1` mematikan semua peningkatan dan menjalankan aplikasi seperti edisi Mac aslinya.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "release",
+        title: tx("Reference implementation & release", "Implementasi referensi & rilis"),
+        blocks: [
+          {
+            type: "checklist",
+            title: tx("What a release contains", "Isi setiap rilis"),
+            items: [
+              tx(
+                "Windows x86 .zip and Linux x86 .tar.gz archives, listed with their hashes in SHA256SUMS.txt",
+                "Arsip .zip Windows x86 dan .tar.gz Linux x86, dengan hash masing-masing di SHA256SUMS.txt",
+              ),
+              tx(
+                "No files of the original application: the port runs from the user's own copy of the Mac release 1.0.0",
+                "Tanpa berkas aplikasi asli: port berjalan dari salinan rilis Mac 1.0.0 milik pengguna sendiri",
+              ),
+            ],
+          },
+          {
+            type: "code",
+            caption: tx("Verify a download", "Verifikasi unduhan"),
+            snippets: [
+              { label: "Windows", code: "certutil -hashfile <file> SHA256" },
+              { label: "Linux", code: "sha256sum -c SHA256SUMS.txt --ignore-missing" },
+            ],
+            note: tx(
+              "On Windows, compare the result with the matching line of SHA256SUMS.txt.",
+              "Di Windows, bandingkan hasilnya dengan baris yang sesuai di SHA256SUMS.txt.",
+            ),
+          },
           {
             type: "links",
             items: [
-              { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "github", primary: true },
+              { release: "mac-loader", label: DOWNLOAD_RELEASE, href: links.macLoaderReleases, icon: "tag", primary: true },
+              { label: BROWSE_SOURCE, href: links.macLoaderRepo, icon: "github" },
+              { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "code" },
               { label: tx("Technical notes (docs/NOTES.md)", "Catatan teknis (docs/NOTES.md)"), href: links.macLoaderNotes, icon: "book" },
-              { to: routes.gangstar, label: tx("Gangstar port case study", "Studi kasus port Gangstar"), icon: "laptop" },
               { to: routes.iosLoader, label: tx("Compare: the 32-bit iOS loader", "Bandingkan: loader iOS 32-bit"), icon: "tablet" },
             ],
           },
@@ -2145,8 +1969,8 @@ export const communityLinks = [
   { id: "sidaf", name: "SIDAF", handle: "sidaf", icon: "code", url: links.sidafRepo },
   { id: "vr-airport", name: "VR Simulation Airport", handle: "VR-Simulation-Airport", icon: "cube", url: links.vrAirportRepo },
   { id: "war-plane", name: "War Plane 1945", handle: "War-Plane-1945", icon: "controller", url: links.warPlaneRepo },
-  { id: "gt-racing", name: "GT Racing PC Port", handle: GT_RACING_REPO, icon: "flag", url: links.gtRacingRepo },
-  { id: "gangstar", name: "Gangstar PC Port", handle: GANGSTAR_REPO, icon: "city", url: links.gangstarRepo },
+  { id: "ios-loader", name: tx("32-Bit iOS Loader", "Loader iOS 32-Bit"), handle: IOS_LOADER_REPO, icon: "tablet", url: links.iosLoaderRepo },
+  { id: "mac-loader", name: tx("32-Bit Mac Loader", "Loader Mac 32-Bit"), handle: MAC_LOADER_REPO, icon: "laptop", url: links.macLoaderRepo },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -2191,8 +2015,8 @@ export const engineeringNotes = [
     ),
     tags: ["OpenGL ES 1.1/2.0", "GLSL 1.20", "PVRTC", "VBO"],
     related: [
-      { label: tx("GT Racing case study", "Studi kasus GT Racing"), to: routes.gtRacing },
-      { label: tx("Gangstar case study", "Studi kasus Gangstar"), to: routes.gangstar },
+      { label: tx("32-bit iOS loader case study", "Studi kasus loader iOS 32-bit"), to: routes.iosLoader },
+      { label: tx("32-bit Mac loader case study", "Studi kasus loader Mac 32-bit"), to: routes.macLoader },
     ],
     sections: [
       {

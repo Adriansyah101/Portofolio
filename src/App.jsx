@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -7,7 +7,7 @@ import NavBar from "./components/NavBar.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import Footer from "./sections/Footer.jsx";
 import { useLocalized } from "./context/LanguageContext.jsx";
-import { ui } from "./constants/index.js";
+import { legacyRedirects, ui } from "./constants/index.js";
 
 gsap.registerPlugin(useGSAP);
 
@@ -46,6 +46,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
+            {/* Retired port pages, folded into the loader case studies. */}
+            {Object.entries(legacyRedirects).map(([from, to]) => (
+              <Route key={from} path={from} element={<Navigate to={to} replace />} />
+            ))}
             <Route path="/projects/:slug" element={<CaseStudy />} />
             <Route path="/journey" element={<Journey />} />
             <Route path="/notes" element={<Notes />} />

@@ -556,6 +556,15 @@
     @apply border border-white/12 text-white-50 hover:border-white/30 hover:text-white;
   }
 
+  /* Compact icon button (`iconOnly` links): GitHub and release beside "Read Case Study". */
+  .project-link.is-icon {
+    @apply size-9 justify-center p-0;
+  }
+
+  .project-link.is-icon .project-link-label {
+    @apply sr-only;
+  }
+
   /* ------------------------------------------------------------------------ */
   /*                                 Experience                               */
   /* ------------------------------------------------------------------------ */
@@ -1066,20 +1075,7 @@
     @apply lg:size-5;
   }
 
-  /* Desktop overview: each loader as a slim link under the port it runs. */
-  .loader-link {
-    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-100 px-3 py-2.5 transition-colors duration-300 hover:border-white/15;
-  }
-
-  .loader-link-meta {
-    @apply block truncate font-mono text-[10px] tracking-widest text-blue-50 uppercase;
-  }
-
-  .loader-link-title {
-    @apply mt-0.5 block text-sm leading-snug font-semibold text-white-50;
-  }
-
-  /* Overview port tiles: the description already names the legacy platform. */
+  /* Overview loader tiles: the description already names the legacy platform. */
   .catalog.is-all .archive-grid.is-preservation .archive-card.is-compact .platform-badge {
     @apply lg:hidden;
   }
@@ -1183,8 +1179,9 @@
     }
   }
 
+  /* The two loaders side by side from tablet width up. */
   .archive-grid.is-preservation {
-    @apply lg:grid-cols-2;
+    @apply md:grid-cols-2;
   }
 
   .category-tabs {
@@ -1204,12 +1201,12 @@
     @apply lg:mt-4 lg:flex-1 xl:mt-5;
   }
 
-  /* Desktop overview: the two groups side by side (originals | preservation ports and their loaders). */
+  /* Desktop overview: the two groups side by side (originals | the two loaders). */
   .catalog.is-all {
     @apply lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-5 xl:gap-6;
   }
 
-  /* Desktop preservation view: the two ports beside the comparison table. */
+  /* Desktop preservation view: the two loaders beside the comparison table. */
   .catalog.is-preservation .catalog-body {
     @apply lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-6;
   }

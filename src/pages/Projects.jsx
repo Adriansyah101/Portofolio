@@ -1,5 +1,5 @@
-import { Fragment, useId, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useId, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import PageHeader from "../components/PageHeader.jsx";
 import GitHubStats from "../components/GitHubStats.jsx";
@@ -30,11 +30,10 @@ import { usePageTitle } from "../utils/hooks.js";
 /**
  * One project. `compact` (the "All" overview on desktop) trims the card to a
  * scannable tile: shorter artwork, a two-line summary and no tag list; the
- * originals beside the featured tile and the two loaders under their ports
- * become thumbnail rows (`is-row`). The category views and every screen under
- * 1024px show the full card. A `featured` project spans its row, with the
- * artwork beside the text from tablet width up, and carries a "Featured
- * Project" marker.
+ * originals beside the featured tile become thumbnail rows (`is-row`). The
+ * category views and every screen under 1024px show the full card. A
+ * `featured` project spans its row, with the artwork beside the text from
+ * tablet width up, and carries a "Featured Project" marker.
  */
 const ArchiveCard = ({ project, badge, text, compact }) => {
   const row = compact && !project.featured && project.category === "original";
@@ -43,8 +42,6 @@ const ArchiveCard = ({ project, badge, text, compact }) => {
     compact && "is-compact",
     row && "is-row",
     project.featured && "is-featured",
-    // In the desktop overview a loader shows as a slim link under its port (LoaderLink).
-    compact && project.runtime && "lg:hidden",
   ].filter(Boolean);
   return (
     <article className={classes.join(" ")}>
@@ -89,26 +86,6 @@ const ArchiveCard = ({ project, badge, text, compact }) => {
     </article>
   );
 };
-
-/**
- * A loader in the desktop "All" overview: a slim link to its case study under
- * the port it runs (platform icon, title). Phones, tablets and the
- * preservation view show the full card instead.
- */
-const LoaderLink = ({ project, text }) => (
-  <article className="loader-link-card hidden lg:block">
-    <Link to={project.caseStudy} className="loader-link group">
-      <span className="icon-chip size-9 flex-none" aria-hidden="true">
-        <Icon name={project.platformIcon} className="size-4" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="loader-link-meta">{text.loaderLabel}</span>
-        <span className="loader-link-title">{project.shortTitle}</span>
-      </span>
-      <ArrowRightIcon className="size-4 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
-    </Link>
-  </article>
-);
 
 /** Legacy-vs-native comparison, one tab per preservation project. */
 const Comparison = ({ projects, text, readCaseStudy }) => {
@@ -159,10 +136,7 @@ const CatalogSection = ({ id, section, items, text, compact, children = null }) 
     <div className="catalog-body">
       <div className={`archive-grid is-${id}`}>
         {items.map((project) => (
-          <Fragment key={project.id}>
-            <ArchiveCard project={project} badge={section.badge} text={text} compact={compact} />
-            {compact && project.runtime && <LoaderLink project={project} text={text} />}
-          </Fragment>
+          <ArchiveCard key={project.id} project={project} badge={section.badge} text={text} compact={compact} />
         ))}
       </div>
       {children}
@@ -171,7 +145,8 @@ const CatalogSection = ({ id, section, items, text, compact, children = null }) 
 );
 
 /**
- * `/projects`: Original Software and 32-Bit Software Preservation as two clearly
+ * `/projects`: Original Software and 32-Bit Software Preservation (the two
+ * binary loaders, each linking to its case study) as two clearly
  * separated groups, filterable with `All / Original / 32-Bit` pills
  * (`?category=original|preservation`), with Niskala Utilities first as the
  * featured project. From 1024px up "All" is a one-screen overview of compact

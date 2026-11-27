@@ -7,20 +7,22 @@ a Systems & Application Operations Engineer based in Semarang, Indonesia.
   Binary Recompilation), a two-sentence bio, four factual metrics and the 3D workstation.
 - **Journey (`/journey`)** is professional work experience only: Business Application Operational
   Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026).
-- **Projects (`/projects`)** holds six open-source projects in two separate categories, plus the
-  two loaders the ports run on:
+- **Projects (`/projects`)** holds six open-source projects in two separate categories:
   - **Original Software**: **Niskala Utilities** (featured: Windows WinUI & CLI system utility,
     C# / .NET), **SIDAF** (PHP / CodeIgniter information system), **VR Simulation Airport**
     (Unity / C#, Oculus Quest 2) and **War Plane 1945** (interactive 2D application).
-  - **32-Bit Software Preservation** (native PC software ports):
-    - **GTRacingMotorAcademy-PC-Port**: static binary recompilation of a 32-bit iPad (ARMv7) application to native Windows and Linux x86.
-    - **GangstarMiamiVindication-PC-Port**: a custom Mach-O loader that runs a 32-bit Mac (i386) application natively on Windows and Linux x86.
-    - **32-Bit iOS Loader** and **32-Bit Mac Loader**: the runtime layers inside those two
-      repositories (`host/core`), each with its own case study.
+  - **32-Bit Software Preservation** (two binary loaders, each with its own case study):
+    - **32-Bit iOS (ARMv7) Binary Loader**: static binary recompilation and an OpenGL ES to desktop
+      OpenGL 2.1 runtime bridge that run 32-bit iPad Mach-O binaries natively on Windows and Linux x86
+      (repository `GTRacingMotorAcademy-PC-Port`).
+    - **32-Bit Mac (i386) Native Loader**: a user-space Mach-O loader and ABI/syscall shim that run
+      32-bit OS X binaries natively on Windows and Linux x86 without CPU emulation (repository
+      `GangstarMiamiVindication-PC-Port`).
 
-Five case studies (`/projects/niskala`, `/projects/gt-racing`, `/projects/gangstar`,
-`/projects/ios-loader`, `/projects/mac-loader`) and three engineering notes have a Copy Link button
-and Previous / Next links; notes also show a reading time.
+Three case studies (`/projects/niskala`, `/projects/ios-loader`, `/projects/mac-loader`) and three
+engineering notes have a Copy Link button and Previous / Next links; notes also show a reading time.
+The retired port pages `/projects/gt-racing` and `/projects/gangstar` redirect to the matching
+loader case study (`legacyRedirects`).
 
 Copy rules: the words "game" and "gaming" are not used anywhere in the site copy (EN or ID), there
 are no emojis, and there are no unverified percentage claims. Technical facts in the case studies
@@ -46,12 +48,10 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
 | `/`                     | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips and three camera presets: Overview, Desk Setup, Telemetry) |
-| `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation with the two ports and their loaders) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
+| `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation with the two loaders, each with "Read Case Study" and GitHub / release icon links) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
 | `/projects/niskala`     | Niskala Utilities        | Modular architecture, PathGuard / RegistryGuard / PrivilegeScope, `.reg` backups, the closed DISM / SFC / netsh / ipconfig / chkdsk command list, release |
-| `/projects/gt-racing`   | GT Racing case study     | Why it stopped running, legacy-vs-port table, key engineering work, leaderboard architecture, default controls, release and checksum verification |
-| `/projects/gangstar`    | Gangstar case study      | Why it stopped running, legacy-vs-port table, porting approach, key engineering fixes, release and checksum verification |
-| `/projects/ios-loader`  | 32-bit iOS loader        | Hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge |
-| `/projects/mac-loader`  | 32-bit Mac loader        | Memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility |
+| `/projects/ios-loader`  | 32-bit iOS loader        | Why it stopped running, legacy-vs-native table, hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge, port engineering and leaderboard architecture, repository, release and SHA-256 verification |
+| `/projects/mac-loader`  | 32-bit Mac loader        | Why it stopped running, legacy-vs-native table, memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility, engineering fixes, repository, release and SHA-256 verification |
 | `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (three compact cards and the Field Documentation photo strip with its lightbox) · Enterprise Stack (four CSS 3D tilt cards); both tabs fit one viewport from 1280 × 800 |
 | `/notes`, `/notes/:slug` | Engineering Notes     | Note list and reading pane side by side on desktop; list and article pages on phones. Three notes, each Context → Engineering Approach → Outcome |
 | `/contact`              | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
@@ -165,22 +165,19 @@ name or a version tag) shows the same text in both languages. Components read co
   them), in display order. `featured: true` marks the top project (Niskala Utilities).
   `projectCategories` defines the tabs and `projectSections` the section headings. Original
   projects link straight to GitHub (`View Source on GitHub`); Niskala Utilities also has a case
-  study. Preservation projects have a case study and a comparison table (`comparison`).
-  `runtime: true` marks the two loaders: they are listed under 32-Bit Software Preservation (as
-  slim links under their ports in the desktop overview) but not counted as separate projects on
-  Home or in the résumé.
+  study. Preservation projects (the two loaders) have a case study and a comparison table
+  (`comparison`); `iconOnly: true` on a link shows it as a compact icon button on the card.
 - `releaseSources`: the repositories whose latest GitHub release drives the version badges and
   release links ([`src/hooks/useGitHubReleases.js`](src/hooks/useGitHubReleases.js)), with a
   fallback tag and URL each. In project and case-study data, a link with `release: "<project id>"`
   points at that release, and `{tag}` in a label, target, fact or table cell becomes the tag.
-- `caseStudies`: the five deep-dive pages, in reading order (Previous / Next follow it). Each
+- `caseStudies`: the three deep-dive pages, in reading order (Previous / Next follow it). Each
   section is a list of typed blocks (`timeline`, `cards`, `flow`, `architecture`, `table`
   (`plain: true` for text cells), `comparison`, `checklist`, `code`, `links`, `prose`). A link with
-  `to` is an internal route, used to cross-link the ports, their loaders and the notes.
-- `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
+  `to` is an internal route, used to cross-link the loaders and the notes.
 - `heroContent` and `counterItems`: the Home page. A counter item with `text` (e.g.
   `"Dozens of ports"`) shows that text instead of an animated number; the project count is every
-  project except the loaders.
+  project (4 original, 2 loaders).
 - `expCards` and `stackDomains`: the Journey page (work experience only). `breakdown` on an
   `expCards` entry feeds the Operational Breakdown tab and the résumé; `stackDomains` are the four
   tilt cards of the Enterprise Stack tab (`TiltCard.jsx`). On desktop windows shorter than 860px
@@ -212,8 +209,6 @@ artwork on a project card with a real capture:
 | SIDAF                                | `public/images/sidaf.png`          | `originalProjects[1].image = "images/sidaf.png"`              |
 | VR Simulation Airport                | `public/images/vr-airport.jpg`     | `originalProjects[2].image = "images/vr-airport.jpg"`         |
 | War Plane 1945                       | `public/images/war-plane-1945.jpg` | `originalProjects[3].image = "images/war-plane-1945.jpg"`     |
-| GT Racing: Motor Academy PC port     | `public/images/gtracing-pc.png`    | `preservationProjects[0].image = "images/gtracing-pc.png"`    |
-| Gangstar: Miami Vindication PC port  | `public/images/gangstar-mv-pc.png` | `preservationProjects[1].image = "images/gangstar-mv-pc.png"` |
 
 - **Aspect ratio:** 16:9. Recommended size is 1920×1080 (at least 1280×720).
 - **Format:** `.png` or `.jpg`/`.webp` (update the extension in the constant to match). Keep each
@@ -256,10 +251,10 @@ src/
 │   ├── PageHeader.jsx, ProjectBits.jsx, CaseStudyBlocks.jsx, NoteBits.jsx, GitHubStats.jsx
 │   ├── ReaderBits.jsx        # Copy Link button and Previous / Next links for case studies and notes
 │   ├── Schematics.jsx        # Monochrome architecture schematics for project cards
-│   ├── AnimatedCounter.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx
+│   ├── AnimatedCounter.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx, Lightbox.jsx, TiltCard.jsx
 │   ├── HeroModels/           # Hero canvas, lights, avatar, hotspots, procedural room
-│   └── Models/               # Desk parts, contact scene, glTF loader, studio env, emblems
-├── sections/                 # Hero, JourneyPanels (summary, breakdown, stack, 3D cards),
+│   └── Models/               # Desk parts, contact scene, glTF loader
+├── sections/                 # Hero, JourneyPanels (summary, breakdown and photos, stack tilt cards),
 │                             # Contact, Footer
 ├── utils/                    # i18n (tx/localize/format), asset URL, inline-code and page-title helpers
 └── index.css                 # Tailwind v4 theme, custom utilities and keyframes

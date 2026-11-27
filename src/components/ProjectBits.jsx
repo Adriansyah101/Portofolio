@@ -83,7 +83,9 @@ export const ProjectTags = ({ tags }) => {
 /**
  * "Read Case Study →" (internal route) followed by the project's external
  * GitHub / release links. Without a case study, the first external link is
- * styled as the primary action. `arrow: true` on a link adds a trailing →.
+ * styled as the primary action. `arrow: true` on a link adds a trailing →;
+ * `iconOnly: true` shows it as a compact icon button (label as tooltip and for
+ * screen readers).
  * Inside a compact archive tile (desktop overview) the CSS turns secondary
  * links into icon buttons; their label stays for screen readers and as a tooltip.
  */
@@ -104,7 +106,7 @@ export const ProjectActions = ({ project }) => {
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`project-link ${!project.caseStudy && index === 0 ? "primary" : "secondary"}`}
+          className={`project-link ${!project.caseStudy && index === 0 ? "primary" : "secondary"} ${link.iconOnly ? "is-icon" : ""}`}
           title={link.label}
         >
           <Icon name={link.icon} className="size-4 flex-none" />

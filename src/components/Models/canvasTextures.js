@@ -383,7 +383,7 @@ export const createProjectsScreenTexture = () => {
 
   const columns = [
     { x: 36, title: "ORIGINAL", color: S.sage, items: ["SIDAF", "VR Airport", "War Plane 1945"] },
-    { x: 524, title: "32-BIT PRESERVATION", color: S.blue, items: ["GT Racing · iPad", "Gangstar · Mac"] },
+    { x: 524, title: "32-BIT PRESERVATION", color: S.blue, items: ["iOS Loader · ARMv7", "Mac Loader · i386"] },
   ];
   columns.forEach(({ x, title, color, items }) => {
     panel(ctx, x, 146, 464, 290);
