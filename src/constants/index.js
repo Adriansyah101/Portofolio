@@ -229,14 +229,12 @@ export const ui = {
     tabsLabel: tx("Experience details", "Detail pengalaman"),
     tabs: {
       impact: tx("Operational Breakdown", "Rincian Operasional"),
-      stack: tx("Enterprise Stack", "Stack Enterprise"),
-      tech3d: tx("3D Tech Cards", "Kartu Teknologi 3D"),
+      stack: tx("Enterprise Stack", "Stack Operasional"),
     },
     stackIntro: tx(
-      "The systems and tools behind day-to-day production operations, from harbor servers to the edge.",
-      "Sistem dan tools di balik operasional produksi sehari-hari, dari server pelabuhan hingga edge.",
+      "Four production domains behind national ferry ticketing.",
+      "Empat domain produksi di balik tiket kapal penyeberangan nasional.",
     ),
-    tech3dHint: tx("Drag an emblem to turn it.", "Geser emblem untuk memutarnya."),
     fieldDocs: {
       title: tx("Field Documentation", "Dokumentasi Lapangan"),
       note: tx("Faces of other people are blurred for privacy.", "Wajah orang lain diburamkan demi privasi."),
@@ -2086,68 +2084,54 @@ export const fieldDocs = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*                                 Tech stack                                 */
+/*                              Enterprise stack                              */
 /* -------------------------------------------------------------------------- */
 
 /**
- * `emblem` selects a procedural 3D emblem (and is the stable React key). Set
- * `glbPath` (relative to `/public`) to render your own `.glb` model instead.
- * `icon` is the flat icon used in the "Enterprise Stack" list on `/journey`.
+ * Enterprise Stack tab on `/journey`: the four production domains of the PT
+ * ASDP role, each a tilt card (2 × 2 on wide panels). `icon` is a key of the
+ * icon map in `components/Icons.jsx`.
  */
-export const techStackIcons = [
+export const stackDomains = [
   {
-    name: tx("Linux & Windows Servers", "Server Linux & Windows"),
-    subtitle: tx("Harbor & Cloud Hosts", "Host Pelabuhan & Cloud"),
-    emblem: "servers",
-    icon: "server",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
-  },
-  {
-    name: "Hybrid Cloud",
-    subtitle: tx("Cloud + On-Prem Deployments", "Deployment Cloud + On-Prem"),
-    emblem: "hybrid",
+    id: "harbor-cloud",
     icon: "cloud",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
+    title: tx("Harbor & Cloud Deployment", "Deployment Pelabuhan & Cloud"),
+    body: tx(
+      "Local port servers, hybrid cloud backend services and multi-harbor rollout architecture.",
+      "Server lokal pelabuhan, layanan backend hybrid cloud, dan arsitektur rollout ke banyak pelabuhan.",
+    ),
+    tags: [tx("Port Servers", "Server Pelabuhan"), "Hybrid Cloud", tx("Multi-Harbor Rollout", "Rollout Multi-Pelabuhan")],
   },
   {
-    name: tx("Omron PLC / Gate Integration", "Integrasi PLC / Gate Omron"),
-    subtitle: tx("Industrial Field Hardware", "Perangkat Keras Lapangan Industri"),
-    emblem: "gate",
+    id: "gate-hardware",
     icon: "lock",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
+    title: tx("Industrial Gate Hardware", "Perangkat Keras Gate Industri"),
+    body: tx(
+      "Omron PLC and automated barrier gate systems, with port lane hardware integration in Surabaya.",
+      "PLC Omron dan sistem barrier gate otomatis, beserta integrasi perangkat keras lajur pelabuhan di Surabaya.",
+    ),
+    tags: ["Omron PLC", "Barrier Gate", tx("Surabaya Harbor", "Pelabuhan Surabaya")],
   },
   {
-    name: "C / C++",
-    subtitle: tx("Native & Low-Level Systems", "Sistem Native & Tingkat Rendah"),
-    emblem: "cpp",
-    icon: "code",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
+    id: "ticketing-pos",
+    icon: "tag",
+    title: tx("Ticketing & POS Production", "Produksi Tiket & POS"),
+    body: tx(
+      "The trip.ferizy.com transaction pipeline, harbor counter applications and high-availability operations.",
+      "Alur transaksi trip.ferizy.com, aplikasi loket pelabuhan, dan operasional ketersediaan tinggi.",
+    ),
+    tags: ["trip.ferizy.com", tx("Counter Apps", "Aplikasi Loket"), tx("High Availability", "Ketersediaan Tinggi")],
   },
   {
-    name: "Cloudflare Workers & D1",
-    subtitle: tx("Edge Services & Storage", "Layanan Edge & Penyimpanan"),
-    emblem: "cloudflare",
-    icon: "database",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
-  },
-  {
-    name: "Git & CI/CD",
-    subtitle: tx("Versioned, Repeatable Releases", "Rilis Berversi & Dapat Diulang"),
-    emblem: "git",
-    icon: "layers",
-    glbPath: null,
-    scale: 1,
-    rotation: [0, 0, 0],
+    id: "system-network",
+    icon: "terminal",
+    title: tx("System & Network Operations", "Operasional Sistem & Jaringan"),
+    body: tx(
+      "Service health diagnostics, incident triage, network troubleshooting and release rollout verification.",
+      "Diagnosis kesehatan layanan, triase insiden, troubleshooting jaringan, dan verifikasi rollout rilis.",
+    ),
+    tags: [tx("Health Checks", "Cek Kesehatan"), tx("Incident Triage", "Triase Insiden"), tx("Release Verification", "Verifikasi Rilis")],
   },
 ];
 

@@ -33,10 +33,9 @@ theme**. Both choices are remembered in `localStorage`.
 `@react-three/drei` and `@react-three/postprocessing` · GSAP · Tailwind CSS v4 ·
 react-countup · react-responsive.
 
-The 3D scenes (hero systems workstation, tech-stack emblems, contact desk) and the project previews
-are drawn in code. The site needs no image or model files to render, and it makes no runtime
-requests to third-party CDNs for assets: the tech-card reflections come from a procedural
-`<Lightformer>` environment rather than a downloaded HDRI. The only external requests are
+The 3D scenes (hero systems workstation, contact desk) and the project previews are drawn in
+code. The site needs no model files to render, and it makes no runtime requests to third-party
+CDNs for assets. The only external requests are
 Google Fonts (Inter for prose, JetBrains Mono for versions, years and tech badges, with system-font
 fallbacks) and the GitHub REST API (profile stats and latest release tags, cached in
 `sessionStorage` for 30 minutes, with built-in fallbacks when it is unreachable). The contact page has no form: it links to Gmail's
@@ -53,7 +52,7 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | `/projects/gangstar`    | Gangstar case study      | Why it stopped running, legacy-vs-port table, porting approach, key engineering fixes, release and checksum verification |
 | `/projects/ios-loader`  | 32-bit iOS loader        | Hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge |
 | `/projects/mac-loader`  | 32-bit Mac loader        | Memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility |
-| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (with the Field Documentation photo strip and its lightbox) · Enterprise Stack · 3D Tech Cards |
+| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (three compact cards and the Field Documentation photo strip with its lightbox) · Enterprise Stack (four CSS 3D tilt cards); both tabs fit one viewport from 1280 × 800 |
 | `/notes`, `/notes/:slug` | Engineering Notes     | Note list and reading pane side by side on desktop; list and article pages on phones. Three notes, each Context → Engineering Approach → Outcome |
 | `/contact`              | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
@@ -182,10 +181,11 @@ name or a version tag) shows the same text in both languages. Components read co
 - `heroContent` and `counterItems`: the Home page. A counter item with `text` (e.g.
   `"Dozens of ports"`) shows that text instead of an animated number; the project count is every
   project except the loaders.
-- `expCards` and `techStackIcons`: the Journey page (work experience only). `breakdown` on an
-  `expCards` entry feeds the Operational Breakdown tab and the résumé. `icon` on a
-  `techStackIcons` entry is its flat icon in the Enterprise Stack tab. Set `logo`
-  on an `expCards` entry to a key of `brandLogos`.
+- `expCards` and `stackDomains`: the Journey page (work experience only). `breakdown` on an
+  `expCards` entry feeds the Operational Breakdown tab and the résumé; `stackDomains` are the four
+  tilt cards of the Enterprise Stack tab (`TiltCard.jsx`). On desktop windows shorter than 860px
+  the tags on both tabs are hidden so everything fits without scrolling. Set `logo` on an
+  `expCards` entry to a key of `brandLogos`.
 - `fieldDocs`: the Field Documentation photos on `/journey` (`public/images/journey/`), with place and
   caption. The files are web exports in which every face except the site owner's is blurred and
   all EXIF/GPS data is removed; process any new photo the same way before adding it.
@@ -235,7 +235,6 @@ artwork on a project card with a real capture:
 | ----------------------------- | --------------------------- | ------------------------ |
 | Hero room model (`.glb`)      | `heroScene.modelPath`       | `"models/hero-room.glb"` |
 | Contact desk model (`.glb`)   | `contactScene.modelPath`    | `"models/desk.glb"`      |
-| Tech-stack emblem (`.glb`)    | `techStackIcons[n].glbPath` | `"models/cpp.glb"`       |
 
 Paths are relative to `public/`. If a model is missing or fails to load, the built-in
 procedural mesh is shown instead.

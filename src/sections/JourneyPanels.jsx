@@ -1,22 +1,21 @@
 import { useState } from "react";
 
-import TechIcon from "../components/Models/TechLogos/TechIcon.jsx";
 import { ExternalIcon, Icon } from "../components/Icons.jsx";
 import { BrandLogo } from "../components/CompanyEmblems.jsx";
 import Lightbox from "../components/Lightbox.jsx";
-import { expCards as cardSource, fieldDocs, techStackIcons, ui } from "../constants/index.js";
+import TiltCard from "../components/TiltCard.jsx";
+import { expCards as cardSource, fieldDocs, stackDomains, ui } from "../constants/index.js";
 import { useLocalized } from "../context/LanguageContext.jsx";
-import { useTheme } from "../context/ThemeContext.jsx";
 import { assetUrl } from "../utils/assets.js";
 import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
 /**
- * Panels of `/journey`: the executive summary of the role (left) and the
- * three tab panels beside it: the structured operational breakdown, the
- * enterprise stack as a list, and the same stack as draggable 3D emblems. The
- * tab panels lay out by their own width (container queries), so they adapt to
- * the split instead of the viewport.
+ * Panels of `/journey`: the executive summary of the role (left) and the two
+ * tab panels beside it: the operational breakdown with its field photos, and
+ * the enterprise stack as four tilt cards. The tab panels lay out by their own
+ * width (container queries), so they adapt to the split instead of the
+ * viewport.
  */
 
 /** PT ASDP role: logo, title, period, one-paragraph summary, systems covered and the production site. */
@@ -88,8 +87,9 @@ export const ExperiencePanel = () => {
 
 /**
  * Field Documentation: four photos from the harbors in a 2 × 2 (phones) or
- * 1 × 4 strip, each opening the lightbox. Third-party faces in the files are
- * blurred.
+ * 1 × 4 strip, each opening the lightbox. The caption under a thumbnail is cut
+ * to one line; the lightbox shows it in full. Third-party faces in the files
+ * are blurred.
  */
 const FieldDocumentation = () => {
   const photos = useLocalized(fieldDocs);
@@ -124,8 +124,8 @@ const FieldDocumentation = () => {
                 style={photo.position ? { objectPosition: photo.position } : undefined}
               />
             </button>
-            <p className="mt-1.5 font-mono text-[10px] leading-snug tracking-wider text-blue-50 uppercase">
-              {photo.place}
+            <p className="mt-1.5 truncate text-xs text-blue-50" title={photo.caption}>
+              {photo.caption}
             </p>
           </li>
         ))}
@@ -135,7 +135,7 @@ const FieldDocumentation = () => {
   );
 };
 
-/** What the role covered, one flat card per area (one, two or three per row by panel width), then the field photos. */
+/** What the role covered, one compact card per area (three in a row on wide panels), then the field photos. */
 export const OperationalBreakdown = () => (
   <>
     <BreakdownCards />
@@ -151,19 +151,19 @@ const BreakdownCards = () => {
     <ol className="breakdown-grid">
       {items.map((item, index) => (
         <li key={item.id} className="breakdown-card">
-          <div className="flex items-center justify-between gap-3">
-            <span className="icon-chip" aria-hidden="true">
-              <Icon name={item.icon} className="size-5" />
+          <div className="flex items-start gap-2.5">
+            <span className="icon-chip is-sm" aria-hidden="true">
+              <Icon name={item.icon} className="size-4" />
             </span>
-            <span className="font-mono text-xs text-blue-50" aria-hidden="true">
+            <h3 className="min-w-0 flex-1 self-center leading-snug font-semibold text-white-50 lg:text-[0.9375rem]">{item.title}</h3>
+            <span className="font-mono text-[11px] text-blue-50" aria-hidden="true">
               {String(index + 1).padStart(2, "0")}
             </span>
           </div>
-          <h3 className="mt-4 text-lg leading-snug font-semibold text-white-50">{item.title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-body">{renderInlineCode(item.body)}</p>
-          <ul className="mt-4 flex flex-wrap gap-1.5 lg:mt-3">
+          <p className="mt-2 text-sm leading-relaxed text-body lg:text-[0.8125rem] lg:leading-snug">{renderInlineCode(item.body)}</p>
+          <ul className="breakdown-tags">
             {item.tags.map((tag) => (
-              <li key={tag} className="tag-pill">
+              <li key={tag} className="tag-pill is-sm">
                 {tag}
               </li>
             ))}
@@ -173,7 +173,7 @@ const BreakdownCards = () => {
               href={item.link.href}
               target="_blank"
               rel="noreferrer"
-              className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium text-white-50 transition-colors hover:text-white"
+              className="mt-auto inline-flex items-center gap-1.5 pt-2.5 text-sm font-medium text-white-50 transition-colors hover:text-white"
             >
               {item.link.label}
               <ExternalIcon className="size-4" />
@@ -185,51 +185,42 @@ const BreakdownCards = () => {
   );
 };
 
-/** The stack as a scannable list. */
+/**
+ * The four production domains of the role as tilt cards: one column on narrow
+ * panels, 2 × 2 from 32rem of panel width. Each card takes keyboard focus so
+ * the lift is reachable without a pointer.
+ */
 export const EnterpriseStack = () => {
-  const icons = useLocalized(techStackIcons);
+  const domains = useLocalized(stackDomains);
   const { journey: text } = useLocalized(ui);
 
   return (
     <div>
       <p className="text-sm leading-relaxed text-body">{text.stackIntro}</p>
-      <ul className="mt-4 grid grid-cols-1 gap-3 @lg:grid-cols-2">
-        {icons.map((item) => (
-          <li key={item.emblem} className="stack-item">
-            <span className="icon-chip" aria-hidden="true">
-              <Icon name={item.icon} className="size-5" />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-semibold text-white-50">{item.name}</span>
-              <span className="block text-sm text-blue-50">{item.subtitle}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-/** The same stack as draggable 3D emblems (each card is its own small canvas). */
-export const TechCards = () => {
-  const icons = useLocalized(techStackIcons);
-  const { journey: text } = useLocalized(ui);
-  const { theme } = useTheme();
-
-  return (
-    <div>
-      <p className="hidden text-sm text-blue-50 md:block">{text.tech3dHint}</p>
-      <ul className="tech-grid">
-        {icons.map((model) => (
-          // Keyed by emblem so switching language never remounts the WebGL canvas.
-          <li key={model.emblem} className="tech-card">
-            <div className="tech-card-content">
-              <div className="tech-icon-wrapper">
-                <TechIcon model={model} theme={theme} />
+      <ul className="stack-grid">
+        {domains.map((domain, index) => (
+          <li key={domain.id} className="min-w-0">
+            <TiltCard tabIndex={0} aria-labelledby={`stack-${domain.id}`}>
+              <div className="tilt-card-layer flex items-center gap-3">
+                <span className="icon-chip is-md" aria-hidden="true">
+                  <Icon name={domain.icon} className="size-[1.125rem]" />
+                </span>
+                <h3 id={`stack-${domain.id}`} className="min-w-0 flex-1 leading-snug font-semibold text-white-50 2xl:text-lg">
+                  {domain.title}
+                </h3>
+                <span className="self-start font-mono text-[11px] text-blue-50" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
-              <h3 className="font-semibold text-white-50 lg:text-[0.9375rem] xl:text-base">{model.name}</h3>
-              <p className="mt-0.5 text-xs text-blue-50 xl:text-sm">{model.subtitle}</p>
-            </div>
+              <p className="mt-2.5 text-sm leading-relaxed text-body lg:leading-snug">{domain.body}</p>
+              <ul className="stack-tags">
+                {domain.tags.map((tag) => (
+                  <li key={tag} className="tag-pill is-sm">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </TiltCard>
           </li>
         ))}
       </ul>

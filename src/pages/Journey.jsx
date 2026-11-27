@@ -5,7 +5,7 @@ import PageHeader from "../components/PageHeader.jsx";
 import { ArrowRightIcon } from "../components/Icons.jsx";
 import { CvButton } from "../components/Resume.jsx";
 import { TabList, TabPanel } from "../components/Tabs.jsx";
-import { EnterpriseStack, ExperiencePanel, OperationalBreakdown, TechCards } from "../sections/JourneyPanels.jsx";
+import { EnterpriseStack, ExperiencePanel, OperationalBreakdown } from "../sections/JourneyPanels.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { routes, ui } from "../constants/index.js";
 import { usePageTitle } from "../utils/hooks.js";
@@ -13,14 +13,14 @@ import { usePageTitle } from "../utils/hooks.js";
 const TABS = [
   { id: "impact", icon: "layers", Panel: OperationalBreakdown },
   { id: "stack", icon: "server", Panel: EnterpriseStack },
-  { id: "tech3d", icon: "cube", Panel: TechCards },
 ];
 
 /**
  * `/journey`: work experience only (projects and preservation work live on
  * `/projects`). The PT ASDP executive summary sits beside a tabbed panel
- * (Operational Breakdown · Enterprise Stack · 3D Tech Cards); from 1024px up the
- * two share one viewport and each scrolls on its own if it has to.
+ * (Operational Breakdown · Enterprise Stack); from 1024px up the two share one
+ * viewport, and both tabs are laid out to fit it at 1280 × 800 and up (each
+ * pane still scrolls on its own on shorter screens).
  */
 const Journey = () => {
   const { journey: text } = useLocalized(ui);
@@ -52,10 +52,10 @@ const Journey = () => {
           <ExperiencePanel />
 
           <section className="panel" aria-label={text.tabsLabel}>
-            <div className="flex-none border-b border-black-50 p-3 md:p-4">
+            <div className="flex-none border-b border-black-50 p-3 md:p-4 lg:p-3">
               <TabList tabs={tabs} value={tab} onChange={setTab} label={text.tabsLabel} base={base} />
             </div>
-            <TabPanel base={base} value={tab} className="scroll-pane @container flex-1 p-4 md:p-6 lg:p-5 xl:p-6">
+            <TabPanel base={base} value={tab} className="scroll-pane @container flex-1 p-4 md:p-6 lg:p-4 2xl:p-5">
               <Panel />
             </TabPanel>
           </section>

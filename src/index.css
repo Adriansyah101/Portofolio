@@ -589,28 +589,28 @@
     @apply text-accent-cyan;
   }
 
-  /* Operational impact cards, sized by the tab panel: 1 / 2 / 3 columns; a lone last card spans two. */
-  /* Operational breakdown: one, two or three flat cards per row by panel width. */
+  /* Operational breakdown: compact cards, stacked on narrow panels and three in a row from 36rem of panel width. */
   .breakdown-grid {
-    @apply grid grid-cols-1 gap-4 @xl:grid-cols-2 @2xl:grid-cols-3 xl:gap-3;
-  }
-
-  .breakdown-grid > :last-child:nth-child(odd) {
-    @apply @xl:col-span-2 @2xl:col-span-1;
+    @apply grid grid-cols-1 gap-2.5 @xl:grid-cols-3;
   }
 
   .breakdown-card {
-    @apply flex h-full min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-5;
+    @apply flex h-full min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-4 lg:p-3;
+  }
+
+  .breakdown-tags {
+    @apply mt-3 flex flex-wrap gap-1.5 lg:mt-2.5;
   }
 
   /* Field Documentation strip under the breakdown cards. */
   .field-docs {
-    @apply mt-6 border-t border-black-50 pt-5 lg:mt-4 lg:pt-4;
+    @apply mt-5 border-t border-black-50 pt-4 lg:mt-3 lg:pt-3;
   }
 
-  /* Thumbnails: flat surface, 1px hairline, a quiet desaturated rest state that comes to full colour on hover or focus. */
+  /* Thumbnails: flat surface, 1px hairline, a quiet desaturated rest state that comes to full colour on hover or focus.
+     A fixed height on desktop keeps the strip short enough to sit above the fold. */
   .field-thumb {
-    @apply block aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg border border-black-50 bg-black-100 transition-colors duration-300 hover:border-white/25 lg:aspect-[3/2];
+    @apply block aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg border border-black-50 bg-black-100 transition-colors duration-300 hover:border-white/25 lg:aspect-auto lg:h-24 2xl:h-28;
   }
 
   .field-thumb img {
@@ -666,10 +666,6 @@
     overflow: hidden;
   }
 
-  .stack-item {
-    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-100 p-3;
-  }
-
   /* Official brand logos on a light pill so their colours stay legible. */
   /* Literal white in both themes (`white` is the ink colour in light mode). */
   .brand-logo {
@@ -693,31 +689,100 @@
     @apply flex-center size-11 flex-none rounded-full border border-white/8 bg-white/[0.03] text-accent-cyan;
   }
 
+  .icon-chip.is-sm {
+    @apply size-8;
+  }
+
+  .icon-chip.is-md {
+    @apply size-10;
+  }
+
+  .tag-pill.is-sm {
+    @apply px-2.5 py-0.5 text-[11px];
+  }
+
   /* Production system link (logo + name) under an experience entry. */
   .system-link {
     @apply flex items-center gap-4 rounded-xl border border-black-50 bg-black-100 py-3 pr-5 pl-3 transition-colors duration-300 hover:border-white/15 lg:gap-3 lg:py-2;
   }
 
   /* ------------------------------------------------------------------------ */
-  /*                                 Tech stack                               */
+  /*                              Enterprise stack                            */
   /* ------------------------------------------------------------------------ */
 
-  /* Flex + wrap keeps rows centred: 2 + 2 + 2 on tablets, 3 + 3 on desktop. */
-  /* Sized by the tab panel: 1 / 2 / 3 emblems per row. */
-  .tech-grid {
-    @apply mt-3 grid grid-cols-1 gap-3 @sm:grid-cols-2 @2xl:grid-cols-3 xl:gap-4;
+  /* Sized by the tab panel: one column, then 2 × 2 from 32rem. */
+  .stack-grid {
+    @apply mt-4 grid grid-cols-1 gap-3 @lg:grid-cols-2 lg:mt-3.5 xl:gap-4;
   }
 
-  .tech-card {
-    @apply relative w-full overflow-hidden rounded-xl border border-black-50 bg-black-100 transition-colors duration-300 hover:border-white/15;
+  /* Tilt card (TiltCard.jsx): the flat slate surface and hairline, turned toward the
+     cursor in CSS 3D. The icon row and title sit a little forward of the face
+     (preserve-3d), and a faint sheen follows the pointer. No overflow clipping here:
+     it would flatten the 3D context. */
+  .tilt-card {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --lift: 0px;
+    --sheen: rgb(255 255 255 / 0.06);
+    @apply relative flex h-full min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-4 lg:p-3.5;
+    transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(var(--lift));
+    transform-style: preserve-3d;
+    transition:
+      transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+    will-change: transform;
   }
 
-  .tech-card-content {
-    @apply relative z-10 flex flex-col items-center px-4 pt-2 pb-5 text-center lg:pb-4;
+  /* While the pointer drives it, follow closely instead of easing for half a second. */
+  .tilt-card[data-tilt] {
+    transition:
+      transform 0.12s ease-out,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
-  .tech-icon-wrapper {
-    @apply flex-center h-44 w-full cursor-grab active:cursor-grabbing lg:h-[clamp(6rem,14vh,10rem)];
+  .tilt-card:is(:hover, :focus-visible, [data-tilt]) {
+    --lift: 12px;
+    border-color: color-mix(in oklab, var(--color-white) 16%, transparent);
+    box-shadow: 0 18px 32px -24px rgb(0 0 0 / 0.55);
+  }
+
+  /* Keyboard focus: a slight forward lean so the depth reads without a pointer. */
+  .tilt-card:focus-visible:not([data-tilt]) {
+    --tilt-x: 4deg;
+  }
+
+  .tilt-card::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300;
+    background: radial-gradient(
+      circle at var(--sheen-x, 50%) var(--sheen-y, 0%),
+      var(--sheen),
+      transparent 60%
+    );
+  }
+
+  .tilt-card:is(:hover, :focus-visible, [data-tilt])::after {
+    @apply opacity-100;
+  }
+
+  .tilt-card-layer {
+    transform: translateZ(22px);
+  }
+
+  .stack-tags {
+    @apply mt-auto flex flex-wrap gap-1.5 pt-3;
+  }
+
+  /* Short desktop windows (1280 × 800): the tags on both tabs give way so the field
+     photos and all four stack cards stay above the fold; the same systems are listed
+     as pills in the summary beside them. */
+  @media (min-width: 1024px) and (max-height: 859px) {
+    .breakdown-tags,
+    .stack-tags {
+      display: none;
+    }
   }
 
   /* ------------------------------------------------------------------------ */
@@ -1429,6 +1494,13 @@
   .cta-button .arrow-wrapper svg {
     animation: none !important;
   }
+
+  /* Tilt cards stay flat; the border and sheen still mark hover and focus. */
+  .tilt-card,
+  .tilt-card-layer {
+    transform: none !important;
+    transition-property: border-color, box-shadow !important;
+  }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1442,6 +1514,15 @@
 }
 
 /* Flat white surfaces on the alabaster page: the 1px hairline does the separating. */
+
+/* On a white card a white highlight vanishes: the sheen becomes a faint slate tint. */
+:root[data-theme="light"] .tilt-card {
+  --sheen: rgb(15 23 42 / 0.035);
+}
+
+:root[data-theme="light"] .tilt-card:is(:hover, :focus-visible, [data-tilt]) {
+  box-shadow: 0 18px 30px -24px rgb(15 23 42 / 0.28);
+}
 
 /* -------------------------------------------------------------------------- */
 /*                    Hero scene controls & hover tooltip                     */
