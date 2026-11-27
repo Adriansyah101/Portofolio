@@ -5,20 +5,20 @@ import PageHeader from "../components/PageHeader.jsx";
 import { ArrowRightIcon } from "../components/Icons.jsx";
 import { CvButton } from "../components/Resume.jsx";
 import { TabList, TabPanel } from "../components/Tabs.jsx";
-import { EnterpriseStack, ExperiencePanel, OperationalBreakdown } from "../sections/JourneyPanels.jsx";
+import { ExperiencePanel, OperationalBreakdown, OperationsStack } from "../sections/JourneyPanels.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { routes, ui } from "../constants/index.js";
 import { usePageTitle } from "../utils/hooks.js";
 
 const TABS = [
   { id: "impact", icon: "layers", Panel: OperationalBreakdown },
-  { id: "stack", icon: "server", Panel: EnterpriseStack },
+  { id: "stack", icon: "server", Panel: OperationsStack },
 ];
 
 /**
  * `/journey`: work experience only (projects and preservation work live on
  * `/projects`). The PT ASDP executive summary sits beside a tabbed panel
- * (Operational Breakdown · Enterprise Stack); from 1024px up the two share one
+ * (Operational Breakdown · Business Operations Stack); from 1024px up the two share one
  * viewport, and both tabs are laid out to fit it at 1280 × 800 and up (each
  * pane still scrolls on its own on shorter screens).
  */

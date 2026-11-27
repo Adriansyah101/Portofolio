@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, LinkIcon } from "./Icons.jsx";
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, Icon, LinkIcon } from "./Icons.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { siteUrl, ui } from "../constants/index.js";
 
@@ -73,9 +73,11 @@ export const CopyLinkButton = ({ path = null, className = "" }) => {
 /**
  * Previous / Next links at the end of a reader. `items` is the ordered list of
  * `{ to, title, meta }`; `index` is the current page's place in it. The list
- * wraps around, so every page has both links.
+ * wraps around, so every page has both links. `extra` (`{ to, label, icon }`)
+ * adds an internal cross-link on its own row underneath, such as the sibling
+ * case study to compare with.
  */
-export const PagerNav = ({ items, index, label, className = "" }) => {
+export const PagerNav = ({ items, index, label, extra = null, className = "" }) => {
   const { common } = useLocalized(ui);
   if (items.length < 2) return null;
   const previous = items[(index - 1 + items.length) % items.length];
@@ -103,6 +105,13 @@ export const PagerNav = ({ items, index, label, className = "" }) => {
         </span>
         <ArrowRightIcon className="size-5 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
       </Link>
+      {extra && (
+        <Link to={extra.to} className="pager-compare group">
+          {extra.icon && <Icon name={extra.icon} className="size-4 flex-none text-blue-50" />}
+          {extra.label}
+          <ArrowRightIcon className="size-4 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
+        </Link>
+      )}
     </nav>
   );
 };

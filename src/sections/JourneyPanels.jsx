@@ -13,7 +13,7 @@ import { renderInlineCode, softBreak } from "../utils/text.jsx";
 /**
  * Panels of `/journey`: the executive summary of the role (left) and the two
  * tab panels beside it: the operational breakdown with its field photos, and
- * the enterprise stack as four tilt cards. The tab panels lay out by their own
+ * the business operations stack as four tilt cards. The tab panels lay out by their own
  * width (container queries), so they adapt to the split instead of the
  * viewport.
  */
@@ -190,7 +190,7 @@ const BreakdownCards = () => {
  * panels, 2 × 2 from 32rem of panel width. Each card takes keyboard focus so
  * the lift is reachable without a pointer.
  */
-export const EnterpriseStack = () => {
+export const OperationsStack = () => {
   const domains = useLocalized(stackDomains);
   const { journey: text } = useLocalized(ui);
 

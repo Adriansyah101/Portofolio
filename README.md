@@ -5,7 +5,7 @@ a Systems & Application Operations Engineer based in Semarang, Indonesia.
 
 - **Home (`/`)**: name, role (Systems & Application Operations Engineer · Windows Systems &
   Binary Recompilation), a two-sentence bio, four factual metrics and the 3D workstation.
-- **Journey (`/journey`)** is professional work experience only: Business Application Operational
+- **Journey (`/journey`)** is professional work experience only: Business Application Operations
   Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026).
 - **Projects (`/projects`)** holds six open-source projects in two separate categories:
   - **Original Software**: **Niskala Utilities** (featured: Windows WinUI & CLI system utility,
@@ -22,7 +22,9 @@ a Systems & Application Operations Engineer based in Semarang, Indonesia.
 Three case studies (`/projects/niskala`, `/projects/ios-loader`, `/projects/mac-loader`) and three
 engineering notes have a Copy Link button and Previous / Next links; notes also show a reading time.
 The retired port pages `/projects/gt-racing` and `/projects/gangstar` redirect to the matching
-loader case study (`legacyRedirects`).
+loader case study (`legacyRedirects`). The loaders have no standalone repository: each lives in
+`host/core` of the production port it runs, so their case studies list those ports as **verified
+target implementations** (a `targets` block: add an item when another release ships the same loader).
 
 Copy rules: the words "game" and "gaming" are not used anywhere in the site copy (EN or ID), there
 are no emojis, and there are no unverified percentage claims. Technical facts in the case studies
@@ -50,9 +52,9 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | `/`                     | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips and three camera presets: Overview, Desk Setup, Telemetry) |
 | `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation with the two loaders, each with "Read Case Study" and GitHub / release icon links) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
 | `/projects/niskala`     | Niskala Utilities        | Modular architecture, PathGuard / RegistryGuard / PrivilegeScope, `.reg` backups, the closed DISM / SFC / netsh / ipconfig / chkdsk command list, release |
-| `/projects/ios-loader`  | 32-bit iOS loader        | Why it stopped running, legacy-vs-native table, hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge, port engineering and leaderboard architecture, repository, release and SHA-256 verification |
-| `/projects/mac-loader`  | 32-bit Mac loader        | Why it stopped running, legacy-vs-native table, memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility, engineering fixes, repository, release and SHA-256 verification |
-| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (three compact cards and the Field Documentation photo strip with its lightbox) · Enterprise Stack (four CSS 3D tilt cards); both tabs fit one viewport from 1280 × 800 |
+| `/projects/ios-loader`  | 32-bit iOS loader        | Why it stopped running, legacy-vs-native table, hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge, port engineering and leaderboard architecture, verified target implementations (release download, implementation repository, `host/core`, notes) and SHA-256 verification; a Compare link to the other loader sits beside Previous / Next |
+| `/projects/mac-loader`  | 32-bit Mac loader        | Why it stopped running, legacy-vs-native table, memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility, engineering fixes, verified target implementations (release download, implementation repository, `host/core`, notes) and SHA-256 verification; a Compare link to the other loader sits beside Previous / Next |
+| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (three compact cards and the Field Documentation photo strip with its lightbox) · Business Operations Stack (four CSS 3D tilt cards); both tabs fit one viewport from 1280 × 800 |
 | `/notes`, `/notes/:slug` | Engineering Notes     | Note list and reading pane side by side on desktop; list and article pages on phones. Three notes, each Context → Engineering Approach → Outcome |
 | `/contact`              | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
@@ -173,14 +175,14 @@ name or a version tag) shows the same text in both languages. Components read co
   points at that release, and `{tag}` in a label, target, fact or table cell becomes the tag.
 - `caseStudies`: the three deep-dive pages, in reading order (Previous / Next follow it). Each
   section is a list of typed blocks (`timeline`, `cards`, `flow`, `architecture`, `table`
-  (`plain: true` for text cells), `comparison`, `checklist`, `code`, `links`, `prose`). A link with
+  (`plain: true` for text cells), `comparison`, `checklist`, `code`, `links`, `targets`, `prose`). A link with
   `to` is an internal route, used to cross-link the loaders and the notes.
 - `heroContent` and `counterItems`: the Home page. A counter item with `text` (e.g.
   `"Dozens of ports"`) shows that text instead of an animated number; the project count is every
   project (4 original, 2 loaders).
 - `expCards` and `stackDomains`: the Journey page (work experience only). `breakdown` on an
   `expCards` entry feeds the Operational Breakdown tab and the résumé; `stackDomains` are the four
-  tilt cards of the Enterprise Stack tab (`TiltCard.jsx`). On desktop windows shorter than 860px
+  tilt cards of the Business Operations Stack tab (`TiltCard.jsx`). On desktop windows shorter than 860px
   the tags on both tabs are hidden so everything fits without scrolling. Set `logo` on an
   `expCards` entry to a key of `brandLogos`.
 - `fieldDocs`: the Field Documentation photos on `/journey` (`public/images/journey/`), with place and

@@ -153,7 +153,7 @@ const CaseStudy = () => {
                 </section>
               ))}
 
-              <PagerNav items={order} index={position} label={text.more} className="mt-16 lg:mt-12" />
+              <PagerNav items={order} index={position} label={text.more} extra={study.compare} className="mt-16 lg:mt-12" />
             </div>
           </div>
         </div>

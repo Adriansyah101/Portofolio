@@ -55,6 +55,8 @@ export const links = {
   iosLoaderRepo: `${GITHUB}/${IOS_LOADER_REPO}`,
   iosLoaderReleases: `${GITHUB}/${IOS_LOADER_REPO}/releases`,
   iosLoaderSource: `${GITHUB}/${IOS_LOADER_REPO}/tree/main/host/core`,
+  // This repository has no docs/NOTES.md; its architecture notes are the README's "How it works" section.
+  iosLoaderNotes: `${GITHUB}/${IOS_LOADER_REPO}/blob/main/README.md#how-it-works`,
   macLoaderRepo: `${GITHUB}/${MAC_LOADER_REPO}`,
   macLoaderReleases: `${GITHUB}/${MAC_LOADER_REPO}/releases`,
   macLoaderSource: `${GITHUB}/${MAC_LOADER_REPO}/tree/main/host/core`,
@@ -237,7 +239,7 @@ export const ui = {
     tabsLabel: tx("Experience details", "Detail pengalaman"),
     tabs: {
       impact: tx("Operational Breakdown", "Rincian Operasional"),
-      stack: tx("Enterprise Stack", "Stack Operasional"),
+      stack: tx("Business Operations Stack", "Stack Operasional Bisnis"),
     },
     stackIntro: tx(
       "Four production domains behind national ferry ticketing.",
@@ -360,7 +362,7 @@ export const heroContent = {
   role: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),
   focus: tx("Windows Systems & Binary Recompilation", "Sistem Windows & Rekompilasi Biner"),
   bio: tx(
-    "Business Application Operational Support at PT ASDP Indonesia Ferry (2024–2026), managing nationwide port counter deployments, Omron barrier gate integration, and trip.ferizy.com stability. Independently engineering Windows system utilities (Niskala Utilities) and native PC static recompilation ports for 32-bit legacy software.",
+    "Business Application Operations Support Staff at PT ASDP Indonesia Ferry (2024–2026), managing nationwide port counter deployments, Omron barrier gate integration, and trip.ferizy.com stability. Independently engineering Windows system utilities (Niskala Utilities) and native PC static recompilation ports for 32-bit legacy software.",
     "Staf Dukungan Operasional Aplikasi Bisnis di PT ASDP Indonesia Ferry (2024–2026) yang menangani deployment layanan loket di puluhan pelabuhan, integrasi barrier gate Omron, dan operasional trip.ferizy.com. Secara independen mengembangkan utilitas sistem Windows (Niskala Utilities) serta port native PC berbasis rekompilasi biner statis untuk perangkat lunak klasik 32-bit.",
   ),
   ctaProjects: tx("Projects", "Proyek"),
@@ -673,7 +675,7 @@ export const counterItems = [
   {
     id: "years",
     text: "2024 – 2026", // non-breaking spaces keep the range on one line
-    label: tx("Enterprise operations", "Operasional enterprise"),
+    label: tx("Business application operations", "Operasional aplikasi bisnis"),
     note: "PT ASDP Indonesia Ferry (Persero)",
   },
   {
@@ -705,7 +707,17 @@ export const counterItems = [
 const BROWSE_SOURCE = tx("Browse the source on GitHub", "Jelajahi source di GitHub");
 const DOWNLOAD_RELEASE = tx("Download {tag} from GitHub Releases", "Unduh {tag} dari GitHub Releases");
 
-const LOADER_SOURCE = tx("Loader source: host/core", "Source loader: host/core");
+/*
+ * The loaders have no standalone repository: each one lives in host/core of
+ * the production port it runs and ships inside that port's releases. These
+ * labels say so ("target implementation") instead of suggesting a bare loader
+ * download.
+ */
+const IMPLEMENTATION_REPO = tx("Implementation Repository (GitHub)", "Repositori Implementasi (GitHub)");
+const LOADER_CORE = tx("Loader Core Module (host/core)", "Modul Inti Loader (host/core)");
+const TARGET_RELEASE = tx("Target Release {tag}", "Rilis Target {tag}");
+const DOWNLOAD_TARGET = tx("Download Target Release ({tag})", "Unduh Rilis Target ({tag})");
+const TARGET_ONE = tx("Target Implementation #1", "Implementasi Target #1");
 
 /**
  * Data for the deep-dive pages, in reading order (the Previous / Next links at
@@ -1007,10 +1019,12 @@ export const caseStudies = {
       { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
-      { label: GITHUB_REPOSITORY, href: links.iosLoaderRepo, icon: "github" },
-      { release: "ios-loader", label: RELEASE_TAG, href: links.iosLoaderReleases, icon: "tag" },
-      { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "code" },
+      { label: IMPLEMENTATION_REPO, href: links.iosLoaderRepo, icon: "github" },
+      { release: "ios-loader", label: TARGET_RELEASE, href: links.iosLoaderReleases, icon: "tag" },
+      { label: LOADER_CORE, href: links.iosLoaderSource, icon: "code" },
     ],
+    // Shown in the reader navigation beside Previous / Next.
+    compare: { to: routes.macLoader, label: tx("Compare: 32-Bit Mac Loader", "Bandingkan: Loader Mac 32-Bit"), icon: "laptop" },
     sections: [
       {
         id: "context",
@@ -1345,9 +1359,30 @@ export const caseStudies = {
         ],
       },
       {
-        id: "release",
-        title: tx("Reference implementation & release", "Implementasi referensi & rilis"),
+        id: "targets",
+        title: tx("Verified target implementations", "Implementasi target terverifikasi"),
+        intro: tx(
+          "The loader runtime is maintained directly inside production preservation releases rather than as a standalone bare repository. Source modules and compiled builds are verified below:",
+          "Runtime loader dipelihara langsung di dalam rilis preservasi produksi (bukan sebagai repositori polos terpisah). Modul source dan rilis biner terverifikasi tersedia di bawah:",
+        ),
         blocks: [
+          {
+            type: "targets",
+            items: [
+              {
+                id: "target-1",
+                kicker: TARGET_ONE,
+                title: tx("32-Bit iPad (ARMv7) Simulation Workload", "Beban Simulasi 3D iPad ARMv7"),
+                repo: `${githubUser}/${IOS_LOADER_REPO}`,
+                download: { release: "ios-loader", label: DOWNLOAD_TARGET, href: links.iosLoaderReleases, icon: "tag" },
+                links: [
+                  { label: IMPLEMENTATION_REPO, href: links.iosLoaderRepo, icon: "github" },
+                  { label: LOADER_CORE, href: links.iosLoaderSource, icon: "code" },
+                  { label: tx("Architecture & Recompilation Notes (README · How it works)", "Catatan Rekompilasi (README · How it works)"), href: links.iosLoaderNotes, icon: "book" },
+                ],
+              },
+            ],
+          },
           {
             type: "checklist",
             title: tx("What a release contains", "Isi setiap rilis"),
@@ -1378,15 +1413,6 @@ export const caseStudies = {
               "Bandingkan hasilnya dengan SHA-256 yang tercantum di PATCHNOTES.md untuk rilis tersebut.",
             ),
           },
-          {
-            type: "links",
-            items: [
-              { release: "ios-loader", label: DOWNLOAD_RELEASE, href: links.iosLoaderReleases, icon: "tag", primary: true },
-              { label: BROWSE_SOURCE, href: links.iosLoaderRepo, icon: "github" },
-              { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "code" },
-              { to: routes.macLoader, label: tx("Compare: the 32-bit Mac loader", "Bandingkan: loader Mac 32-bit"), icon: "laptop" },
-            ],
-          },
         ],
       },
     ],
@@ -1410,10 +1436,12 @@ export const caseStudies = {
       { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86 · {tag}" },
     ],
     links: [
-      { label: GITHUB_REPOSITORY, href: links.macLoaderRepo, icon: "github" },
-      { release: "mac-loader", label: RELEASE_TAG, href: links.macLoaderReleases, icon: "tag" },
-      { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "code" },
+      { label: IMPLEMENTATION_REPO, href: links.macLoaderRepo, icon: "github" },
+      { release: "mac-loader", label: TARGET_RELEASE, href: links.macLoaderReleases, icon: "tag" },
+      { label: LOADER_CORE, href: links.macLoaderSource, icon: "code" },
     ],
+    // Shown in the reader navigation beside Previous / Next.
+    compare: { to: routes.iosLoader, label: tx("Compare: 32-Bit iOS Loader", "Bandingkan: Loader iOS 32-Bit"), icon: "tablet" },
     sections: [
       {
         id: "context",
@@ -1728,9 +1756,30 @@ export const caseStudies = {
         ],
       },
       {
-        id: "release",
-        title: tx("Reference implementation & release", "Implementasi referensi & rilis"),
+        id: "targets",
+        title: tx("Verified target implementations", "Implementasi target terverifikasi"),
+        intro: tx(
+          "The Mach-O user-space loader and ABI shim are maintained directly inside production preservation releases rather than as a standalone bare repository:",
+          "Loader Mach-O user-space dan jembatan ABI dipelihara langsung di dalam rilis preservasi produksi (bukan sebagai repositori polos terpisah):",
+        ),
         blocks: [
+          {
+            type: "targets",
+            items: [
+              {
+                id: "target-1",
+                kicker: TARGET_ONE,
+                title: tx("32-Bit OS X (i386) Open-World Workload", "Beban 3D Open-World OS X i386"),
+                repo: `${githubUser}/${MAC_LOADER_REPO}`,
+                download: { release: "mac-loader", label: DOWNLOAD_TARGET, href: links.macLoaderReleases, icon: "tag" },
+                links: [
+                  { label: IMPLEMENTATION_REPO, href: links.macLoaderRepo, icon: "github" },
+                  { label: LOADER_CORE, href: links.macLoaderSource, icon: "code" },
+                  { label: tx("Technical Notes (docs/NOTES.md)", "Catatan Teknis (docs/NOTES.md)"), href: links.macLoaderNotes, icon: "book" },
+                ],
+              },
+            ],
+          },
           {
             type: "checklist",
             title: tx("What a release contains", "Isi setiap rilis"),
@@ -1757,16 +1806,6 @@ export const caseStudies = {
               "Di Windows, bandingkan hasilnya dengan baris yang sesuai di SHA256SUMS.txt.",
             ),
           },
-          {
-            type: "links",
-            items: [
-              { release: "mac-loader", label: DOWNLOAD_RELEASE, href: links.macLoaderReleases, icon: "tag", primary: true },
-              { label: BROWSE_SOURCE, href: links.macLoaderRepo, icon: "github" },
-              { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "code" },
-              { label: tx("Technical notes (docs/NOTES.md)", "Catatan teknis (docs/NOTES.md)"), href: links.macLoaderNotes, icon: "book" },
-              { to: routes.iosLoader, label: tx("Compare: the 32-bit iOS loader", "Bandingkan: loader iOS 32-bit"), icon: "tablet" },
-            ],
-          },
         ],
       },
     ],
@@ -1788,7 +1827,7 @@ export const expCards = [
   {
     id: "asdp",
     kind: tx("Professional Experience", "Pengalaman Profesional"),
-    title: tx("Business Application Operational Support Staff", "Staf Dukungan Operasional Aplikasi Bisnis"),
+    title: tx("Business Application Operations Support Staff", "Staf Dukungan Operasional Aplikasi Bisnis"),
     project: "PT ASDP Indonesia Ferry (Persero)",
     period: "2024 – 2026",
     logo: "asdp",
@@ -1908,11 +1947,11 @@ export const fieldDocs = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*                              Enterprise stack                              */
+/*                          Business operations stack                         */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Enterprise Stack tab on `/journey`: the four production domains of the PT
+ * Business Operations Stack tab on `/journey`: the four production domains of the PT
  * ASDP role, each a tilt card (2 × 2 on wide panels). `icon` is a key of the
  * icon map in `components/Icons.jsx`.
  */
@@ -2529,7 +2568,7 @@ export const resume = {
   role: tx("Systems & Application Operations Engineer", "Engineer Sistem & Operasional Aplikasi"),
   location: "Semarang, Indonesia",
   summary: tx(
-    "Business Application Operational Support Staff at PT ASDP Indonesia Ferry (Persero), 2024–2026: counter application and backend deployments to harbor servers and the cloud across dozens of ports, Omron barrier gate integration at Surabaya port, and production support for trip.ferizy.com. Independently builds Windows system utilities (Niskala Utilities) and native PC ports of 32-bit legacy software by static binary recompilation.",
+    "Business Application Operations Support Staff at PT ASDP Indonesia Ferry (Persero), 2024–2026: counter application and backend deployments to harbor servers and the cloud across dozens of ports, Omron barrier gate integration at Surabaya port, and production support for trip.ferizy.com. Independently builds Windows system utilities (Niskala Utilities) and native PC ports of 32-bit legacy software by static binary recompilation.",
     "Staf Dukungan Operasional Aplikasi Bisnis di PT ASDP Indonesia Ferry (Persero), 2024–2026: deployment aplikasi loket dan layanan backend ke server pelabuhan dan cloud di puluhan pelabuhan, integrasi barrier gate Omron di Pelabuhan Surabaya, serta dukungan produksi untuk trip.ferizy.com. Secara independen mengembangkan utilitas sistem Windows (Niskala Utilities) dan port PC native untuk perangkat lunak klasik 32-bit melalui rekompilasi biner statis.",
   ),
   skills: [

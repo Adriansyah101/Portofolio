@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRightIcon, Icon } from "./Icons.jsx";
+import { ArrowRightIcon, ExternalIcon, Icon } from "./Icons.jsx";
 import { renderInlineCode } from "../utils/text.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { ui } from "../constants/index.js";
@@ -246,6 +246,60 @@ const Links = ({ items }) => {
   );
 };
 
+/** Repository-relative part of a GitHub URL, e.g. "Repo-PC-Port/tree/main/host/core". */
+const githubPath = (href) => href.replace(/^https:\/\/github\.com\/[^/]+\//, "");
+
+/**
+ * One production release that ships a loader: its kicker ("Target
+ * Implementation #1"), workload, repository, a primary download of the
+ * target's latest release, then the paths inside that repository (each with
+ * its location shown, so it reads as part of the target, not a bare loader).
+ */
+const TargetEntry = ({ item }) => {
+  const [download, ...paths] = useResolvedLinks([item.download, ...item.links]);
+  return (
+    <li className="target-card">
+      <div className="target-head">
+        <p className="font-mono text-[11px] tracking-widest text-accent-cyan uppercase">{item.kicker}</p>
+        <h3 className="mt-1.5 text-lg leading-snug font-semibold text-white-50">{item.title}</h3>
+        <p className="mt-1 font-mono text-xs wrap-break-word text-blue-50">{item.repo}</p>
+      </div>
+      <div className="target-body">
+        <a href={download.href} target="_blank" rel="noopener noreferrer" className="project-link primary w-fit">
+          <Icon name={download.icon} className="size-4 flex-none" />
+          {download.label}
+        </a>
+        <ul className="target-paths">
+          {paths.map((link) => (
+            <li key={link.href}>
+              <a href={link.href} target="_blank" rel="noopener noreferrer" className="target-path group">
+                <Icon name={link.icon} className="size-4 flex-none text-blue-50" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-white-50">{link.label}</span>
+                  <span className="block truncate font-mono text-[11px] text-blue-50">{githubPath(link.href)}</span>
+                </span>
+                <ExternalIcon className="size-4 flex-none text-blue-50 transition-colors group-hover:text-white" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </li>
+  );
+};
+
+/**
+ * Verified target implementations: the releases a loader ships inside, one
+ * entry each (add an item when another target uses the same loader).
+ */
+const Targets = ({ items }) => (
+  <ol className="flex flex-col gap-4">
+    {items.map((item) => (
+      <TargetEntry key={item.id} item={item} />
+    ))}
+  </ol>
+);
+
 const Prose = ({ paragraphs }) => (
   <div className="flex max-w-3xl flex-col gap-4 text-lg leading-relaxed text-body">
     {paragraphs.map((paragraph) => (
@@ -264,6 +318,7 @@ const blockMap = {
   checklist: Checklist,
   code: Code,
   links: Links,
+  targets: Targets,
 };
 
 export const CaseStudyBlock = ({ block }) => {
