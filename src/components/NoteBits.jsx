@@ -28,17 +28,18 @@ export const NoteCard = ({ note, headingLevel = "h3", selected = false, current 
       className={`note-card group ${selected ? "is-selected" : ""}`}
       aria-current={current ? "page" : undefined}
     >
+      {/* In the desktop list the reading pane beside it shows the summary, so the card keeps to date, kicker and title. */}
       <div className="flex items-center justify-between gap-3">
-        <span className="flex-center size-10 rounded-lg bg-black-50 text-accent-cyan lg:size-9">
+        <span className="flex-center size-10 rounded-lg bg-black-50 text-accent-cyan lg:hidden">
           <Icon name={note.icon} className="size-5" />
         </span>
         <span className="font-mono text-[11px] text-blue-50">
           {formatDate(note.published, lang)} · {format(text.minutes, { n: readingMinutes(note) })}
         </span>
       </div>
-      <p className="mt-5 font-mono text-xs tracking-widest text-accent-cyan uppercase lg:mt-4">{note.kicker}</p>
-      <Heading className="mt-2 text-xl font-semibold text-balance text-white-50 md:text-2xl lg:text-lg">{note.title}</Heading>
-      <p className="mt-3 leading-relaxed text-body lg:mt-2 lg:text-sm">{note.summary}</p>
+      <p className="mt-5 font-mono text-xs tracking-widest text-accent-cyan uppercase lg:mt-2.5 lg:text-[11px]">{note.kicker}</p>
+      <Heading className="mt-2 text-xl font-semibold text-balance text-white-50 md:text-2xl lg:mt-1.5 lg:text-base xl:text-lg">{note.title}</Heading>
+      <p className="mt-3 leading-relaxed text-body lg:hidden">{note.summary}</p>
       <span className="note-read">
         {text.read}
         <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />

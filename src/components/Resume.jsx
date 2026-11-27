@@ -42,7 +42,8 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
   const { cv: text } = useLocalized(ui);
   const data = useLocalized(resume);
   const experience = useLocalized(expCards);
-  const work = useLocalized(projects);
+  // The loaders are part of their ports, so the résumé lists the ports only.
+  const work = useLocalized(projects).filter((project) => !project.runtime);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -155,7 +156,7 @@ const ResumeDialog = ({ open, onClose, pdfAvailable }) => {
         </section>
 
         <p className="resume-foot">
-          {text.contactNote}: {contactEmail} · {siteUrl}#/contact · github.com/{githubUser}
+          {text.contactNote}: {contactEmail} · {siteUrl}contact · github.com/{githubUser}
         </p>
       </article>
     </dialog>,

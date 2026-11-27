@@ -1,13 +1,34 @@
+import { copyFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+/**
+ * GitHub Pages has no rewrite rules: a direct load of a client route such as
+ * /projects/niskala finds no file and serves 404.html. A copy of index.html
+ * under that name boots the app there, and React Router renders the route.
+ */
+const spaFallback = () => {
+  let outDir = "dist";
+  return {
+    name: "spa-404-fallback",
+    apply: "build",
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      copyFileSync(resolve(outDir, "index.html"), resolve(outDir, "404.html"));
+    },
+  };
+};
+
 // The site is served from the root of its custom domain, https://adriansyahpn.com/
-// (public/CNAME), so every built asset path starts at "/". Routing is hash-based,
-// so the document itself is always /index.html and root paths resolve on every route.
+// (public/CNAME), with clean URLs (BrowserRouter). Every built asset path starts
+// at "/", so it resolves the same on /, /projects and /projects/niskala.
 export default defineConfig({
   base: "/",
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), spaFallback()],
   build: {
     outDir: "dist",
     chunkSizeWarningLimit: 1600,

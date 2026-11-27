@@ -1,9 +1,10 @@
 import { Link, useParams } from "react-router-dom";
 
 import ProjectPreview from "../components/ProjectPreview.jsx";
-import { ArrowLeftIcon, ArrowRightIcon, Icon } from "../components/Icons.jsx";
+import { ArrowLeftIcon, Icon } from "../components/Icons.jsx";
 import { ComparisonTable, PlatformBadge, ProjectTags, ReleaseBadge } from "../components/ProjectBits.jsx";
 import { CaseStudyBlock } from "../components/CaseStudyBlocks.jsx";
+import { CopyLinkButton, PagerNav } from "../components/ReaderBits.jsx";
 import NotFound from "./NotFound.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { caseStudies, projects, routes, ui } from "../constants/index.js";
@@ -12,13 +13,33 @@ import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 import { scrollToId, usePageTitle } from "../utils/hooks.js";
 
+/** A header action: an internal route (`to`) or an external link. */
+const StudyLink = ({ link, primary }) => {
+  const className = `project-link ${primary ? "primary" : "secondary"}`;
+  const content = (
+    <>
+      <Icon name={link.icon} className="size-4 flex-none" />
+      {link.label}
+    </>
+  );
+  return link.to ? (
+    <Link to={link.to} className={className}>
+      {content}
+    </Link>
+  ) : (
+    <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+      {content}
+    </a>
+  );
+};
+
 /**
- * `/projects/:slug`: technical specification of one preservation port. From
- * 1024px up the intro (back link, title, live release badge, summary, links,
- * artwork) stays on the left and the facts, numbered sections (context, the
- * legacy-vs-port table, engineering work, release) and next links read in a
- * pane on the right that scrolls on its own; below 1024px it is one scrolling
- * page in the same order.
+ * `/projects/:slug`: technical specification of one project (Niskala
+ * Utilities, the two preservation ports and their two loaders). From 1024px up
+ * the intro (back link, title, live release badge, Copy Link, summary, links,
+ * artwork) stays on the left and the facts, numbered sections and the
+ * Previous / Next links read in a pane on the right that scrolls on its own;
+ * below 1024px it is one scrolling page in the same order.
  */
 const CaseStudy = () => {
   const { slug } = useParams();
@@ -33,8 +54,12 @@ const CaseStudy = () => {
   if (!study) return <NotFound />;
 
   const project = allProjects.find((item) => item.id === study.projectId);
-  const [nextSlug, next] = Object.entries(studies).find(([key]) => key !== slug);
-  const nextProject = allProjects.find((item) => item.id === next.projectId);
+  const order = Object.entries(studies).map(([key, item]) => ({
+    to: `${routes.projects}/${key}`,
+    title: item.title,
+    meta: allProjects.find((entry) => entry.id === item.projectId)?.platform,
+  }));
+  const position = Object.keys(studies).indexOf(slug);
 
   return (
     <article className="page-shell page-enter" key={slug}>
@@ -50,20 +75,12 @@ const CaseStudy = () => {
             <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 lg:mt-2">
               <p className="min-w-0 font-mono text-sm wrap-break-word text-accent-cyan lg:text-xs xl:text-sm">{softBreak(study.repoName)}</p>
               <ReleaseBadge projectId={study.projectId} detailed />
+              <CopyLinkButton />
             </div>
             <p className="page-description">{study.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3 lg:mt-5">
               {studyLinks.map((link, index) => (
-                <a
-                  key={link.href + index}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`project-link ${index === 0 ? "primary" : "secondary"}`}
-                >
-                  <Icon name={link.icon} className="size-4" />
-                  {link.label}
-                </a>
+                <StudyLink key={(link.to ?? link.href) + index} link={link} primary={index === 0} />
               ))}
             </div>
 
@@ -76,10 +93,10 @@ const CaseStudy = () => {
                 alt={format(projectText.previewAlt, { title: study.title })}
                 className="aspect-8/5 rounded-2xl"
                 overlay={
-                  // Screenshots carry their own title text up top, so the badge moves to the open bottom corner.
+                  // Screenshots and the loader schematics carry their own caption up top, so the badge moves to the open bottom corner.
                   <PlatformBadge
                     project={project}
-                    className={`pointer-events-none absolute left-3 z-10 ${study.image ? "bottom-3" : "top-3"}`}
+                    className={`pointer-events-none absolute left-3 z-10 ${study.image || project.runtime ? "bottom-3" : "top-3"}`}
                   />
                 }
               />
@@ -136,25 +153,7 @@ const CaseStudy = () => {
                 </section>
               ))}
 
-              {/* Next */}
-              <nav className="mt-16 grid grid-cols-1 gap-5 @2xl:grid-cols-2 lg:mt-12" aria-label={text.more}>
-                <Link to={routes.projects} className="next-card group">
-                  <ArrowLeftIcon className="size-5 text-blue-50 transition-transform group-hover:-translate-x-1" />
-                  <span>
-                    <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.backTo}</span>
-                    <span className="mt-1 block text-xl font-semibold">{text.allProjects}</span>
-                  </span>
-                </Link>
-                <Link to={`${routes.projects}/${nextSlug}`} className="next-card group justify-between">
-                  <span className="min-w-0">
-                    <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">
-                      {text.next} · {nextProject.platform}
-                    </span>
-                    <span className="mt-1 block text-xl font-semibold wrap-break-word">{next.title}</span>
-                  </span>
-                  <ArrowRightIcon className="size-5 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
-                </Link>
-              </nav>
+              <PagerNav items={order} index={position} label={text.more} className="mt-16 lg:mt-12" />
             </div>
           </div>
         </div>

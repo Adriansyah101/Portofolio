@@ -11,8 +11,8 @@ export const usePageTitle = (title) => {
 };
 
 /**
- * Smooth-scrolls to an element (in-page "#anchors" would change the HashRouter
- * route). Inside a desktop `.scroll-pane` that pane scrolls; elsewhere the
+ * Smooth-scrolls to an element (in-page "#anchors" would add to the browser
+ * history). Inside a desktop `.scroll-pane` that pane scrolls; elsewhere the
  * window does, leaving room for the fixed navbar.
  */
 export const scrollToId = (id, offset = 96) => {

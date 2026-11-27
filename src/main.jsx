@@ -12,8 +12,16 @@ import { LanguageProvider } from "./context/LanguageContext.jsx";
  * Repeat visits read the fonts from cache and render immediately; if the font
  * CDN is slow or blocked, the site renders with the system fallback fonts.
  */
-const FONTS = ['400 16px "Mona Sans"', '600 16px "Mona Sans"', '400 16px "JetBrains Mono"'];
+const FONTS = ['400 16px "Inter"', '600 16px "Inter"', '400 16px "JetBrains Mono"'];
 const FONT_WAIT_MS = 1500;
+
+/**
+ * Links shared while the site used hash routing (`/#/projects`) open the same
+ * page at its clean URL (`/projects`) before the router reads the address.
+ */
+if (window.location.hash.startsWith("#/")) {
+  window.history.replaceState(null, "", window.location.hash.slice(1) || "/");
+}
 
 const fontsLoaded = () => {
   if (!document.fonts?.load) return Promise.resolve();

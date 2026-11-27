@@ -55,6 +55,10 @@ export const links = {
   gtRacingReleases: `${GITHUB}/${GT_RACING_REPO}/releases`,
   gangstarRepo: `${GITHUB}/${GANGSTAR_REPO}`,
   gangstarReleases: `${GITHUB}/${GANGSTAR_REPO}/releases`,
+  // The loaders live inside the two port repositories, in host/core.
+  iosLoaderSource: `${GITHUB}/${GT_RACING_REPO}/tree/main/host/core`,
+  macLoaderSource: `${GITHUB}/${GANGSTAR_REPO}/tree/main/host/core`,
+  macLoaderNotes: `${GITHUB}/${GANGSTAR_REPO}/blob/main/docs/NOTES.md`,
   twitter: TWITTER_HANDLE ? `https://x.com/${TWITTER_HANDLE}` : null,
   ferizy: "https://trip.ferizy.com",
 };
@@ -72,8 +76,8 @@ export const releaseSources = {
 };
 
 /**
- * Official logos in `public/images/`, rendered by `<BrandLogo>`. Paths are
- * relative (`./images/...`) so they resolve under any GitHub Pages sub-path.
+ * Official logos in `public/images/`, rendered by `<BrandLogo>`. Paths start
+ * at the site root (`/images/...`), so they resolve on nested routes too.
  * Candidates are tried in order; `emblem` (a drawn SVG) or `wordmark` (text)
  * is the last resort when no file loads. `width`/`height` are the intrinsic
  * size, used to reserve space before the image arrives.
@@ -81,14 +85,14 @@ export const releaseSources = {
 export const brandLogos = {
   asdp: {
     name: "PT ASDP Indonesia Ferry (Persero)",
-    sources: ["./images/asdp.png", "./images/asdp.svg"],
+    sources: ["/images/asdp.png", "/images/asdp.svg"],
     width: 1773,
     height: 1220,
     emblem: "asdp",
   },
   ferizy: {
     name: "Ferizy",
-    sources: ["./images/ferizy.svg", "./images/ferizy.png"],
+    sources: ["/images/ferizy.svg", "/images/ferizy.png"],
     width: 99,
     height: 42,
     wordmark: "ferizy",
@@ -102,8 +106,11 @@ export const brandLogos = {
 export const routes = {
   home: "/",
   projects: "/projects",
+  niskala: "/projects/niskala",
   gtRacing: "/projects/gt-racing",
   gangstar: "/projects/gangstar",
+  iosLoader: "/projects/ios-loader",
+  macLoader: "/projects/mac-loader",
   journey: "/journey",
   notes: "/notes",
   contact: "/contact",
@@ -138,6 +145,11 @@ export const ui = {
     readCaseStudy: tx("Read Case Study", "Baca Studi Kasus"),
     viewSource: tx("View Source on GitHub", "Lihat Source di GitHub"),
     onThisPage: tx("On this page", "Di halaman ini"),
+    copyLink: tx("Copy Link", "Salin Tautan"),
+    copyLinkLabel: tx("Copy the link to this page", "Salin tautan halaman ini"),
+    linkCopied: tx("Copied", "Tersalin"),
+    previous: tx("Previous", "Sebelumnya"),
+    next: tx("Next", "Berikutnya"),
   },
   nav: {
     homeLabel: tx("Adriansyah, home", "Adriansyah, beranda"),
@@ -155,12 +167,11 @@ export const ui = {
   },
   hero: {
     sceneLabel: tx("Interactive 3D systems workstation", "Workstation sistem 3D interaktif"),
-    waveBack: tx("Wave Back", "Sapa Balik"),
     presetsLabel: tx("Camera view", "Sudut kamera"),
     presets: {
       overview: tx("Overview", "Ringkasan"),
-      desk: tx("Developer & Desk", "Meja Kerja"),
-      telemetry: tx("System Telemetry", "Telemetri Sistem"),
+      desk: tx("Desk Setup", "Meja Kerja"),
+      telemetry: tx("Telemetry", "Telemetri"),
     },
     openProjects: tx("Explore Projects & Preservation →", "Jelajahi Proyek & Preservasi →"),
     openJourney: tx("View Work Experience →", "Lihat Pengalaman Kerja →"),
@@ -195,15 +206,15 @@ export const ui = {
     eyebrow: tx("Notes", "Catatan"),
     title: tx("Engineering Notes", "Catatan Teknis"),
     description: tx(
-      "Technical write-ups in three parts (context, approach, outcome): OpenGL ES translation for the iPad port, and hybrid harbor-and-cloud ticketing operations.",
-      "Tulisan teknis dalam tiga bagian (konteks, pendekatan, hasil): translasi OpenGL ES untuk port iPad, dan operasional tiket hybrid pelabuhan-dan-cloud.",
+      "Technical write-ups in three parts (context, approach, outcome): OpenGL ES translation for the iPad port, hybrid harbor-and-cloud ticketing operations, and safety guardrails for Windows maintenance.",
+      "Tulisan teknis dalam tiga bagian (konteks, pendekatan, hasil): translasi OpenGL ES untuk port iPad, operasional tiket hybrid pelabuhan-dan-cloud, dan pengaman untuk pemeliharaan Windows.",
     ),
     read: tx("Read note", "Baca catatan"),
     minutes: tx("{n} min read", "{n} menit baca"),
     published: tx("Published", "Diterbitkan"),
     allNotes: tx("All notes", "Semua catatan"),
     backTo: tx("Back to", "Kembali ke"),
-    nextNote: tx("Next note", "Catatan berikutnya"),
+    pager: tx("More notes", "Catatan lainnya"),
     related: tx("Related work", "Karya terkait"),
   },
   journey: {
@@ -241,10 +252,11 @@ export const ui = {
     eyebrow: tx("Projects", "Proyek"),
     title: tx("Original software & 32-bit preservation", "Software original & preservasi 32-bit"),
     description: tx(
-      "Four original applications built from scratch and two native PC ports of 32-bit iPad and Mac software. The case studies cover each port in technical detail.",
-      "Empat aplikasi original yang dibangun dari nol dan dua port PC native untuk software iPad dan Mac 32-bit. Studi kasus membahas setiap port secara teknis.",
+      "Four original applications built from scratch, and two native PC ports of 32-bit iPad and Mac software with the loader layer behind each. The case studies cover them in technical detail.",
+      "Empat aplikasi original yang dibangun dari nol, serta dua port PC native untuk software iPad dan Mac 32-bit beserta lapisan loader di baliknya. Studi kasus membahasnya secara teknis.",
     ),
     featured: tx("Featured Project", "Proyek Unggulan"),
+    loaderLabel: tx("Loader case study", "Studi kasus loader"),
     catalogTitle: tx("Project catalog", "Katalog proyek"),
     filterLabel: tx("Filter projects by category", "Filter proyek berdasarkan kategori"),
     showing: tx("Showing {n} of {total} projects", "Menampilkan {n} dari {total} proyek"),
@@ -272,7 +284,6 @@ export const ui = {
     atAGlance: tx("At a glance", "Sekilas"),
     backTo: tx("Back to", "Kembali ke"),
     allProjects: tx("All Projects", "Semua Proyek"),
-    next: tx("Next case study", "Studi kasus berikutnya"),
     more: tx("More case studies", "Studi kasus lainnya"),
     offline: tx("Offline", "Offline"),
     replacedBy: tx("replaced by", "digantikan oleh"),
@@ -388,8 +399,8 @@ export const projectSections = {
     title: tx("32-Bit Software Preservation", "Preservasi Software 32-Bit"),
     badge: { label: tx("32-Bit Preservation", "Preservasi 32-Bit"), icon: "archive" },
     description: tx(
-      "Native PC ports of 32-bit iPad (ARMv7) and Mac (x86) applications that current iOS and macOS no longer run.",
-      "Port PC native untuk aplikasi iPad (ARMv7) dan Mac (x86) 32-bit yang tidak lagi bisa dijalankan iOS dan macOS terbaru.",
+      "Native PC ports of 32-bit iPad (ARMv7) and Mac (x86) applications that current iOS and macOS no longer run, and the Mach-O loaders underneath them.",
+      "Port PC native untuk aplikasi iPad (ARMv7) dan Mac (x86) 32-bit yang tidak lagi bisa dijalankan iOS dan macOS terbaru, beserta loader Mach-O di baliknya.",
     ),
   },
 };
@@ -411,7 +422,7 @@ export const originalProjects = [
     id: "niskala",
     category: "original",
     featured: true,
-    caseStudy: null,
+    caseStudy: routes.niskala,
     shortTitle: "Niskala Utilities",
     subtitle: tx("Windows Desktop & CLI Utility", "Utilitas Desktop & CLI Windows"),
     platform: ORIGINAL_BADGE,
@@ -445,7 +456,7 @@ export const originalProjects = [
     ),
     tags: ["PHP", "CodeIgniter", "JavaScript", "HTML & CSS"],
     art: "sidaf",
-    image: null, // e.g. "images/sidaf.png" (16:9)
+    image: null, // e.g. "images/sidaf.png" (16:9); without one the card shows its architecture schematic
     links: [{ label: VIEW_SOURCE, href: links.sidafRepo, icon: "github" }],
     comparison: null,
   },
@@ -464,7 +475,9 @@ export const originalProjects = [
     ),
     tags: ["Unity", "C#", "Oculus Quest 2", "PCVR"],
     art: "airport",
-    image: "images/vr-airport.jpg", // thumbnail of the demo video below
+    // The card shows the architecture schematic, with the demo video behind its play button.
+    // Set "images/vr-airport.jpg" to use the video's thumbnail instead.
+    image: null,
     video: { youtubeId: "oLm0qSSHeiM", title: "Demo Aplikasi Simulasi Prosedur Bandara Menggunakan Virtual Reality" },
     links: [{ label: VIEW_SOURCE, href: links.vrAirportRepo, icon: "github" }],
     comparison: null,
@@ -484,7 +497,8 @@ export const originalProjects = [
     ),
     tags: ["GML", tx("2D Kinematics", "Kinematika 2D"), tx("Collision Detection", "Deteksi Tabrakan"), "Windows"],
     art: "warplane",
-    image: "images/war-plane-1945.jpg", // thumbnail of the recording below
+    // Architecture schematic with the recording behind its play button; "images/war-plane-1945.jpg" shows the thumbnail instead.
+    image: null,
     video: { youtubeId: "LXDtVyzX5zQ", title: "War Plane 1945 - Demo" },
     links: [
       { label: VIEW_SOURCE, href: links.warPlaneRepo, icon: "github" },
@@ -630,10 +644,59 @@ export const preservationProjects = [
       },
     ],
   },
+  {
+    id: "ios-loader",
+    category: "preservation",
+    runtime: true,
+    caseStudy: routes.iosLoader,
+    shortTitle: tx("32-Bit iOS Loader", "Loader iOS 32-Bit"),
+    subtitle: tx("ARMv7 Mach-O Loader & Runtime Bridge · GT Racing port", "Loader Mach-O ARMv7 & Runtime Bridge · port GT Racing"),
+    platform: "32-Bit iPad",
+    platformIcon: "tablet",
+    origin: "ARMv7 Mach-O · iOS ARM ABI",
+    target: tx("x86 host bridges · Windows & Linux", "Host bridge x86 · Windows & Linux"),
+    description: tx(
+      "The runtime layer under the GT Racing port: it maps the 32-bit iOS Mach-O at its own addresses, binds every import to an ARM-ABI host bridge and registers the Objective-C metadata for the recompiled code.",
+      "Lapisan runtime di balik port GT Racing: memetakan Mach-O iOS 32-bit di alamat aslinya, menautkan setiap import ke host bridge ber-ABI ARM, dan mendaftarkan metadata Objective-C untuk kode hasil rekompilasi.",
+    ),
+    tags: ["Mach-O", "ARMv7 ABI", "Objective-C", "C"],
+    art: "iosloader",
+    image: null,
+    links: [{ label: tx("Source: host/core", "Source: host/core"), href: links.iosLoaderSource, icon: "github" }],
+    comparison: null,
+  },
+  {
+    id: "mac-loader",
+    category: "preservation",
+    runtime: true,
+    caseStudy: routes.macLoader,
+    shortTitle: tx("32-Bit Mac Loader", "Loader Mac 32-Bit"),
+    subtitle: tx("i386 Mach-O Loader & ABI Bridge · Gangstar port", "Loader Mach-O i386 & ABI Bridge · port Gangstar"),
+    platform: "32-Bit Mac",
+    platformIcon: "laptop",
+    origin: "i386 Mach-O · OS X ABI",
+    target: tx("Host shims · Windows & Linux x86", "Host shim · Windows & Linux x86"),
+    description: tx(
+      "The user-space loader under the Gangstar port: it maps the non-PIE i386 Mach-O at its own addresses, patches the low range it cannot occupy, binds all 528 imports to host shims and runs the x86 code directly.",
+      "Loader user-space di balik port Gangstar: memetakan Mach-O i386 non-PIE di alamat aslinya, mem-patch rentang rendah yang tidak bisa ditempatinya, menautkan 528 import ke host shim, dan menjalankan kode x86 secara langsung.",
+    ),
+    tags: ["Mach-O", "i386 ABI", tx("dyld binding", "Binding dyld"), tx("Cocoa shims", "Shim Cocoa")],
+    art: "macloader",
+    image: null,
+    links: [{ label: tx("Source: host/core", "Source: host/core"), href: links.macLoaderSource, icon: "github" }],
+    comparison: null,
+  },
 ];
 
-/** Every project, originals first (6 in total: 4 original + 2 preservation). */
+/**
+ * Every project, originals first: 4 original applications, 2 preservation
+ * ports and the 2 loaders (`runtime: true`) the ports run on.
+ */
 export const projects = [...originalProjects, ...preservationProjects];
+
+/** Projects counted on the Home metric strip: the loaders are part of their ports. */
+const countedProjects = projects.filter((project) => !project.runtime);
+const countedPorts = preservationProjects.filter((project) => !project.runtime);
 
 /* -------------------------------------------------------------------------- */
 /*                               Counter metrics                              */
@@ -654,12 +717,12 @@ export const counterItems = [
   },
   {
     id: "projects",
-    value: projects.length,
+    value: countedProjects.length,
     suffix: "",
     label: tx("Engineering projects", "Proyek engineering"),
     note: tx(
-      `${originalProjects.length} original · ${preservationProjects.length} preservation ports`,
-      `${originalProjects.length} original · ${preservationProjects.length} port preservasi`,
+      `${originalProjects.length} original · ${countedPorts.length} preservation ports`,
+      `${originalProjects.length} original · ${countedPorts.length} port preservasi`,
     ),
   },
   {
@@ -676,14 +739,290 @@ export const counterItems = [
 const BROWSE_SOURCE = tx("Browse the source on GitHub", "Jelajahi source di GitHub");
 const DOWNLOAD_RELEASE = tx("Download {tag} from GitHub Releases", "Unduh {tag} dari GitHub Releases");
 
+const LOADER_SOURCE = tx("Loader source: host/core", "Source loader: host/core");
+
 /**
- * Data for the two deep-dive pages. Each section renders a list of typed
- * blocks: `prose`, `cards`, `timeline`, `flow`, `architecture`, `table`,
- * `comparison` (the project's legacy-vs-port table), `checklist`, `code` and
- * `links`. Facts and links may hold `{tag}` (the latest release tag).
- * Technical details follow each repository's README, FIXES.md and PATCHNOTES.md.
+ * Data for the deep-dive pages, in reading order (the Previous / Next links at
+ * the bottom of each page follow it). Each section renders a list of typed
+ * blocks: `prose`, `cards`, `timeline`, `flow`, `architecture`, `table`
+ * (`plain: true` for text cells instead of key caps), `comparison` (the
+ * project's legacy-vs-port table), `checklist`, `code` and `links`. A link with
+ * `to` is an internal route. Facts and links may hold `{tag}` (the latest
+ * release tag). Technical details follow each repository's README, FIXES.md,
+ * PATCHNOTES.md, docs/NOTES.md and source code.
  */
 export const caseStudies = {
+  niskala: {
+    projectId: "niskala",
+    eyebrow: tx("Case Study · Windows System Utility", "Studi Kasus · Utilitas Sistem Windows"),
+    title: "Niskala Utilities",
+    repoName: `${githubUser}/${NISKALA_REPO}`,
+    summary: tx(
+      "A Windows uninstaller, cleaner, resource control and maintenance toolkit: one C# engine with two front ends, the niskala.exe command line and the Niskala.exe WinUI 3 app. Every removal passes a path or registry guard twice and runs as a journaled transaction with a registry backup, and system repair runs only Windows' own tools from a closed list.",
+      "Uninstaller, pembersih, kontrol resource, dan toolkit pemeliharaan Windows: satu engine C# dengan dua antarmuka, command line niskala.exe dan aplikasi WinUI 3 Niskala.exe. Setiap penghapusan melewati pengaman path atau registry dua kali dan berjalan sebagai transaksi berjurnal dengan backup registry, sedangkan perbaikan sistem hanya menjalankan tools bawaan Windows dari daftar tertutup.",
+    ),
+    art: "niskala",
+    image: null,
+    facts: [
+      { id: "platform", label: tx("Platform", "Platform"), value: "Windows 10 & 11" },
+      { id: "front", label: tx("Front ends", "Antarmuka"), value: "WinUI 3 & CLI" },
+      { id: "build", label: "Build", value: "C# · Native AOT" },
+      { id: "release", label: tx("Latest release", "Rilis terbaru"), value: "{tag} · GPL-3.0" },
+    ],
+    links: [
+      { label: GITHUB_REPOSITORY, href: links.niskalaRepo, icon: "github" },
+      { release: "niskala", label: RELEASE_TAG, href: links.niskalaReleases, icon: "tag" },
+    ],
+    sections: [
+      {
+        id: "architecture",
+        title: tx("Modular architecture", "Arsitektur modular"),
+        intro: tx(
+          "The goal was a maintenance tool in which every action names what it touches, refuses protected locations and can be undone wherever Windows allows it. Each concern is its own project in `Niskala.sln`, and every module that removes or changes something goes through the same safety layer and journal.",
+          "Tujuannya adalah tool pemeliharaan yang setiap aksinya menyebut apa yang disentuh, menolak lokasi terlindungi, dan bisa dibatalkan selama Windows mengizinkan. Setiap fungsi menjadi proyek tersendiri di `Niskala.sln`, dan setiap modul yang menghapus atau mengubah sesuatu melewati lapisan pengaman dan jurnal yang sama.",
+        ),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "terminal",
+                title: "Niskala.Repair",
+                body: tx(
+                  "Runs DISM, SFC, netsh, ipconfig and chkdsk from a closed list of commands with fixed arguments, and maps their exit codes to a diagnostic.",
+                  "Menjalankan DISM, SFC, netsh, ipconfig, dan chkdsk dari daftar perintah tertutup dengan argumen tetap, lalu memetakan exit code-nya ke diagnosis.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: "Niskala.Cleaner",
+                body: tx(
+                  "Cleans system junk and browser traces from declarative rules in `rules/*.json`, and compacts SQLite databases only after `PRAGMA integrity_check` answers `ok`.",
+                  "Membersihkan sampah sistem dan jejak browser dari aturan deklaratif di `rules/*.json`, dan memadatkan database SQLite hanya setelah `PRAGMA integrity_check` menjawab `ok`.",
+                ),
+              },
+              {
+                icon: "chip",
+                title: "Niskala.Optimizer",
+                body: tx(
+                  "Resource Control for startup entries, third-party services, scheduled tasks and context-menu handlers, each switch recorded before and after.",
+                  "Resource Control untuk entri startup, layanan pihak ketiga, scheduled task, dan context-menu handler, dengan setiap perubahan dicatat sebelum dan sesudahnya.",
+                ),
+              },
+              {
+                icon: "layers",
+                title: "Niskala.Toolkit",
+                body: tx(
+                  "Storage Map, Duplicate Scan and Secure Wipe. Storage Map counts a folder that is a reparse point as a link and never enters it, so junction loops cannot happen.",
+                  "Storage Map, Duplicate Scan, dan Secure Wipe. Storage Map menghitung folder yang berupa reparse point sebagai tautan dan tidak pernah memasukinya, sehingga loop junction tidak mungkin terjadi.",
+                ),
+              },
+              {
+                icon: "shield",
+                title: "Niskala.Core",
+                body: tx(
+                  "The safety layer: `PathGuard` for files and folders, `RegistryGuard` for keys and values.",
+                  "Lapisan pengaman: `PathGuard` untuk file dan folder, `RegistryGuard` untuk key dan value.",
+                ),
+              },
+              {
+                icon: "database",
+                title: "Niskala.Guardian",
+                body: tx(
+                  "Runs every removal as a journaled transaction in `%LocalAppData%\\Niskala\\transactions`, so `restore` can put it back.",
+                  "Menjalankan setiap penghapusan sebagai transaksi berjurnal di `%LocalAppData%\\Niskala\\transactions`, sehingga `restore` bisa mengembalikannya.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "guardrails",
+        title: tx("Safety guardrails", "Pengaman"),
+        intro: tx(
+          "Every removal must pass a guard twice: when the scanner proposes it, and again right before the Guardian acts.",
+          "Setiap penghapusan harus melewati pengaman dua kali: saat scanner mengusulkannya, dan lagi tepat sebelum Guardian bertindak.",
+        ),
+        blocks: [
+          {
+            type: "flow",
+            caption: tx("PathGuard checks, in order", "Urutan pemeriksaan PathGuard"),
+            steps: [
+              {
+                icon: "code",
+                title: tx("Syntax", "Sintaks"),
+                body: tx(
+                  "UNC and device paths, alternate data streams, . and .. segments, trailing dots or spaces, DOS device names",
+                  "Path UNC dan device, alternate data stream, segmen . dan .., titik atau spasi di akhir, nama device DOS",
+                ),
+              },
+              {
+                icon: "shield",
+                title: tx("Lexical rules", "Aturan leksikal"),
+                body: tx("Protection rules on the path as written", "Aturan proteksi pada path seperti yang ditulis"),
+              },
+              {
+                icon: "layers",
+                title: tx("Physical resolution", "Resolusi fisik"),
+                body: tx(
+                  "Through a handle: junctions, symbolic links, SUBST drives, 8.3 names and network drives resolved",
+                  "Melalui handle: junction, symbolic link, drive SUBST, nama 8.3, dan network drive diresolusi",
+                ),
+              },
+              {
+                icon: "lock",
+                title: tx("Physical rules", "Aturan fisik"),
+                body: tx("The same protection rules again on the resolved path", "Aturan proteksi yang sama sekali lagi pada path hasil resolusi"),
+              },
+            ],
+          },
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "lock",
+                title: "RegistryGuard",
+                body: tx(
+                  "All of `HKLM` is a protected tree, with named rules for `SYSTEM`, `SAM`, `SECURITY`, `BCD00000000` and `HARDWARE` so a denial names the hive. `HKCR` is refused because it merges two hives, and keys are opened with `REG_OPTION_OPEN_LINK` so a registry symbolic link is refused.",
+                  "Seluruh `HKLM` adalah tree terlindungi, dengan aturan bernama untuk `SYSTEM`, `SAM`, `SECURITY`, `BCD00000000`, dan `HARDWARE` sehingga penolakan menyebut hive-nya. `HKCR` ditolak karena menggabungkan dua hive, dan key dibuka dengan `REG_OPTION_OPEN_LINK` sehingga symbolic link registry ditolak.",
+                ),
+              },
+              {
+                icon: "shield",
+                title: "PrivilegeScope",
+                body: tx(
+                  "When elevated, `SeBackupPrivilege` and `SeRestorePrivilege` are enabled for the removal loop only and released afterwards. PathGuard, the owner check and the signature check still decide what may go.",
+                  "Saat elevated, `SeBackupPrivilege` dan `SeRestorePrivilege` hanya diaktifkan selama loop penghapusan lalu dilepas. PathGuard, pemeriksaan owner, dan pemeriksaan tanda tangan tetap menentukan apa yang boleh dihapus.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: tx(".reg backups", "Backup .reg"),
+                body: tx(
+                  "Before anything is removed, the Guardian saves `registry.json.gz`, with every value's type and bytes, and `registry.reg` in Registry Editor format (UTF-16, version 5.00) for use without Niskala.",
+                  "Sebelum apa pun dihapus, Guardian menyimpan `registry.json.gz`, berisi tipe dan byte setiap value, serta `registry.reg` dalam format Registry Editor (UTF-16, versi 5.00) yang bisa dipakai tanpa Niskala.",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Handle-bound decisions", "Keputusan terikat handle"),
+                body: tx(
+                  "The final check opens the object and binds the decision to that handle: the same physical path as scanned, not owned by TrustedInstaller, not a Microsoft-signed program.",
+                  "Pemeriksaan terakhir membuka objeknya dan mengikat keputusan ke handle itu: path fisik yang sama dengan saat dipindai, bukan milik TrustedInstaller, dan bukan program bertanda tangan Microsoft.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "maintenance",
+        title: tx("Non-destructive maintenance scope", "Cakupan pemeliharaan non-destruktif"),
+        intro: tx(
+          "`Niskala.Repair` runs Windows' own repair tools and nothing else. `RepairCommandId` is a closed enum, and each value resolves to a program in the system directory with fixed arguments.",
+          "`Niskala.Repair` hanya menjalankan tools perbaikan bawaan Windows. `RepairCommandId` adalah enum tertutup, dan setiap nilainya diresolusi ke program di direktori sistem dengan argumen tetap.",
+        ),
+        blocks: [
+          {
+            type: "table",
+            plain: true,
+            caption: tx("The closed command list", "Daftar perintah tertutup"),
+            columns: [tx("Command", "Perintah"), tx("Runs", "Menjalankan"), tx("Notes", "Catatan")],
+            rows: [
+              ["dism-check-health", "`DISM /Online /Cleanup-Image /CheckHealth`", tx("Reads only", "Hanya membaca")],
+              [
+                "dism-restore-health",
+                "`DISM /Online /Cleanup-Image /RestoreHealth`",
+                tx("Repairs the component store from Windows Update", "Memperbaiki component store dari Windows Update"),
+              ],
+              ["sfc-scan", "`sfc /scannow`", tx("Replaces damaged protected files", "Mengganti file terlindungi yang rusak")],
+              [
+                "dism-component-cleanup",
+                "`DISM /Online /Cleanup-Image /StartComponentCleanup`",
+                tx("Never `/ResetBase`, so updates stay uninstallable", "Tidak pernah `/ResetBase`, jadi update tetap bisa di-uninstall"),
+              ],
+              ["winsock-reset", "`netsh winsock reset`", tx("Needs a restart", "Perlu restart")],
+              ["ip-reset", "`netsh int ip reset`", tx("Needs a restart", "Perlu restart")],
+              ["flush-dns", "`ipconfig /flushdns`", tx("Clears the DNS cache", "Mengosongkan cache DNS")],
+              [
+                "chkdsk-scan",
+                "`chkdsk C: /scan`",
+                tx(
+                  "Online scan; the drive is the system drive Windows reports. Never `/f`, `/r`, `/x` or `/spotfix`",
+                  "Pemindaian online; drive-nya adalah drive sistem dari Windows. Tidak pernah `/f`, `/r`, `/x`, atau `/spotfix`",
+                ),
+              ],
+            ],
+          },
+          {
+            type: "checklist",
+            title: tx("Hard limits", "Batasan tetap"),
+            items: [
+              tx(
+                "Every command needs elevation; without it the runner returns NotElevated and starts nothing",
+                "Setiap perintah butuh elevasi; tanpanya runner mengembalikan NotElevated dan tidak menjalankan apa pun",
+              ),
+              tx(
+                "The resolved invocation accepts only these programs and argument tokens, and refuses destructive switches by name",
+                "Invocation yang diresolusi hanya menerima program dan token argumen ini, dan menolak switch destruktif berdasarkan namanya",
+              ),
+              tx(
+                "A program that is missing or is a reparse point is not started",
+                "Program yang hilang atau berupa reparse point tidak dijalankan",
+              ),
+              tx(
+                "Cancelling kills the whole process tree; exit codes such as 3010 and 0x800F081F map to a diagnostic",
+                "Pembatalan menghentikan seluruh process tree; exit code seperti 3010 dan 0x800F081F dipetakan ke diagnosis",
+              ),
+            ],
+          },
+          {
+            type: "code",
+            caption: tx("From the command line", "Dari command line"),
+            snippets: [
+              { label: tx("List the repairs", "Daftar perbaikan"), code: "niskala repair list" },
+              { label: tx("Run one", "Jalankan satu"), code: "niskala repair run dism-check-health" },
+            ],
+            note: tx(
+              "A repair that changes Windows asks first (--yes skips the question); the exit code is 3010 when a restart is needed.",
+              "Perbaikan yang mengubah Windows akan bertanya dulu (--yes melewati pertanyaan); exit code 3010 berarti perlu restart.",
+            ),
+          },
+        ],
+      },
+      {
+        id: "release",
+        title: tx("Release", "Rilis"),
+        blocks: [
+          {
+            type: "checklist",
+            title: tx("What a release contains", "Isi setiap rilis"),
+            items: [
+              tx(
+                "Native AOT builds of niskala.exe and Niskala.exe for win-x64 and win-arm64",
+                "Build Native AOT untuk niskala.exe dan Niskala.exe, untuk win-x64 dan win-arm64",
+              ),
+              tx(
+                "A clean-room implementation: no code or binaries of other system utilities analysed or reused",
+                "Implementasi clean-room: tidak ada kode atau biner utilitas sistem lain yang dianalisis atau dipakai ulang",
+              ),
+              tx("Released under the GNU General Public License v3.0", "Dirilis dengan lisensi GNU General Public License v3.0"),
+            ],
+          },
+          {
+            type: "links",
+            items: [
+              { release: "niskala", label: DOWNLOAD_RELEASE, href: links.niskalaReleases, icon: "tag", primary: true },
+              { label: BROWSE_SOURCE, href: links.niskalaRepo, icon: "github" },
+              { to: "/notes/windows-system-guardrails", label: tx("Engineering note: safety guardrails", "Catatan teknis: pengaman"), icon: "book" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
   "gt-racing": {
     projectId: "gt-racing",
     eyebrow: tx("Case Study · 32-Bit iPad Software Preservation", "Studi Kasus · Preservasi Software iPad 32-Bit"),
@@ -704,6 +1043,7 @@ export const caseStudies = {
     links: [
       { label: GITHUB_REPOSITORY, href: links.gtRacingRepo, icon: "github" },
       { release: "gt-racing", label: RELEASE_TAG, href: links.gtRacingReleases, icon: "tag" },
+      { to: routes.iosLoader, label: tx("Loader & runtime bridge", "Loader & runtime bridge"), icon: "layers" },
     ],
     sections: [
       {
@@ -891,6 +1231,7 @@ export const caseStudies = {
             items: [
               { release: "gt-racing", label: DOWNLOAD_RELEASE, href: links.gtRacingReleases, icon: "tag", primary: true },
               { label: BROWSE_SOURCE, href: links.gtRacingRepo, icon: "github" },
+              { to: routes.iosLoader, label: tx("How the loader works", "Cara kerja loader"), icon: "layers" },
             ],
           },
         ],
@@ -918,6 +1259,7 @@ export const caseStudies = {
     links: [
       { label: GITHUB_REPOSITORY, href: links.gangstarRepo, icon: "github" },
       { release: "gangstar", label: RELEASE_TAG, href: links.gangstarReleases, icon: "tag" },
+      { to: routes.macLoader, label: tx("Mach-O loader & ABI bridge", "Loader Mach-O & ABI bridge"), icon: "layers" },
     ],
     sections: [
       {
@@ -1075,6 +1417,522 @@ export const caseStudies = {
             items: [
               { release: "gangstar", label: DOWNLOAD_RELEASE, href: links.gangstarReleases, icon: "tag", primary: true },
               { label: BROWSE_SOURCE, href: links.gangstarRepo, icon: "github" },
+              { to: routes.macLoader, label: tx("How the loader works", "Cara kerja loader"), icon: "layers" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
+  "ios-loader": {
+    projectId: "ios-loader",
+    eyebrow: tx("Case Study · Runtime Architecture · 32-Bit iOS", "Studi Kasus · Arsitektur Runtime · iOS 32-Bit"),
+    title: tx("32-Bit iOS ARMv7 Binary Loader & Runtime Bridge", "Loader Biner ARMv7 iOS 32-Bit & Runtime Bridge"),
+    repoName: `${githubUser}/${GT_RACING_REPO} · host/core`,
+    summary: tx(
+      "The runtime layer under the GT Racing: Motor Academy PC port. Its code is recompiled ahead of time from ARMv7 to C; at start-up a loader reads the original 32-bit iOS Mach-O, places its segments at their own addresses in a range the executable reserves, binds every import to a host bridge that speaks the iOS ARM calling convention and registers the Objective-C metadata. The recompiled code then runs as native x86 on Windows and Linux, with no iOS and no CPU emulation underneath.",
+      "Lapisan runtime di balik port PC GT Racing: Motor Academy. Kodenya direkompilasi lebih dulu dari ARMv7 ke C; saat start-up, loader membaca Mach-O iOS 32-bit aslinya, menempatkan segmennya di alamat aslinya dalam rentang yang dicadangkan executable, menautkan setiap import ke host bridge yang memakai konvensi pemanggilan ARM iOS, dan mendaftarkan metadata Objective-C. Kode hasil rekompilasi lalu berjalan sebagai x86 native di Windows dan Linux, tanpa iOS dan tanpa emulasi CPU di bawahnya.",
+    ),
+    art: "iosloader",
+    image: null,
+    facts: [
+      { id: "input", label: tx("Input", "Input"), value: "ARMv7 Mach-O · MH_MAGIC" },
+      { id: "range", label: tx("Image range", "Rentang image"), value: "0x11000 – 0x8B5000" },
+      { id: "imports", label: tx("Import signatures", "Signature import"), value: "747 · imports.sig" },
+      { id: "host", label: tx("Runs on", "Berjalan di"), value: "Windows & Linux x86" },
+    ],
+    links: [
+      { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "github" },
+      { to: routes.gtRacing, label: tx("GT Racing port case study", "Studi kasus port GT Racing"), icon: "tablet" },
+    ],
+    sections: [
+      {
+        id: "pipeline",
+        title: tx("Hybrid loading pipeline", "Pipeline loading hybrid"),
+        intro: tx(
+          "Code and data take different paths. The instructions were translated at build time (`recomp/`, one C function `F_<addr>(CPU *c)` per guest function); the data, symbol tables and Objective-C metadata are read from the user's own Mach-O when the program starts (`host/core/loader.c`, `macho.c`).",
+          "Kode dan data menempuh jalur berbeda. Instruksi diterjemahkan saat build (`recomp/`, satu fungsi C `F_<addr>(CPU *c)` per fungsi guest); data, tabel simbol, dan metadata Objective-C dibaca dari Mach-O milik pengguna saat program dimulai (`host/core/loader.c`, `macho.c`).",
+        ),
+        blocks: [
+          {
+            type: "flow",
+            caption: tx("From the iOS Mach-O to running code", "Dari Mach-O iOS ke kode yang berjalan"),
+            steps: [
+              {
+                icon: "code",
+                title: tx("Parse", "Parse"),
+                body: tx(
+                  "Header, LC_SEGMENT, LC_SYMTAB, LC_DYSYMTAB, LC_DYLD_INFO and the linked dylibs; anything but CPU_TYPE_ARM is refused",
+                  "Header, LC_SEGMENT, LC_SYMTAB, LC_DYSYMTAB, LC_DYLD_INFO, dan dylib yang ditautkan; selain CPU_TYPE_ARM ditolak",
+                ),
+              },
+              {
+                icon: "layers",
+                title: tx("Map segments", "Petakan segmen"),
+                body: tx(
+                  "__TEXT and __DATA copied to their own addresses; a segment that does not fit the reserved range stops the load",
+                  "__TEXT dan __DATA disalin ke alamat aslinya; segmen yang tidak muat di rentang cadangan menghentikan proses load",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Bind", "Bind"),
+                body: tx(
+                  "Regular, lazy and weak bind opcodes: functions to ARM-ABI bridges, data to host objects, missing data to guard slots",
+                  "Opcode bind regular, lazy, dan weak: fungsi ke bridge ABI ARM, data ke objek host, data yang hilang ke slot guard",
+                ),
+              },
+              {
+                icon: "cube",
+                title: "Objective-C",
+                body: tx(
+                  "Selectors in __objc_selrefs interned, classes in __objc_classlist registered beside the host classes",
+                  "Selector di __objc_selrefs di-intern, kelas di __objc_classlist didaftarkan di samping kelas host",
+                ),
+              },
+              {
+                icon: "chip",
+                title: tx("Run", "Jalankan"),
+                body: tx(
+                  "The __mod_init_func initializers, then the entry point, all as recompiled native code",
+                  "Initializer __mod_init_func, lalu entry point, semuanya sebagai kode native hasil rekompilasi",
+                ),
+              },
+            ],
+          },
+          {
+            type: "table",
+            plain: true,
+            caption: tx("Fixed address layout (layout.h)", "Layout alamat tetap (layout.h)"),
+            columns: [tx("Range", "Rentang"), tx("Holds", "Isi")],
+            rows: [
+              ["`0x00011000 – 0x008B5000`", tx("The Mach-O image at its own addresses", "Image Mach-O di alamat aslinya")],
+              [
+                "`0x008C0000`",
+                tx(
+                  "Copy of the image's first 64 KB (0x1000 – 0x11000): Windows maps nothing below 0x10000 and the executable's own header sits there. Header pointers in __program_vars and __nl_symbol_ptr are redirected to the copy",
+                  "Salinan 64 KB pertama image (0x1000 – 0x11000): Windows tidak memetakan apa pun di bawah 0x10000 dan header executable sendiri ada di sana. Pointer header di __program_vars dan __nl_symbol_ptr dialihkan ke salinan ini",
+                ),
+              ],
+              ["`0x008D0000`", tx("Import slots, one per bound host function", "Slot import, satu per fungsi host yang ditautkan")],
+              ["`0x008D4000`", tx("16-byte guard slots for data imports the host does not provide", "Slot guard 16 byte untuk import data yang tidak disediakan host")],
+              ["`0x008D8000`", tx("Host function addresses handed to the guest", "Alamat fungsi host yang diberikan ke guest")],
+            ],
+          },
+        ],
+      },
+      {
+        id: "resolution",
+        title: tx("Symbol & stub resolution", "Resolusi simbol & stub"),
+        intro: tx(
+          "Every bind slot must land inside the image, or the load stops with an error. After binding, the import, guard and host-function pages are made no-access, so a stray read or call faults and is reported with the symbol's name.",
+          "Setiap slot bind harus berada di dalam image, atau proses load berhenti dengan error. Setelah binding, halaman import, guard, dan fungsi host dibuat no-access, sehingga baca atau panggilan yang nyasar memicu fault dan dilaporkan beserta nama simbolnya.",
+        ),
+        blocks: [
+          {
+            type: "table",
+            plain: true,
+            caption: tx("How an import is resolved", "Cara sebuah import diresolusi"),
+            columns: [tx("Import", "Import"), tx("Resolved to", "Diresolusi ke")],
+            rows: [
+              [
+                tx("Function", "Fungsi"),
+                tx(
+                  "An ARM-ABI bridge, found by binary search in the sorted bridge table (`rt_bridge_by_name`) and given an import slot",
+                  "Bridge ABI ARM, dicari dengan binary search di tabel bridge yang terurut (`rt_bridge_by_name`) lalu diberi slot import",
+                ),
+              ],
+              [
+                tx("Data symbol", "Simbol data"),
+                tx(
+                  "A host object (`rt_data_import`): class and metaclass objects, C++ vtables and type info, `k…` constants, `…Notification` and `…Key` strings",
+                  "Objek host (`rt_data_import`): objek class dan metaclass, vtable dan type info C++, konstanta `k…`, string `…Notification` dan `…Key`",
+                ),
+              ],
+              [
+                tx("Missing data", "Data yang hilang"),
+                tx("A no-access guard slot, logged at load with its address", "Slot guard no-access, dicatat saat load beserta alamatnya"),
+              ],
+              [
+                tx("Weak import the image defines", "Import weak yang didefinisikan image"),
+                tx("Kept as the image's own definition", "Tetap memakai definisi milik image"),
+              ],
+              [
+                "`dladdr`, `dlsym`, `_dyld_*`",
+                tx(
+                  "Answered by the host (`dyld.c`): one image, the original executable",
+                  "Dijawab host (`dyld.c`): satu image, yaitu executable aslinya",
+                ),
+              ],
+            ],
+          },
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "cube",
+                title: tx("Objective-C runtime", "Runtime Objective-C"),
+                body: tx(
+                  "`objc_msgSend`, `objc_msgSend_stret` and the `Super2` variants are bridges over a host class registry. When an application class subclasses a host class, the host class takes its instance size from the subclass's instance start, so the two layouts line up.",
+                  "`objc_msgSend`, `objc_msgSend_stret`, dan varian `Super2` adalah bridge di atas registry kelas host. Saat kelas aplikasi menurunkan kelas host, kelas host mengambil ukuran instance dari awal instance subclass-nya, sehingga kedua layout tetap sejajar.",
+                ),
+              },
+              {
+                icon: "layers",
+                title: tx("iOS libraries", "Pustaka iOS"),
+                body: tx(
+                  "Foundation, UIKit, OpenAL, CoreFoundation, libc, libstdc++ and the rest live in `host/shims/`; OpenGL ES and EAGL run on desktop OpenGL, with SDL3 for the window, input and audio.",
+                  "Foundation, UIKit, OpenAL, CoreFoundation, libc, libstdc++, dan lainnya ada di `host/shims/`; OpenGL ES dan EAGL berjalan di OpenGL desktop, dengan SDL3 untuk jendela, input, dan audio.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "abi",
+        title: tx("Calling-convention bridge", "Jembatan konvensi pemanggilan"),
+        intro: tx(
+          "Recompiled functions take a `CPU *` that holds the ARM registers, flags and VFP/NEON state. A call to an imported function lands in a bridge generated from its signature in `host/core/imports.sig` by `recomp/bridgegen.py`.",
+          "Fungsi hasil rekompilasi menerima `CPU *` yang menyimpan register ARM, flag, dan state VFP/NEON. Panggilan ke fungsi impor masuk ke bridge yang dihasilkan dari signature-nya di `host/core/imports.sig` oleh `recomp/bridgegen.py`.",
+        ),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "code",
+                title: tx("Arguments", "Argumen"),
+                body: tx(
+                  "The first four words come from `r0`–`r3`, the rest from the guest stack at `sp`. 64-bit integers and doubles take two words; variadic calls read up to 96 words.",
+                  "Empat word pertama diambil dari `r0`–`r3`, sisanya dari stack guest di `sp`. Integer 64-bit dan double memakai dua word; panggilan variadic membaca hingga 96 word.",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Returns", "Nilai balik"),
+                body: tx(
+                  "Integers and floats return in `r0`, 64-bit values and doubles in `r0:r1`. The bridges also cover VFP arguments and structure returns.",
+                  "Integer dan float dikembalikan di `r0`, nilai 64-bit dan double di `r0:r1`. Bridge juga menangani argumen VFP dan structure return.",
+                ),
+              },
+              {
+                icon: "chip",
+                title: tx("Indirect calls", "Panggilan tidak langsung"),
+                body: tx(
+                  "A call through a pointer goes through a direct-mapped dispatch table from guest address to recompiled function (`rt_lookup`).",
+                  "Panggilan melalui pointer melewati tabel dispatch direct-mapped dari alamat guest ke fungsi hasil rekompilasi (`rt_lookup`).",
+                ),
+              },
+              {
+                icon: "shield",
+                title: tx("Exceptions", "Exception"),
+                body: tx(
+                  "The binary uses SjLj exceptions. The runtime keeps the SjLj frame list across host frames, and guest `setjmp` / `longjmp` restore `r4`–`r11`, `sp`, `d8` and that list.",
+                  "Biner ini memakai exception SjLj. Runtime menjaga daftar frame SjLj melintasi frame host, dan `setjmp` / `longjmp` guest memulihkan `r4`–`r11`, `sp`, `d8`, serta daftar itu.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "execution",
+        title: tx("Native execution, no OS emulation", "Eksekusi native, tanpa emulasi OS"),
+        blocks: [
+          {
+            type: "checklist",
+            title: tx("What runs at run time", "Apa yang berjalan saat runtime"),
+            items: [
+              tx(
+                "No iOS kernel, no dyld and no CPU interpreter: the recompiled C functions are ordinary x86 code",
+                "Tanpa kernel iOS, tanpa dyld, dan tanpa interpreter CPU: fungsi C hasil rekompilasi adalah kode x86 biasa",
+              ),
+              tx(
+                "gt.ld (Windows) and gt_linux.ld (a fixed-address ELF) reserve the range from 0x11000, so the image loads with no relocation",
+                "gt.ld (Windows) dan gt_linux.ld (ELF beralamat tetap) mencadangkan rentang mulai 0x11000, sehingga image dimuat tanpa relokasi",
+              ),
+              tx(
+                "Each emitted instruction form is tested against Unicorn (Cortex-A8) in tests/difftest.py",
+                "Setiap bentuk instruksi yang dihasilkan diuji terhadap Unicorn (Cortex-A8) di tests/difftest.py",
+              ),
+              tx(
+                "The shims reach the application-specific code through a single hooks header, so the loader itself knows no application",
+                "Shim menjangkau kode khusus aplikasi melalui satu header hook, sehingga loader sendiri tidak mengenal aplikasi mana pun",
+              ),
+            ],
+          },
+          {
+            type: "links",
+            items: [
+              { label: LOADER_SOURCE, href: links.iosLoaderSource, icon: "github", primary: true },
+              { to: routes.gtRacing, label: tx("GT Racing port case study", "Studi kasus port GT Racing"), icon: "tablet" },
+              { to: routes.macLoader, label: tx("Compare: the 32-bit Mac loader", "Bandingkan: loader Mac 32-bit"), icon: "laptop" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+
+  "mac-loader": {
+    projectId: "mac-loader",
+    eyebrow: tx("Case Study · Runtime Architecture · 32-Bit Mac", "Studi Kasus · Arsitektur Runtime · Mac 32-Bit"),
+    // U+2011 (non-breaking hyphen) keeps "Mach-O" on one line in the page title.
+    title: tx("32-Bit OS X x86 Mach‑O Loader & ABI Bridge", "Loader Mach‑O x86 OS X 32-Bit & ABI Bridge"),
+    repoName: `${githubUser}/${GANGSTAR_REPO} · host/core`,
+    summary: tx(
+      "The user-space loader under the Gangstar: Miami Vindication PC port. The application is a non-PIE i386 Mach-O linked at 0x1000 with no rebase information, so it must run at its own addresses. The host executable reserves that range, copies the segments in, patches the small low range it cannot occupy, binds every import itself and calls the original x86 code directly, with no CPU emulation and no macOS underneath.",
+      "Loader user-space di balik port PC Gangstar: Miami Vindication. Aplikasinya adalah Mach-O i386 non-PIE yang ditautkan di 0x1000 tanpa informasi rebase, sehingga harus berjalan di alamat aslinya. Executable host mencadangkan rentang itu, menyalin segmennya, mem-patch rentang rendah kecil yang tidak bisa ditempatinya, menautkan setiap import sendiri, dan memanggil kode x86 aslinya secara langsung, tanpa emulasi CPU dan tanpa macOS di bawahnya.",
+    ),
+    art: "macloader",
+    image: null,
+    facts: [
+      { id: "input", label: tx("Input", "Input"), value: "i386 Mach-O · non-PIE" },
+      { id: "binds", label: tx("Bind slots", "Slot bind"), value: tx("4,243 · 528 imports", "4.243 · 528 import") },
+      { id: "shims", label: tx("Imports with a shim", "Import dengan shim"), value: tx("477 of 528", "477 dari 528") },
+      { id: "patches", label: tx("Low-range patches", "Patch rentang rendah"), value: tx("4,360", "4.360") },
+    ],
+    links: [
+      { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "github" },
+      { to: routes.gangstar, label: tx("Gangstar port case study", "Studi kasus port Gangstar"), icon: "laptop" },
+    ],
+    sections: [
+      {
+        id: "layout",
+        title: tx("Memory layout & loading", "Layout memori & loading"),
+        intro: tx(
+          "The host executable is based at `0x10000`, the lowest address Windows allows, and its first section (`.gmvimg`, from `reserve.S`) reserves the application's whole range so nothing else can be mapped there. On Linux the program is linked at `0x08048000` and maps the range with `MAP_FIXED_NOREPLACE` as it starts, so the layout and the patch table are the same on both.",
+          "Executable host berbasis di `0x10000`, alamat terendah yang diizinkan Windows, dan section pertamanya (`.gmvimg`, dari `reserve.S`) mencadangkan seluruh rentang aplikasi sehingga tidak ada yang lain bisa dipetakan di sana. Di Linux, program ditautkan di `0x08048000` dan memetakan rentang itu dengan `MAP_FIXED_NOREPLACE` saat mulai, sehingga layout dan tabel patch-nya sama di keduanya.",
+        ),
+        blocks: [
+          {
+            type: "flow",
+            caption: tx("Load sequence (host/core)", "Urutan load (host/core)"),
+            steps: [
+              {
+                icon: "code",
+                title: tx("Parse", "Parse"),
+                body: tx(
+                  "LC_SEGMENT, LC_SYMTAB, LC_DYSYMTAB, LC_DYLD_INFO, LC_UNIXTHREAD and LC_LOAD_DYLIB; i386, MH_EXECUTE and non-PIE are required",
+                  "LC_SEGMENT, LC_SYMTAB, LC_DYSYMTAB, LC_DYLD_INFO, LC_UNIXTHREAD, dan LC_LOAD_DYLIB; wajib i386, MH_EXECUTE, dan non-PIE",
+                ),
+              },
+              {
+                icon: "layers",
+                title: tx("Copy", "Salin"),
+                body: tx(
+                  "Segments into the reserved range; the code below 0x11000, where the PE header sits, into a copy at 0xC70000",
+                  "Segmen ke rentang cadangan; kode di bawah 0x11000, tempat header PE berada, ke salinan di 0xC70000",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Patch", "Patch"),
+                body: tx(
+                  "4,360 branches and PIC references from gmv_patch.bin, CRC-locked to the binary and checked byte by byte first",
+                  "4.360 branch dan referensi PIC dari gmv_patch.bin, terkunci CRC ke binernya dan diperiksa byte demi byte lebih dulu",
+                ),
+              },
+              {
+                icon: "database",
+                title: tx("Bind", "Bind"),
+                body: tx(
+                  "All 4,243 bind slots written up front: a host shim, a name-reporting thunk, or a no-access stand-in",
+                  "Semua 4.243 slot bind ditulis di awal: host shim, thunk yang melaporkan nama, atau pengganti no-access",
+                ),
+              },
+              {
+                icon: "chip",
+                title: tx("Run", "Jalankan"),
+                body: tx(
+                  "451 static initializers one at a time, the Objective-C registry, then main()",
+                  "451 static initializer satu per satu, registry Objective-C, lalu main()",
+                ),
+              },
+            ],
+          },
+          {
+            type: "table",
+            plain: true,
+            caption: tx("Low-range patch kinds (image.c)", "Jenis patch rentang rendah (image.c)"),
+            columns: [tx("Kind", "Jenis"), tx("What it fixes", "Yang diperbaiki")],
+            rows: [
+              [
+                "`REL32_OUT`",
+                tx(
+                  "A call, jmp or jcc in the low copy that leaves it: the displacement is shifted by the copy's offset",
+                  "call, jmp, atau jcc di salinan rendah yang keluar darinya: displacement digeser sebesar offset salinan",
+                ),
+              ],
+              [
+                "`PIC_POP`",
+                tx(
+                  "A `call $+5; pop reg` sequence in the low copy: rewritten as `mov reg, <original address>` plus a `nop`",
+                  "Urutan `call $+5; pop reg` di salinan rendah: ditulis ulang menjadi `mov reg, <alamat asli>` ditambah `nop`",
+                ),
+              ],
+              [
+                "`REL32_IN`",
+                tx("A call or jmp from the image into low-range code: retargeted to the copy", "call atau jmp dari image ke kode rentang rendah: diarahkan ke salinan"),
+              ],
+              [
+                "`PTR_IN`",
+                tx("A data word holding a low-range code address: retargeted to the copy", "Word data yang berisi alamat kode rentang rendah: diarahkan ke salinan"),
+              ],
+            ],
+          },
+        ],
+      },
+      {
+        id: "dyld",
+        title: tx("dyld binding without dyld", "Binding dyld tanpa dyld"),
+        intro: tx(
+          "No dyld runs. The loader reads the `LC_DYLD_INFO` bind, lazy-bind and weak-bind opcode streams itself and writes every slot before the first instruction runs, so `dyld_stub_binder` and the `__stub_helper` code are never reached.",
+          "Tidak ada dyld yang berjalan. Loader membaca sendiri stream opcode bind, lazy-bind, dan weak-bind dari `LC_DYLD_INFO`, lalu menulis setiap slot sebelum instruksi pertama berjalan, sehingga `dyld_stub_binder` dan kode `__stub_helper` tidak pernah tercapai.",
+        ),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "database",
+                title: tx("Ordinals & slots", "Ordinal & slot"),
+                body: tx(
+                  "Each import keeps its library ordinal. A symbol bound from two dylibs, a special ordinal, or a slot that is not an aligned data word outside `__TEXT` stops the load.",
+                  "Setiap import menyimpan ordinal pustakanya. Simbol yang ditautkan dari dua dylib, ordinal khusus, atau slot yang bukan word data teralign di luar `__TEXT` menghentikan proses load.",
+                ),
+              },
+              {
+                icon: "shield",
+                title: tx("Missing imports", "Import yang hilang"),
+                body: tx(
+                  "The 49 functions without a shim get a thunk that logs `[MISSING] … unimplemented import <name>` and exits with code 3; the 2 data symbols get a no-access stand-in. A static audit of their callers found none reachable in this build.",
+                  "49 fungsi tanpa shim mendapat thunk yang mencatat `[MISSING] … unimplemented import <name>` lalu keluar dengan kode 3; 2 simbol data mendapat pengganti no-access. Audit statis terhadap pemanggilnya tidak menemukan satu pun yang bisa tercapai di build ini.",
+                ),
+              },
+              {
+                icon: "lock",
+                title: tx("Faults stay contained", "Fault tetap terkendali"),
+                body: tx(
+                  "The code always runs under page protections and a vectored exception handler (`veh.c`; signal handlers on Linux). A stray jump into the original low range is redirected to its copy, and any other fault is reported with the live initializer or `main`.",
+                  "Kode selalu berjalan di bawah proteksi halaman dan vectored exception handler (`veh.c`; signal handler di Linux). Lompatan nyasar ke rentang rendah asli dialihkan ke salinannya, dan fault lain dilaporkan beserta initializer yang sedang berjalan atau `main`.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "shims",
+        title: tx("Darwin, Cocoa & OpenGL shims", "Shim Darwin, Cocoa & OpenGL"),
+        intro: tx(
+          "The shims in `host/shims/` implement the macOS libraries the binary imports and know no application; the fixes for this one live in a separate folder of their own.",
+          "Shim di `host/shims/` mengimplementasikan pustaka macOS yang diimpor biner ini dan tidak mengenal aplikasi mana pun; perbaikan untuk aplikasi ini ada di folder tersendiri.",
+        ),
+        blocks: [
+          {
+            type: "table",
+            plain: true,
+            caption: tx("Imported libraries and their shims", "Pustaka yang diimpor dan shim-nya"),
+            columns: [tx("Library", "Pustaka"), tx("Implementation", "Implementasi")],
+            rows: [
+              [
+                tx("libSystem (BSD layer)", "libSystem (lapisan BSD)"),
+                tx(
+                  "libc, pthread, mmap, time, stdio, wchar and setjmp over Win32 or Linux calls (`shims.c`, `shimsw.c`)",
+                  "libc, pthread, mmap, time, stdio, wchar, dan setjmp di atas panggilan Win32 atau Linux (`shims.c`, `shimsw.c`)",
+                ),
+              ],
+              [
+                "libobjc",
+                tx(
+                  "Objective-C 1.0: `objc_msgSend`, `_stret` and `Super` in assembly, over a class registry parsed from `__OBJC`",
+                  "Objective-C 1.0: `objc_msgSend`, `_stret`, dan `Super` dalam assembly, di atas registry kelas yang di-parse dari `__OBJC`",
+                ),
+              ],
+              [
+                "Foundation / AppKit",
+                tx(
+                  "`{class, selector, imp}` tables; `NSApplicationMain` runs a host message loop, timers and the deferred-selector queue",
+                  "Tabel `{class, selector, imp}`; `NSApplicationMain` menjalankan message loop host, timer, dan antrean selector tertunda",
+                ),
+              ],
+              [
+                "NSOpenGL / CGL / OpenGL",
+                tx(
+                  "`NSOpenGLContext` on SDL3's GL context; about 112 GL imports bound lazily, through a cdecl to stdcall adapter on Windows",
+                  "`NSOpenGLContext` di atas konteks GL SDL3; sekitar 112 import GL ditautkan secara lazy, melalui adapter cdecl ke stdcall di Windows",
+                ),
+              ],
+              [
+                "CoreAudio AudioUnit",
+                tx("The render callback is pulled for PCM and played on an SDL3 stream", "Render callback ditarik untuk PCM dan diputar di stream SDL3"),
+              ],
+              [
+                "libstdc++",
+                tx(
+                  "Copy-on-write `std::string`, tree and list operations from libstdc++ 4.2, and an `ostringstream` accumulator",
+                  "`std::string` copy-on-write, operasi tree dan list dari libstdc++ 4.2, serta akumulator `ostringstream`",
+                ),
+              ],
+            ],
+          },
+        ],
+      },
+      {
+        id: "abi",
+        title: tx("ABI & thread-state compatibility", "Kompatibilitas ABI & state thread"),
+        intro: tx(
+          "Calls are mostly identical cdecl on both sides, and `int`, `long`, pointers, `float` and `double` have the same widths. The differences are handled one by one:",
+          "Sebagian besar panggilan sama-sama cdecl di kedua sisi, dan `int`, `long`, pointer, `float`, serta `double` punya lebar yang sama. Perbedaannya ditangani satu per satu:",
+        ),
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "layers",
+                title: tx("16-byte stack alignment", "Alignment stack 16 byte"),
+                body: tx(
+                  "The code assumes `esp` is 16-byte aligned at every call (SSE `movaps` on stack locals). Every host function that calls into it is marked `force_align_arg_pointer`, and on Linux the Objective-C dispatchers realign before calling C.",
+                  "Kode ini mengasumsikan `esp` teralign 16 byte di setiap panggilan (SSE `movaps` pada variabel lokal stack). Setiap fungsi host yang memanggil ke dalamnya ditandai `force_align_arg_pointer`, dan di Linux dispatcher Objective-C menyelaraskan ulang sebelum memanggil C.",
+                ),
+              },
+              {
+                icon: "code",
+                title: tx("Struct returns", "Struct return"),
+                body: tx(
+                  "macOS i386 returns a struct through a hidden pointer the callee pops (`ret $4`), and so does a one-word C++ class such as `std::string`. MinGW returns small aggregates in `eax`, so those returns are written in assembly.",
+                  "macOS i386 mengembalikan struct melalui pointer tersembunyi yang di-pop callee (`ret $4`), begitu pula kelas C++ satu word seperti `std::string`. MinGW mengembalikan aggregate kecil di `eax`, sehingga return tersebut ditulis dalam assembly.",
+                ),
+              },
+              {
+                icon: "database",
+                title: tx("Type widths", "Lebar tipe"),
+                body: tx(
+                  "`wchar_t` is 4 bytes on macOS; `time_t`, `off_t` and `jmp_buf` differ and are converted in `shimsw.c`. glibc's `pthread_cond_t` is 48 bytes against the Mac's 28, so on Linux the Mac-sized condition holds a pointer to one on the heap.",
+                  "`wchar_t` berukuran 4 byte di macOS; `time_t`, `off_t`, dan `jmp_buf` berbeda dan dikonversi di `shimsw.c`. `pthread_cond_t` glibc berukuran 48 byte sedangkan milik Mac 28, sehingga di Linux condition berukuran Mac menyimpan pointer ke condition di heap.",
+                ),
+              },
+              {
+                icon: "chip",
+                title: tx("Segment registers & TLS", "Register segmen & TLS"),
+                body: tx(
+                  "The binary does not use `%gs` for thread-local storage, or it could not run on Windows, so glibc's own `%gs`-based TLS on Linux does not conflict. `NSThread` and the pthread shims start ordinary host threads through aligned trampolines.",
+                  "Biner ini tidak memakai `%gs` untuk thread-local storage, karena jika ya ia tidak bisa berjalan di Windows, sehingga TLS glibc berbasis `%gs` di Linux tidak bertabrakan. `NSThread` dan shim pthread menjalankan thread host biasa melalui trampoline yang teralign.",
+                ),
+              },
+            ],
+          },
+          {
+            type: "links",
+            items: [
+              { label: LOADER_SOURCE, href: links.macLoaderSource, icon: "github", primary: true },
+              { label: tx("Technical notes (docs/NOTES.md)", "Catatan teknis (docs/NOTES.md)"), href: links.macLoaderNotes, icon: "book" },
+              { to: routes.gangstar, label: tx("Gangstar port case study", "Studi kasus port Gangstar"), icon: "laptop" },
+              { to: routes.iosLoader, label: tx("Compare: the 32-bit iOS loader", "Bandingkan: loader iOS 32-bit"), icon: "tablet" },
             ],
           },
         ],
@@ -1551,6 +2409,202 @@ export const engineeringNotes = [
               tx(
                 "Repeatable, verifiable deployments as the habit that carries over to any hybrid system",
                 "Deployment yang dapat diulang dan diverifikasi sebagai kebiasaan yang berlaku untuk sistem hybrid mana pun",
+              ),
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "windows-system-guardrails",
+    icon: "shield",
+    published: "2026-11-27",
+    kicker: tx("Windows · Safety", "Windows · Keamanan"),
+    title: tx(
+      "Deterministic Safety Guardrails for Non-Destructive Windows Maintenance",
+      "Pengaman Deterministik untuk Pemeliharaan Windows yang Non-Destruktif",
+    ),
+    summary: tx(
+      "How Niskala Utilities decides what it may remove or repair: PathGuard and RegistryGuard checks that run twice, decisions bound to open handles, .reg snapshots before any registry change, and a closed list of Windows repair commands.",
+      "Bagaimana Niskala Utilities menentukan apa yang boleh dihapus atau diperbaiki: pemeriksaan PathGuard dan RegistryGuard yang berjalan dua kali, keputusan yang terikat ke handle terbuka, snapshot .reg sebelum perubahan registry, dan daftar tertutup perintah perbaikan Windows.",
+    ),
+    tags: ["PathGuard", "RegistryGuard", tx(".reg snapshots", "Snapshot .reg"), "DISM / SFC"],
+    related: [
+      { label: tx("Niskala Utilities case study", "Studi kasus Niskala Utilities"), to: routes.niskala },
+      { label: tx("All projects", "Semua proyek"), to: routes.projects },
+    ],
+    sections: [
+      {
+        id: "context",
+        title: NOTE_PARTS.context,
+        blocks: [
+          {
+            type: "prose",
+            paragraphs: [
+              tx(
+                "A maintenance tool runs with administrator rights and acts on files, keys and services it did not create. A wrong decision costs a damaged Windows installation, not a failed test, so the question is less what the tool can remove than what it must refuse.",
+                "Tool pemeliharaan berjalan dengan hak administrator dan bertindak atas file, key, dan layanan yang tidak dibuatnya. Keputusan yang salah berakibat instalasi Windows rusak, bukan sekadar tes yang gagal, sehingga pertanyaannya bukan apa yang bisa dihapus, melainkan apa yang harus ditolak.",
+              ),
+              tx(
+                "Three situations shaped the design: a path that looks harmless as written but resolves somewhere protected, an object that changes between the scan and the removal, and registry views that merge or redirect hives. The rule set had to be deterministic: the same input always gets the same verdict, and every refusal names the rule behind it.",
+                "Tiga situasi membentuk desainnya: path yang tampak aman saat ditulis tetapi mengarah ke lokasi terlindungi, objek yang berubah antara pemindaian dan penghapusan, serta tampilan registry yang menggabungkan atau mengalihkan hive. Aturannya harus deterministik: input yang sama selalu mendapat putusan yang sama, dan setiap penolakan menyebut aturan di baliknya.",
+              ),
+            ],
+          },
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "layers",
+                title: tx("Paths that resolve elsewhere", "Path yang mengarah ke tempat lain"),
+                body: tx(
+                  "Junctions, symbolic links, SUBST drives and 8.3 short names can point a safe-looking path into the Windows folder.",
+                  "Junction, symbolic link, drive SUBST, dan nama pendek 8.3 bisa mengarahkan path yang tampak aman ke folder Windows.",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Time between check and use", "Jeda antara pemeriksaan dan penggunaan"),
+                body: tx(
+                  "A folder checked during the scan can be swapped for a junction before the removal starts.",
+                  "Folder yang diperiksa saat pemindaian bisa ditukar dengan junction sebelum penghapusan dimulai.",
+                ),
+              },
+              {
+                icon: "database",
+                title: tx("Merged registry views", "Tampilan registry gabungan"),
+                body: tx(
+                  "`HKCR` merges two hives and `WOW6432Node` redirects 32-bit keys, so the key a removal names is not always the key it changes.",
+                  "`HKCR` menggabungkan dua hive dan `WOW6432Node` mengalihkan key 32-bit, sehingga key yang disebut sebuah penghapusan tidak selalu key yang diubahnya.",
+                ),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "approach",
+        title: NOTE_PARTS.approach,
+        blocks: [
+          {
+            type: "cards",
+            items: [
+              {
+                icon: "shield",
+                title: tx("Two checks, two moments", "Dua pemeriksaan, dua waktu"),
+                body: tx(
+                  "Every removal passes a guard when the scanner proposes it and again right before the Guardian acts, so nothing is removed on the strength of an old answer.",
+                  "Setiap penghapusan melewati pengaman saat scanner mengusulkannya dan lagi tepat sebelum Guardian bertindak, sehingga tidak ada yang dihapus berdasarkan jawaban lama.",
+                ),
+              },
+              {
+                icon: "code",
+                title: tx("Lexical, then physical", "Leksikal, lalu fisik"),
+                body: tx(
+                  "`PathGuard` checks syntax, then the protection rules on the path as written, then resolves it through a handle (`CreateFileW` + `GetFinalPathNameByHandleW`) and applies the rules again to the physical path.",
+                  "`PathGuard` memeriksa sintaks, lalu aturan proteksi pada path seperti yang ditulis, kemudian meresolusinya melalui handle (`CreateFileW` + `GetFinalPathNameByHandleW`) dan menerapkan aturan lagi pada path fisiknya.",
+                ),
+              },
+              {
+                icon: "layers",
+                title: tx("Tree and Self rules", "Aturan Tree dan Self"),
+                body: tx(
+                  "`Tree` protects a location and everything below it; `Self` protects only the location itself, so its children may go. The deepest matching rule wins, and a path that contains a protected location is denied as well.",
+                  "`Tree` melindungi sebuah lokasi beserta semua isinya; `Self` hanya melindungi lokasi itu sendiri, sehingga isinya boleh dihapus. Aturan terdalam yang cocok menang, dan path yang memuat lokasi terlindungi juga ditolak.",
+                ),
+              },
+              {
+                icon: "lock",
+                title: tx("Registry rules", "Aturan registry"),
+                body: tx(
+                  "`RegistryGuard` treats all of `HKLM` as a tree with named rules for `SYSTEM`, `SAM`, `SECURITY`, `BCD00000000` and `HARDWARE`, folds `WOW6432Node` into the 32-bit view and refuses `HKCR`, because a removal must name the physical hive.",
+                  "`RegistryGuard` memperlakukan seluruh `HKLM` sebagai tree dengan aturan bernama untuk `SYSTEM`, `SAM`, `SECURITY`, `BCD00000000`, dan `HARDWARE`, melipat `WOW6432Node` ke tampilan 32-bit, dan menolak `HKCR`, karena penghapusan harus menyebut hive fisiknya.",
+                ),
+              },
+              {
+                icon: "terminal",
+                title: tx("Decisions bound to handles", "Keputusan terikat handle"),
+                body: tx(
+                  "The final check opens the object with `FILE_FLAG_OPEN_REPARSE_POINT` and decides on that handle; registry keys are opened with `REG_OPTION_OPEN_LINK`. A folder swapped for a junction after the check is removed as a link, and its target is never visited.",
+                  "Pemeriksaan terakhir membuka objek dengan `FILE_FLAG_OPEN_REPARSE_POINT` dan memutuskan berdasarkan handle itu; key registry dibuka dengan `REG_OPTION_OPEN_LINK`. Folder yang ditukar dengan junction setelah pemeriksaan dihapus sebagai tautan, dan targetnya tidak pernah dikunjungi.",
+                ),
+              },
+              {
+                icon: "archive",
+                title: tx("Snapshots before changes", "Snapshot sebelum perubahan"),
+                body: tx(
+                  "Each transaction records its intent, creates a restore point when elevated, and saves `registry.json.gz` (every value's type and bytes) and `registry.reg` (UTF-16, version 5.00) before anything is removed.",
+                  "Setiap transaksi mencatat niatnya, membuat restore point saat elevated, lalu menyimpan `registry.json.gz` (tipe dan byte setiap value) dan `registry.reg` (UTF-16, versi 5.00) sebelum apa pun dihapus.",
+                ),
+              },
+            ],
+          },
+          {
+            type: "flow",
+            caption: tx("One guarded removal", "Satu penghapusan yang dijaga"),
+            steps: [
+              {
+                icon: "flag",
+                title: tx("Intent", "Niat"),
+                body: tx("Every item recorded as Pending in transaction.json", "Setiap item dicatat sebagai Pending di transaction.json"),
+              },
+              {
+                icon: "shield",
+                title: tx("Restore point", "Restore point"),
+                body: tx("Created through WMI when elevated", "Dibuat melalui WMI saat elevated"),
+              },
+              {
+                icon: "archive",
+                title: tx("Backup", "Backup"),
+                body: tx("Keys, values, firewall rules and task XML saved first", "Key, value, aturan firewall, dan XML task disimpan lebih dulu"),
+              },
+              {
+                icon: "lock",
+                title: tx("Check again", "Periksa ulang"),
+                body: tx("Guard, owner and signature checks on the open handle", "Pemeriksaan pengaman, owner, dan tanda tangan pada handle terbuka"),
+              },
+              {
+                icon: "terminal",
+                title: tx("Remove", "Hapus"),
+                body: tx("Through the handle; restore puts back what can come back", "Melalui handle; restore mengembalikan apa yang bisa kembali"),
+              },
+            ],
+          },
+          {
+            type: "prose",
+            paragraphs: [
+              tx(
+                "System repair follows the same idea from the other side. `RepairCommandId` is a closed enum: each value resolves to `Dism.exe`, `sfc.exe`, `netsh.exe`, `ipconfig.exe` or `chkdsk.exe` in the system directory with fixed arguments, from `/CheckHealth` and `/RestoreHealth` to `/StartComponentCleanup` without `/ResetBase` and `chkdsk /scan` without `/f`. No caller can build another command line.",
+                "Perbaikan sistem mengikuti gagasan yang sama dari sisi lain. `RepairCommandId` adalah enum tertutup: setiap nilainya diresolusi ke `Dism.exe`, `sfc.exe`, `netsh.exe`, `ipconfig.exe`, atau `chkdsk.exe` di direktori sistem dengan argumen tetap, mulai dari `/CheckHealth` dan `/RestoreHealth` hingga `/StartComponentCleanup` tanpa `/ResetBase` dan `chkdsk /scan` tanpa `/f`. Tidak ada pemanggil yang bisa menyusun command line lain.",
+              ),
+            ],
+          },
+        ],
+      },
+      {
+        id: "outcome",
+        title: NOTE_PARTS.outcome,
+        blocks: [
+          {
+            type: "checklist",
+            title: tx("Result", "Hasil"),
+            items: [
+              tx(
+                "A refusal names the rule, and the hive or folder, that blocked it",
+                "Setiap penolakan menyebut aturan, serta hive atau folder, yang memblokirnya",
+              ),
+              tx(
+                "Removals are journaled transactions; restore puts back what can come back without overwriting anything that exists now",
+                "Penghapusan adalah transaksi berjurnal; restore mengembalikan apa yang bisa kembali tanpa menimpa apa pun yang ada sekarang",
+              ),
+              tx(
+                "Repair is limited to Windows' own tools with fixed arguments, and every command requires elevation",
+                "Perbaikan dibatasi pada tools bawaan Windows dengan argumen tetap, dan setiap perintah membutuhkan elevasi",
+              ),
+              tx(
+                "SeBackupPrivilege and SeRestorePrivilege are held only for the removal loop (PrivilegeScope)",
+                "SeBackupPrivilege dan SeRestorePrivilege hanya dipegang selama loop penghapusan (PrivilegeScope)",
               ),
             ],
           },

@@ -7,22 +7,29 @@ a Systems & Application Operations Engineer based in Semarang, Indonesia.
   Binary Recompilation), a two-sentence bio, four factual metrics and the 3D workstation.
 - **Journey (`/journey`)** is professional work experience only: Business Application Operational
   Support Staff at **PT ASDP Indonesia Ferry (Persero)** (2024 – 2026).
-- **Projects (`/projects`)** holds six open-source projects in two separate categories:
+- **Projects (`/projects`)** holds six open-source projects in two separate categories, plus the
+  two loaders the ports run on:
   - **Original Software**: **Niskala Utilities** (featured: Windows WinUI & CLI system utility,
     C# / .NET), **SIDAF** (PHP / CodeIgniter information system), **VR Simulation Airport**
     (Unity / C#, Oculus Quest 2) and **War Plane 1945** (interactive 2D application).
   - **32-Bit Software Preservation** (native PC software ports):
     - **GTRacingMotorAcademy-PC-Port**: static binary recompilation of a 32-bit iPad (ARMv7) application to native Windows and Linux x86.
     - **GangstarMiamiVindication-PC-Port**: a custom Mach-O loader that runs a 32-bit Mac (i386) application natively on Windows and Linux x86.
+    - **32-Bit iOS Loader** and **32-Bit Mac Loader**: the runtime layers inside those two
+      repositories (`host/core`), each with its own case study.
+
+Five case studies (`/projects/niskala`, `/projects/gt-racing`, `/projects/gangstar`,
+`/projects/ios-loader`, `/projects/mac-loader`) and three engineering notes have a Copy Link button
+and Previous / Next links; notes also show a reading time.
 
 Copy rules: the words "game" and "gaming" are not used anywhere in the site copy (EN or ID), there
 are no emojis, and there are no unverified percentage claims. Technical facts in the case studies
-and notes follow each repository's README, FIXES.md and PATCHNOTES.md.
+and notes follow each repository's README, FIXES.md, PATCHNOTES.md, docs and source code.
 
 The whole site is **bilingual (English / Bahasa Indonesia)** and has a **dark (default) and light
 theme**. Both choices are remembered in `localStorage`.
 
-**Stack:** React 19 + Vite · React Router (`HashRouter`) · Three.js via `@react-three/fiber`,
+**Stack:** React 19 + Vite · React Router (`BrowserRouter`) · Three.js via `@react-three/fiber`,
 `@react-three/drei` and `@react-three/postprocessing` · GSAP · Tailwind CSS v4 ·
 react-countup · react-responsive.
 
@@ -39,17 +46,25 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
-| `#/`                  | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips, no particles or speech bubbles) |
-| `#/projects`          | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
-| `#/projects/gt-racing`| GT Racing case study     | Back link, live release badge, why it stopped running, legacy-vs-port table, key engineering work, leaderboard architecture, default controls, release and checksum verification |
-| `#/projects/gangstar` | Gangstar case study      | Back link, live release badge, why it stopped running, legacy-vs-port table, Mach-O loader approach, key engineering fixes, release and checksum verification |
-| `#/journey`           | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown · Enterprise Stack · 3D Tech Cards |
-| `#/notes`, `#/notes/:slug` | Engineering Notes   | Note list and reading pane side by side on desktop; list and article pages on phones. Each note is Context → Engineering Approach → Outcome |
-| `#/contact`           | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
+| `/`                     | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips and three camera presets: Overview, Desk Setup, Telemetry) |
+| `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation with the two ports and their loaders) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
+| `/projects/niskala`     | Niskala Utilities        | Modular architecture, PathGuard / RegistryGuard / PrivilegeScope, `.reg` backups, the closed DISM / SFC / netsh / ipconfig / chkdsk command list, release |
+| `/projects/gt-racing`   | GT Racing case study     | Why it stopped running, legacy-vs-port table, key engineering work, leaderboard architecture, default controls, release and checksum verification |
+| `/projects/gangstar`    | Gangstar case study      | Why it stopped running, legacy-vs-port table, porting approach, key engineering fixes, release and checksum verification |
+| `/projects/ios-loader`  | 32-bit iOS loader        | Hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge |
+| `/projects/mac-loader`  | 32-bit Mac loader        | Memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility |
+| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown · Enterprise Stack · 3D Tech Cards |
+| `/notes`, `/notes/:slug` | Engineering Notes     | Note list and reading pane side by side on desktop; list and article pages on phones. Three notes, each Context → Engineering Approach → Outcome |
+| `/contact`              | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
-Routing uses `HashRouter`, so every URL looks like `https://adriansyahpn.com/#/projects`.
-Reloading or sharing any page always loads `index.html`, so GitHub Pages never returns a 404.
-Because the hash belongs to the router, in-page jumps use buttons that scroll, not `#anchor` links.
+Routing uses `BrowserRouter`, so URLs are clean (`https://adriansyahpn.com/projects/niskala`).
+GitHub Pages has no rewrite rules: a direct load or refresh of a client route finds no file and is
+answered with `404.html`. The build writes `dist/404.html` as a copy of `index.html` (the
+`spa-404-fallback` plugin in [`vite.config.js`](vite.config.js)), so the app boots on any route and
+React Router renders it. The HTTP status of that first response is 404 (GitHub Pages' behaviour);
+visitors see the page as normal. Old links from the hash-routing days (`/#/projects`) are rewritten
+to their clean URL before the router starts ([`src/main.jsx`](src/main.jsx)). In-page jumps use
+buttons that scroll, not `#anchor` links, so the browser history stays clean.
 
 ### Layout: viewport-locked desktop, scrolling phones
 
@@ -135,8 +150,7 @@ npm run dev
    which builds the site and publishes `dist/` to `https://adriansyahpn.com/`.
 
 `vite.config.js` uses `base: "/"` because the site is served from the root of the custom domain.
-Routing is hash-based, so the document is always `/index.html` and root-relative asset paths
-resolve on every route. Absolute URLs for crawlers (`canonical`, `og:*`, `twitter:*` in
+Asset paths start at `/`, so they resolve on nested routes such as `/projects/niskala`. Absolute URLs for crawlers (`canonical`, `og:*`, `twitter:*` in
 `index.html`) and `siteUrl` in `src/constants/index.js` all use `https://adriansyahpn.com/`.
 
 ## Editing content
@@ -151,25 +165,30 @@ name or a version tag) shows the same text in both languages. Components read co
 - `originalProjects` and `preservationProjects`: the two catalog categories (`projects` combines
   them), in display order. `featured: true` marks the top project (Niskala Utilities).
   `projectCategories` defines the tabs and `projectSections` the section headings. Original
-  projects link straight to GitHub (`View Source on GitHub`). Preservation projects also have a
-  case study and a comparison table (`comparison`).
+  projects link straight to GitHub (`View Source on GitHub`); Niskala Utilities also has a case
+  study. Preservation projects have a case study and a comparison table (`comparison`).
+  `runtime: true` marks the two loaders: they are listed under 32-Bit Software Preservation (as
+  slim links under their ports in the desktop overview) but not counted as separate projects on
+  Home or in the résumé.
 - `releaseSources`: the repositories whose latest GitHub release drives the version badges and
   release links ([`src/hooks/useGitHubReleases.js`](src/hooks/useGitHubReleases.js)), with a
   fallback tag and URL each. In project and case-study data, a link with `release: "<project id>"`
   points at that release, and `{tag}` in a label, target, fact or table cell becomes the tag.
-- `caseStudies`: the two deep-dive pages. Each section is a list of typed blocks (`timeline`,
-  `cards`, `flow`, `architecture`, `table`, `comparison`, `checklist`, `code`, `links`, `prose`).
+- `caseStudies`: the five deep-dive pages, in reading order (Previous / Next follow it). Each
+  section is a list of typed blocks (`timeline`, `cards`, `flow`, `architecture`, `table`
+  (`plain: true` for text cells), `comparison`, `checklist`, `code`, `links`, `prose`). A link with
+  `to` is an internal route, used to cross-link the ports, their loaders and the notes.
 - `caseStudies["gt-racing"]`: the default control bindings table. Keep it in sync with your release.
 - `heroContent` and `counterItems`: the Home page. A counter item with `text` (e.g.
-  `"Dozens of ports"`) shows that text instead of an animated number; the project count follows
-  `projects.length`.
+  `"Dozens of ports"`) shows that text instead of an animated number; the project count is every
+  project except the loaders.
 - `expCards` and `techStackIcons`: the Journey page (work experience only). `breakdown` on an
   `expCards` entry feeds the Operational Breakdown tab and the résumé. `icon` on a
   `techStackIcons` entry is its flat icon in the Enterprise Stack tab. Set `logo`
   on an `expCards` entry to a key of `brandLogos`.
 - `engineeringNotes`: the notes, each with three sections (Context, Engineering Approach, Outcome).
-- `brandLogos`: official company/product logos, read from `public/images/` with relative paths
-  (`./images/asdp.png`, `./images/ferizy.svg`). Each lists fallback files in order (png → svg); if
+- `brandLogos`: official company/product logos, read from `public/images/` with root paths
+  (`/images/asdp.png`, `/images/ferizy.svg`). Each lists fallback files in order (png → svg); if
   none loads, the drawn SVG emblem or a text wordmark is shown, never a broken image. Logos sit on a
   light pill so their brand colours stay readable on the dark theme.
 
@@ -188,8 +207,8 @@ artwork on a project card with a real capture:
 | ------------------------------------ | --------------------------------- | ----------------------------------------- |
 | Niskala Utilities                    | `public/images/niskala.png`        | `originalProjects[0].image = "images/niskala.png"`            |
 | SIDAF                                | `public/images/sidaf.png`          | `originalProjects[1].image = "images/sidaf.png"`              |
-| VR Simulation Airport                | `public/images/vr-airport.png`     | `originalProjects[2].image = "images/vr-airport.png"`         |
-| War Plane 1945                       | `public/images/war-plane-1945.png` | `originalProjects[3].image = "images/war-plane-1945.png"`     |
+| VR Simulation Airport                | `public/images/vr-airport.jpg`     | `originalProjects[2].image = "images/vr-airport.jpg"`         |
+| War Plane 1945                       | `public/images/war-plane-1945.jpg` | `originalProjects[3].image = "images/war-plane-1945.jpg"`     |
 | GT Racing: Motor Academy PC port     | `public/images/gtracing-pc.png`    | `preservationProjects[0].image = "images/gtracing-pc.png"`    |
 | Gangstar: Miami Vindication PC port  | `public/images/gangstar-mv-pc.png` | `preservationProjects[1].image = "images/gangstar-mv-pc.png"` |
 
@@ -202,6 +221,10 @@ artwork on a project card with a real capture:
   there. If a configured file fails to load, the SVG artwork is shown instead.
 - Niskala Utilities has no screenshot by default: its artwork is the app's own splash screen
   (`SplashWindow.xaml`: brand gradient, NiskalaMark monogram and wordmark) redrawn as SVG.
+- SIDAF, VR Simulation Airport, War Plane 1945 and the two loaders show monochrome architecture
+  schematics ([`src/components/Schematics.jsx`](src/components/Schematics.jsx)) so every card has
+  the same visual weight. The VR and War Plane video thumbnails are still in `public/images/`
+  (`.jpg`) if you prefer them; the demo videos play from the schematic either way.
 
 ### 3D models
 
@@ -218,7 +241,7 @@ procedural mesh is shown instead.
 
 ```
 src/
-├── App.jsx                   # HashRouter, lazy routes, persistent NavBar + Footer
+├── App.jsx                   # BrowserRouter, lazy routes, persistent NavBar + Footer
 ├── constants/index.js        # All bilingual content, UI copy, routes, links and asset hooks
 ├── context/                  # ThemeContext (dark/light) and LanguageContext (en/id)
 ├── hooks/useGitHubReleases.js # Latest GitHub release per repo (sessionStorage cache, fallbacks)
@@ -229,6 +252,8 @@ src/
 │   ├── ScrollToTop.jsx       # Resets the window scroll on route change
 │   ├── Tabs.jsx              # Accessible tab list + panel (Journey, project comparison)
 │   ├── PageHeader.jsx, ProjectBits.jsx, CaseStudyBlocks.jsx, NoteBits.jsx, GitHubStats.jsx
+│   ├── ReaderBits.jsx        # Copy Link button and Previous / Next links for case studies and notes
+│   ├── Schematics.jsx        # Monochrome architecture schematics for project cards
 │   ├── AnimatedCounter.jsx, Icons.jsx, ProjectPreview.jsx, Resume.jsx
 │   ├── HeroModels/           # Hero canvas, lights, avatar, hotspots, procedural room
 │   └── Models/               # Desk parts, contact scene, glTF loader, studio env, emblems

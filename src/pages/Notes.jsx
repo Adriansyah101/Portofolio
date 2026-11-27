@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader.jsx";
 import { ArrowLeftIcon, ArrowRightIcon } from "../components/Icons.jsx";
 import { CaseStudyBlock } from "../components/CaseStudyBlocks.jsx";
 import { NoteCard, noteRoute, readingMinutes } from "../components/NoteBits.jsx";
+import { CopyLinkButton, PagerNav } from "../components/ReaderBits.jsx";
 import { ProjectTags } from "../components/ProjectBits.jsx";
 import NotFound from "./NotFound.jsx";
 import { useLanguage, useLocalized } from "../context/LanguageContext.jsx";
@@ -11,8 +12,11 @@ import { engineeringNotes, routes, ui } from "../constants/index.js";
 import { format, formatDate } from "../utils/i18n.js";
 import { scrollToId, usePageTitle } from "../utils/hooks.js";
 
-/** The full text of one note: header, "on this page" chips, sections, related work and the next note. */
-const NoteReader = ({ note, next, isPageTitle }) => {
+/**
+ * The full text of one note: header (date, reading time, Copy Link), "on this
+ * page" chips, sections, related work and the Previous / Next notes.
+ */
+const NoteReader = ({ note, pager, index, isPageTitle }) => {
   const { lang } = useLanguage();
   const { notes: text, caseStudy: caseText, common } = useLocalized(ui);
   // On `/notes` the list owns the page's h1, so the note title steps down one level.
@@ -41,10 +45,13 @@ const NoteReader = ({ note, next, isPageTitle }) => {
           {note.title}
         </Title>
         <p className="page-description">{note.summary}</p>
-        <p className="mt-5 font-mono text-xs text-blue-50">
-          {text.published} {formatDate(note.published, lang, { day: "numeric", month: "long", year: "numeric" })} ·{" "}
-          {format(text.minutes, { n: readingMinutes(note) })}
-        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <p className="font-mono text-xs text-blue-50">
+            {text.published} {formatDate(note.published, lang, { day: "numeric", month: "long", year: "numeric" })} ·{" "}
+            <span className="reading-time">{format(text.minutes, { n: readingMinutes(note) })}</span>
+          </p>
+          <CopyLinkButton path={noteRoute(note.slug)} />
+        </div>
         <div className="mt-4">
           <ProjectTags tags={note.tags} />
         </div>
@@ -86,24 +93,12 @@ const NoteReader = ({ note, next, isPageTitle }) => {
           </div>
         </section>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 @2xl:grid-cols-2 lg:mt-10">
-          <Link to={routes.notes} className="next-card group lg:hidden">
-            <ArrowLeftIcon className="size-5 text-blue-50 transition-transform group-hover:-translate-x-1" />
-            <span>
-              <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.backTo}</span>
-              <span className="mt-1 block text-xl font-semibold">{text.allNotes}</span>
-            </span>
-          </Link>
-          {next.slug !== note.slug && (
-            <Link to={noteRoute(next.slug)} className="next-card group justify-between">
-              <span className="min-w-0">
-                <span className="block font-mono text-xs tracking-widest text-blue-50 uppercase">{text.nextNote}</span>
-                <span className="mt-1 block text-xl font-semibold text-balance">{next.title}</span>
-              </span>
-              <ArrowRightIcon className="size-5 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
-            </Link>
-          )}
-        </div>
+        <PagerNav items={pager} index={index} label={text.pager} className="mt-12 lg:mt-10" />
+
+        <Link to={routes.notes} className="back-link group mt-6 mb-0 lg:hidden">
+          <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
+          {text.allNotes}
+        </Link>
       </div>
     </article>
   );
@@ -125,7 +120,7 @@ const Notes = () => {
   usePageTitle(slug ? (note ? note.title : meta.notFound) : text.pageTitle);
 
   if (!note) return <NotFound />;
-  const next = notes[(index + 1) % notes.length];
+  const pager = notes.map((item) => ({ to: noteRoute(item.slug), title: item.title, meta: item.kicker }));
 
   return (
     <div className="page-shell page-enter">
@@ -150,7 +145,7 @@ const Notes = () => {
 
           {/* On phones the index shows only the list; the note opens as its own page. */}
           <div className={`min-w-0 lg:flex lg:min-h-0 ${slug ? "" : "hidden"}`} key={note.slug}>
-            <NoteReader note={note} next={next} isPageTitle={Boolean(slug)} />
+            <NoteReader note={note} pager={pager} index={index} isPageTitle={Boolean(slug)} />
           </div>
         </div>
       </div>

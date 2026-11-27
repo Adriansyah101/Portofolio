@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Icon } from "../components/Icons.jsx";
 import { navLinks, routes, socialLinks, ui } from "../constants/index.js";
 import { useLocalized } from "../context/LanguageContext.jsx";
@@ -44,11 +44,16 @@ const Footer = () => {
 
       <nav aria-label={footer.navLabel} className="mt-8 lg:hidden">
         <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-50">
-          {items.map(({ id, name, to }) => (
+          {items.map(({ id, name, to, end }) => (
             <li key={id}>
-              <Link to={to} className="transition-colors hover:text-white">
+              {/* NavLink sets aria-current="page" on the active route. */}
+              <NavLink
+                to={to}
+                end={end}
+                className={({ isActive }) => `transition-colors hover:text-white ${isActive ? "text-white-50" : ""}`}
+              >
                 {name}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>

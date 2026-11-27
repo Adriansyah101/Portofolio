@@ -1,5 +1,5 @@
-import { useId, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useId, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 
 import PageHeader from "../components/PageHeader.jsx";
 import GitHubStats from "../components/GitHubStats.jsx";
@@ -29,51 +29,84 @@ import { usePageTitle } from "../utils/hooks.js";
 
 /**
  * One project. `compact` (the "All" overview on desktop) trims the card to a
- * scannable tile: shorter artwork, a two-line summary and no tag list. The
- * category views and every screen under 1024px show the full card. A
- * `featured` project spans its row, with the artwork beside the text from
- * tablet width up, and carries a "Featured Project" marker.
+ * scannable tile: shorter artwork, a two-line summary and no tag list; the
+ * originals beside the featured tile and the two loaders under their ports
+ * become thumbnail rows (`is-row`). The category views and every screen under
+ * 1024px show the full card. A `featured` project spans its row, with the
+ * artwork beside the text from tablet width up, and carries a "Featured
+ * Project" marker.
  */
-const ArchiveCard = ({ project, badge, text, compact }) => (
-  <article className={`archive-card ${compact ? "is-compact" : ""} ${project.featured ? "is-featured" : ""}`}>
-    <ProjectPreview
-      art={project.art}
-      image={project.image}
-      imagePosition={project.imagePosition}
-      video={project.video}
-      alt={format(text.previewAlt, { title: project.shortTitle })}
-      className="archive-art"
-    />
-    <div className="archive-body">
-      <div className="flex flex-wrap items-center gap-2">
-        {project.featured && (
-          <span className="featured-badge">
-            <Icon name="flag" className="size-3.5" />
-            {text.featured}
-          </span>
-        )}
-        <KindBadge kind={project.category} badge={badge} className="archive-kind" />
-        {/* Originals name their discipline; preservation ports name the legacy platform they rescue. */}
-        {project.category === "original" ? (
-          project.categoryLabel && <span className="category-chip">{project.categoryLabel}</span>
-        ) : (
-          <PlatformBadge project={project} className="w-fit" />
-        )}
-        <ReleaseBadge projectId={project.id} />
+const ArchiveCard = ({ project, badge, text, compact }) => {
+  const row = compact && !project.featured && project.category === "original";
+  const classes = [
+    "archive-card",
+    compact && "is-compact",
+    row && "is-row",
+    project.featured && "is-featured",
+    // In the desktop overview a loader shows as a slim link under its port (LoaderLink).
+    compact && project.runtime && "lg:hidden",
+  ].filter(Boolean);
+  return (
+    <article className={classes.join(" ")}>
+      <ProjectPreview
+        art={project.art}
+        image={project.image}
+        imagePosition={project.imagePosition}
+        video={project.video}
+        alt={format(text.previewAlt, { title: project.shortTitle })}
+        className="archive-art"
+      />
+      <div className="archive-body">
+        <div className="flex flex-wrap items-center gap-2">
+          {project.featured && (
+            <span className="featured-badge">
+              <Icon name="flag" className="size-3.5" />
+              {text.featured}
+            </span>
+          )}
+          <KindBadge kind={project.category} badge={badge} className="archive-kind" />
+          {/* Originals name their discipline; preservation ports name the legacy platform they rescue. */}
+          {project.category === "original" ? (
+            project.categoryLabel && <span className="category-chip">{project.categoryLabel}</span>
+          ) : (
+            <PlatformBadge project={project} className="w-fit" />
+          )}
+          <ReleaseBadge projectId={project.id} />
+        </div>
+        <div>
+          <h3 className="archive-title">{softBreak(project.shortTitle)}</h3>
+          {project.subtitle && <p className="archive-subtitle">{softBreak(project.subtitle)}</p>}
+        </div>
+        {project.origin && <OriginTarget project={project} />}
+        <p className="archive-description">{renderInlineCode(project.description)}</p>
+        <div className="archive-tags">
+          <ProjectTags tags={project.tags} />
+        </div>
+        <div className="mt-auto pt-1">
+          <ProjectActions project={project} />
+        </div>
       </div>
-      <div>
-        <h3 className="archive-title">{softBreak(project.shortTitle)}</h3>
-        {project.subtitle && <p className="archive-subtitle">{softBreak(project.subtitle)}</p>}
-      </div>
-      {project.origin && <OriginTarget project={project} />}
-      <p className="archive-description">{renderInlineCode(project.description)}</p>
-      <div className="archive-tags">
-        <ProjectTags tags={project.tags} />
-      </div>
-      <div className="mt-auto pt-1">
-        <ProjectActions project={project} />
-      </div>
-    </div>
+    </article>
+  );
+};
+
+/**
+ * A loader in the desktop "All" overview: a slim link to its case study under
+ * the port it runs (platform icon, title). Phones, tablets and the
+ * preservation view show the full card instead.
+ */
+const LoaderLink = ({ project, text }) => (
+  <article className="loader-link-card hidden lg:block">
+    <Link to={project.caseStudy} className="loader-link group">
+      <span className="icon-chip size-9 flex-none" aria-hidden="true">
+        <Icon name={project.platformIcon} className="size-4" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="loader-link-meta">{text.loaderLabel}</span>
+        <span className="loader-link-title">{project.shortTitle}</span>
+      </span>
+      <ArrowRightIcon className="size-4 flex-none text-accent-cyan transition-transform group-hover:translate-x-1" />
+    </Link>
   </article>
 );
 
@@ -126,7 +159,10 @@ const CatalogSection = ({ id, section, items, text, compact, children = null }) 
     <div className="catalog-body">
       <div className={`archive-grid is-${id}`}>
         {items.map((project) => (
-          <ArchiveCard key={project.id} project={project} badge={section.badge} text={text} compact={compact} />
+          <Fragment key={project.id}>
+            <ArchiveCard project={project} badge={section.badge} text={text} compact={compact} />
+            {compact && project.runtime && <LoaderLink project={project} text={text} />}
+          </Fragment>
         ))}
       </div>
       {children}

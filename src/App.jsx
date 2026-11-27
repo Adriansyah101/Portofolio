@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -31,11 +31,12 @@ const PageFallback = () => {
 };
 
 /**
- * HashRouter keeps every route under `#/…`, so reloading any page on GitHub
- * Pages always requests `index.html` and never hits a 404.
+ * Clean URLs (`/projects`, `/notes/:slug`). GitHub Pages answers a direct load
+ * of any of them with `404.html`, a copy of `index.html` written at build time
+ * (vite.config.js), so the app boots and renders the route.
  */
 const App = () => (
-  <HashRouter>
+  <BrowserRouter>
     <ScrollToTop />
     {/* From 1024px up the shell is one viewport tall: navbar, the page, a one-line footer. */}
     <div className="app-shell">
@@ -56,7 +57,7 @@ const App = () => (
       </main>
       <Footer />
     </div>
-  </HashRouter>
+  </BrowserRouter>
 );
 
 export default App;

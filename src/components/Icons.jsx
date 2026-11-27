@@ -287,8 +287,26 @@ export const MoonIcon = (props) => (
   </Stroke>
 );
 
+export const BookIcon = (props) => (
+  <Stroke {...props}>
+    <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v15H5.5A1.5 1.5 0 0 0 4 19.5v-15Z" />
+    <path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H19v-3" />
+    <path d="M8 7h7M8 10.5h5" />
+  </Stroke>
+);
+
+export const LinkIcon = (props) => (
+  <Stroke {...props}>
+    <path d="M10 13.5a4 4 0 0 0 5.7.3l3-3a4 4 0 0 0-5.7-5.6l-1.2 1.1" />
+    <path d="M14 10.5a4 4 0 0 0-5.7-.3l-3 3a4 4 0 0 0 5.7 5.6l1.1-1.1" />
+  </Stroke>
+);
+
 /** Lookup used by data-driven sections (`icon: "chip"` in constants). */
 export const iconMap = {
+  book: BookIcon,
+  link: LinkIcon,
+  check: CheckIcon,
   code: CodeIcon,
   shader: ShaderIcon,
   chip: ChipIcon,

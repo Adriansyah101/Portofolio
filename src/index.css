@@ -46,6 +46,7 @@
   --contact-stage: #2a2825; /* = contactPalettes.dark.stage (fog colour) */
   --selection-bg: rgb(148 163 184 / 0.3);
   --selection-fg: #ffffff;
+  --focus-ring: #a3b6cb; /* slate-steel, 7:1 on the dark canvas */
   /* Category badges: neutral slate for original work, cool steel for preservation. */
   --kind-original-fg: #b6bdc8;
   --kind-original-bg: rgb(148 163 184 / 0.07);
@@ -88,6 +89,7 @@
   --contact-stage: #e7e4df; /* = contactPalettes.light.stage */
   --selection-bg: rgb(51 65 85 / 0.18);
   --selection-fg: #0f172a;
+  --focus-ring: #334155; /* deep slate on the light surfaces */
 }
 
 /* Custom utilities (usable in markup and in @apply) */
@@ -165,6 +167,18 @@
   ::selection {
     background: var(--selection-bg);
     color: var(--selection-fg);
+  }
+
+  /* Keyboard focus: one calm ring for every control, shown only for keyboard
+     navigation (`:focus-visible`), never on mouse clicks. Component rules
+     that draw their own focus state override it. */
+  :where(a, button, input, select, textarea, summary, [role="tab"], [tabindex]):focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  :where(a, button, input, select, textarea, summary, [role="tab"], [tabindex]):focus:not(:focus-visible) {
+    outline: none;
   }
 
   canvas {
@@ -882,45 +896,64 @@
     @apply lg:line-clamp-2;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) {
+  /* Thumbnail rows of the overview (`is-row`, set only there): the originals beside the featured tile. */
+  .archive-card.is-row {
     @apply lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)];
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-art {
+  .archive-card.is-row .archive-art {
     @apply lg:aspect-auto lg:h-full;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .project-preview {
+  .archive-card.is-row .project-preview {
     @apply lg:border-r lg:border-b-0;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-body {
+  .archive-card.is-row .archive-body {
     @apply lg:gap-1.5 lg:p-3;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .archive-description {
+  .archive-card.is-row .archive-description {
     @apply lg:line-clamp-1;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .category-chip {
+  .archive-card.is-row .category-chip {
     @apply lg:hidden;
   }
 
   /* One line of actions: the primary label truncates instead of wrapping. */
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .project-actions {
+  .archive-card.is-row .project-actions {
     @apply lg:flex-nowrap;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-chip {
+  .archive-card.is-row .video-chip {
     @apply lg:hidden;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-play {
+  .archive-card.is-row .video-play {
     @apply lg:size-10;
   }
 
-  .catalog.is-all .archive-grid.is-original > .archive-card:not(.is-featured) .video-play svg {
+  .archive-card.is-row .video-play svg {
     @apply lg:size-5;
+  }
+
+  /* Desktop overview: each loader as a slim link under the port it runs. */
+  .loader-link {
+    @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-100 px-3 py-2.5 transition-colors duration-300 hover:border-white/15;
+  }
+
+  .loader-link-meta {
+    @apply block truncate font-mono text-[10px] tracking-widest text-blue-50 uppercase;
+  }
+
+  .loader-link-title {
+    @apply mt-0.5 block text-sm leading-snug font-semibold text-white-50;
+  }
+
+  /* Overview port tiles: the description already names the legacy platform. */
+  .catalog.is-all .archive-grid.is-preservation .archive-card.is-compact .platform-badge {
+    @apply lg:hidden;
   }
 
   /* The overview keeps each group to its number, title and count. */
@@ -1043,7 +1076,7 @@
     @apply lg:mt-4 lg:flex-1 xl:mt-5;
   }
 
-  /* Desktop overview: the two groups side by side (3 originals | 2 preservation ports). */
+  /* Desktop overview: the two groups side by side (originals | preservation ports and their loaders). */
   .catalog.is-all {
     @apply lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-5 xl:gap-6;
   }
@@ -1176,6 +1209,50 @@
 
   .kbd-text {
     @apply inline-block rounded-md border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-xs text-white-50 md:text-sm;
+  }
+
+  /* Text tables (loader layouts, command lists): long commands wrap inside their cell. */
+  .data-table.is-plain td {
+    @apply leading-relaxed text-body;
+  }
+
+  .data-table.is-plain tbody th {
+    @apply font-mono text-sm wrap-break-word;
+  }
+
+  .data-table.is-plain .inline-code {
+    @apply whitespace-normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Copy Link beside the repository line of a case study or the date of a note. */
+  .copy-link {
+    @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wide whitespace-nowrap text-blue-50 transition-colors hover:border-white/25 hover:text-white;
+  }
+
+  .copy-link.is-copied {
+    @apply border-emerald-300/40 text-emerald-200;
+  }
+
+  /* Previous / Next at the end of a reader: two cards side by side when there is room. */
+  .pager {
+    @apply grid grid-cols-1 gap-4 @2xl:grid-cols-2;
+  }
+
+  .pager-link {
+    @apply flex min-w-0 items-center gap-4 rounded-2xl border border-black-50 bg-black-100 p-5 transition-colors duration-300 hover:border-white/15 md:p-6;
+  }
+
+  .pager-link.is-next {
+    @apply justify-between text-right;
+  }
+
+  .pager-meta {
+    @apply block truncate font-mono text-[11px] tracking-widest text-blue-50 uppercase;
+  }
+
+  .pager-title {
+    @apply mt-1 block text-base font-semibold text-balance wrap-break-word text-white-50 md:text-lg;
   }
 
   /* Case studies */
@@ -1334,10 +1411,6 @@
 
   .scene-pill.active {
     @apply border-transparent bg-white-50 text-canvas hover:text-canvas;
-  }
-
-  .scene-pill.is-wave {
-    @apply text-white-50;
   }
 
   /* Zero-size point in the overlay that the hover tooltip moves with translate3d(). */
@@ -1538,7 +1611,7 @@
   }
 
   .note-card {
-    @apply flex h-full min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8 lg:p-5;
+    @apply flex h-full min-w-0 flex-col rounded-2xl border border-black-50 bg-black-100 p-6 transition-colors duration-500 hover:border-white/15 md:p-8 lg:p-4 xl:px-5;
   }
 
   /* The note open in the desktop reading pane. */
@@ -1564,10 +1637,6 @@
   }
 
   /* In the desktop list the whole card is the link and the open note's summary is in the pane. */
-  .notes-list .note-card p:last-of-type {
-    @apply lg:line-clamp-2;
-  }
-
   .note-read {
     @apply mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-white-50 lg:pt-4;
   }

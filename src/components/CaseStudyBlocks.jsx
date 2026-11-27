@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ArrowRightIcon, Icon } from "./Icons.jsx";
 import { renderInlineCode } from "../utils/text.jsx";
 import { useLocalized } from "../context/LanguageContext.jsx";
@@ -122,9 +123,13 @@ const Architecture = ({ legacy, nodes }) => {
   );
 };
 
-export const DataTable = ({ caption, columns, rows }) => (
+/**
+ * Table whose first column names each row. Cells are key caps (`kbd`) for
+ * control bindings, or text with inline code when `plain` is set.
+ */
+export const DataTable = ({ caption, columns, rows, plain = false }) => (
   <div className="data-table-wrap">
-    <table className="data-table" style={{ "--cols": columns.length - 1 }}>
+    <table className={`data-table ${plain ? "is-plain" : ""}`} style={{ "--cols": columns.length - 1 }}>
       {caption && <caption>{caption}</caption>}
       <thead>
         <tr>
@@ -141,12 +146,10 @@ export const DataTable = ({ caption, columns, rows }) => (
             {row.map((cell, index) =>
               index === 0 ? (
                 <th key={index} scope="row">
-                  {cell}
+                  {plain ? renderInlineCode(cell) : cell}
                 </th>
               ) : (
-                <td key={index}>
-                  <kbd className="kbd-text">{cell}</kbd>
-                </td>
+                <td key={index}>{plain ? renderInlineCode(cell) : <kbd className="kbd-text">{cell}</kbd>}</td>
               ),
             )}
           </tr>
@@ -211,23 +214,34 @@ const Code = ({ caption, snippets, note }) => (
   </div>
 );
 
-/** External links; one with `release` follows that repository's latest release. */
+/**
+ * Links: `to` is an internal route (cross-links between case studies and
+ * notes), `href` an external page; one with `release` follows that
+ * repository's latest release.
+ */
 const Links = ({ items }) => {
   const resolved = useResolvedLinks(items);
   return (
     <div className="flex flex-wrap gap-3">
-      {resolved.map((item) => (
-        <a
-          key={item.href + item.label}
-          href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`project-link ${item.primary ? "primary" : "secondary"}`}
-        >
-          <Icon name={item.icon} className="size-4" />
-          {item.label}
-        </a>
-      ))}
+      {resolved.map((item) => {
+        const className = `project-link ${item.primary ? "primary" : "secondary"}`;
+        const content = (
+          <>
+            <Icon name={item.icon} className="size-4 flex-none" />
+            {item.label}
+          </>
+        );
+        return item.to ? (
+          <Link key={item.to + item.label} to={item.to} className={className}>
+            {content}
+            <ArrowRightIcon className="size-4 flex-none" />
+          </Link>
+        ) : (
+          <a key={item.href + item.label} href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+            {content}
+          </a>
+        );
+      })}
     </div>
   );
 };
