@@ -1385,7 +1385,7 @@
   }
 
   .pager-meta {
-    @apply block truncate font-mono text-[11px] tracking-widest text-blue-50 uppercase;
+    @apply block font-mono text-[11px] tracking-widest wrap-break-word text-blue-50 uppercase;
   }
 
   .pager-title {

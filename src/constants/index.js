@@ -530,7 +530,7 @@ export const originalProjects = [
 ];
 
 /**
- * Category B: 32-bit software preservation, the two binary loaders.
+ * Category B: legacy software preservation, the two binary loaders.
  * `comparison` feeds the "Legacy 32-bit target vs. native port" table on
  * `/projects` and in each case study. `{tag}` is the repository's latest
  * release tag. `iconOnly` links show as compact icon buttons on the card (the
@@ -2048,16 +2048,17 @@ const NOTE_PARTS = {
 export const engineeringNotes = [
   {
     slug: "gles-ipad-to-windows",
+    // U+2011 (non-breaking hyphen) in the titles keeps "32-Bit" whole in the narrow list card.
     icon: "shader",
     published: "2026-11-20",
     kicker: tx("Graphics · Preservation", "Grafis · Preservasi"),
     title: tx(
-      "Translating 32-Bit iPad OpenGL ES 1.1/2.0 Pipelines to Native Windows & Linux",
-      "Menerjemahkan Pipeline OpenGL ES 1.1/2.0 iPad 32-Bit ke Windows & Linux Native",
+      "Translating 32‑Bit iPad OpenGL ES 1.1/2.0 Pipelines to Native Windows & Linux",
+      "Menerjemahkan Pipeline OpenGL ES 1.1/2.0 iPad 32‑Bit ke Windows & Linux Native",
     ),
     summary: tx(
-      "How the GT Racing: Motor Academy port serves an iPad-era OpenGL ES renderer on desktop OpenGL 2.1: shader rewriting, PVRTC decoding and live PostFX, plus the vertex-buffer work shared with the Gangstar port.",
-      "Bagaimana port GT Racing: Motor Academy menjalankan renderer OpenGL ES era iPad di OpenGL 2.1 desktop: penulisan ulang shader, dekode PVRTC, dan PostFX yang langsung berlaku, ditambah pekerjaan vertex buffer yang juga dipakai di port Gangstar.",
+      "How the port of a target 32-bit iPad (ARMv7) binary serves its OpenGL ES renderer on desktop OpenGL 2.1: shader rewriting, PVRTC decoding and live PostFX, plus the vertex-buffer work shared with the port of a target 32-bit OS X (i386) binary.",
+      "Bagaimana port biner target 32-bit iPad (ARMv7) menjalankan renderer OpenGL ES-nya di OpenGL 2.1 desktop: penulisan ulang shader, dekode PVRTC, dan PostFX yang langsung berlaku, ditambah pekerjaan vertex buffer yang juga dipakai di port biner target 32-bit OS X (i386).",
     ),
     tags: ["OpenGL ES 1.1/2.0", "GLSL 1.20", "PVRTC", "VBO"],
     related: [
@@ -2150,16 +2151,16 @@ export const engineeringNotes = [
                 icon: "cube",
                 title: tx("Geometry and driver syncs", "Geometri dan sinkronisasi driver"),
                 body: tx(
-                  "GL state and vertex arrays are cached and streamed through VBOs to avoid driver syncs. The Gangstar port keeps static geometry in GPU buffers for the same reason.",
-                  "State GL dan vertex array di-cache dan dialirkan melalui VBO untuk menghindari sinkronisasi driver. Port Gangstar menyimpan geometri statis di buffer GPU dengan alasan yang sama.",
+                  "GL state and vertex arrays are cached and streamed through VBOs to avoid driver syncs. The port of the target 32-bit OS X (i386) binary keeps static geometry in GPU buffers for the same reason.",
+                  "State GL dan vertex array di-cache dan dialirkan melalui VBO untuk menghindari sinkronisasi driver. Port biner target 32-bit OS X (i386) menyimpan geometri statis di buffer GPU dengan alasan yang sama.",
                 ),
               },
               {
                 icon: "shader",
                 title: tx("PostFX as shader inputs", "PostFX sebagai input shader"),
                 body: tx(
-                  "Effect strengths are inputs to the shaders, not constants compiled into them. `GT_POSTFX=0` is the as-shipped image and `4` (Enhanced) is the default.",
-                  "Kekuatan efek menjadi input shader, bukan konstanta yang dikompilasi ke dalamnya. `GT_POSTFX=0` adalah gambar seperti rilis aslinya dan `4` (Enhanced) adalah default.",
+                  "Effect strengths are inputs to the shaders, not constants compiled into them. PostFX level `0` is the as-shipped image and level `4` (Enhanced) is the default.",
+                  "Kekuatan efek menjadi input shader, bukan konstanta yang dikompilasi ke dalamnya. PostFX level `0` adalah gambar seperti rilis aslinya dan level `4` (Enhanced) adalah default.",
                 ),
               },
             ],
@@ -2184,8 +2185,8 @@ export const engineeringNotes = [
                 "Satu jalur kode untuk Windows dan Linux; Linux hanya menambahkan platform layer kecil",
               ),
               tx(
-                "In the Gangstar port, static VBOs cut time inside draw calls from 185 to 77 ms per second",
-                "Di port Gangstar, VBO statis memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik",
+                "In the port of the target 32-bit OS X (i386) binary, static VBOs cut time inside draw calls from 185 to 77 ms per second",
+                "Di port biner target 32-bit OS X (i386), VBO statis memangkas waktu di dalam draw call dari 185 menjadi 77 ms per detik",
               ),
             ],
           },
