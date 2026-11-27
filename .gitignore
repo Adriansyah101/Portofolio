@@ -10,3 +10,6 @@ npm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Local-only project notes (kept on disk, not published)
+/README.md
