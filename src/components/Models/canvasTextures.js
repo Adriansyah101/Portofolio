@@ -379,11 +379,11 @@ export const createProjectsScreenTexture = () => {
   ctx.fillText("Projects", 40, 108);
   ctx.fillStyle = S.dim;
   ctx.font = font(22, 400, MONO);
-  ctx.fillText("original builds · 32-bit preservation", 240, 110);
+  ctx.fillText("original builds · legacy preservation", 240, 110);
 
   const columns = [
     { x: 36, title: "ORIGINAL", color: S.sage, items: ["SIDAF", "VR Airport", "War Plane 1945"] },
-    { x: 524, title: "32-BIT PRESERVATION", color: S.blue, items: ["iOS Loader · ARMv7", "Mac Loader · i386"] },
+    { x: 524, title: "LEGACY PRESERVATION", color: S.blue, items: ["iOS Loader · ARMv7", "Mac Loader · i386"] },
   ];
   columns.forEach(({ x, title, color, items }) => {
     panel(ctx, x, 146, 464, 290);

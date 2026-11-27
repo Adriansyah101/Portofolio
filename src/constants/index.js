@@ -268,10 +268,10 @@ export const ui = {
   projects: {
     pageTitle: tx("Projects", "Proyek"),
     eyebrow: tx("Projects", "Proyek"),
-    title: tx("Original software & 32-bit preservation", "Software original & preservasi 32-bit"),
+    title: tx("Original Software & Legacy Preservation", "Software Original & Preservasi Klasik"),
     description: tx(
-      "Four original applications built from scratch, and two binary loaders that run 32-bit iPad and Mac software natively on Windows and Linux x86. The case studies cover them in technical detail.",
-      "Empat aplikasi original yang dibangun dari nol, serta dua loader biner yang menjalankan software iPad dan Mac 32-bit secara native di Windows dan Linux x86. Studi kasus membahasnya secara teknis.",
+      "Four original applications built from scratch, and two binary loaders that run 32-bit iPad and Mac software natively on Windows and Linux x86.",
+      "Empat aplikasi original yang dibangun dari nol, serta dua loader biner yang menjalankan software iPad dan Mac 32-bit secara native di Windows dan Linux x86.",
     ),
     featured: tx("Featured Project", "Proyek Unggulan"),
     catalogTitle: tx("Project catalog", "Katalog proyek"),
@@ -279,8 +279,8 @@ export const ui = {
     showing: tx("Showing {n} of {total} projects", "Menampilkan {n} dari {total} proyek"),
     compareEyebrow: tx("Architecture comparison", "Perbandingan arsitektur"),
     compareTitle: tx(
-      "Legacy 32-Bit iPad/Mac vs. Native Windows/Linux Port",
-      "iPad/Mac 32-Bit Lama vs. Port Native Windows/Linux",
+      "Legacy Binaries vs. Native Windows/Linux Ports",
+      "Biner Klasik vs. Port Native Windows/Linux",
     ),
     compareDescription: tx(
       "What each loader's input was built for, and what it runs on now.",
@@ -393,7 +393,7 @@ export const contactScene = {
 export const projectCategories = [
   { id: "all", label: tx("All", "Semua") },
   { id: "original", label: tx("Original Software", "Software Original") },
-  { id: "preservation", label: tx("32-Bit Preservation", "Preservasi 32-Bit") },
+  { id: "preservation", label: tx("Legacy Preservation", "Preservasi Klasik") },
 ];
 
 /**
@@ -413,8 +413,8 @@ export const projectSections = {
   },
   preservation: {
     index: "02",
-    title: tx("32-Bit Software Preservation", "Preservasi Software 32-Bit"),
-    badge: { label: tx("32-Bit Preservation", "Preservasi 32-Bit"), icon: "archive" },
+    title: tx("Legacy Software Preservation", "Preservasi Software Klasik"),
+    badge: { label: tx("Legacy Preservation", "Preservasi Klasik"), icon: "archive" },
     description: tx(
       "Two Mach-O loaders that run 32-bit iPad (ARMv7) and Mac (i386) binaries natively on Windows and Linux x86, after current iOS and macOS dropped them.",
       "Dua loader Mach-O yang menjalankan biner iPad (ARMv7) dan Mac (i386) 32-bit secara native di Windows dan Linux x86, setelah iOS dan macOS terbaru meninggalkannya.",
@@ -424,6 +424,8 @@ export const projectSections = {
 
 const ORIGINAL_BADGE = tx("Original Software", "Software Original");
 const VIEW_SOURCE = tx("View Source on GitHub", "Lihat Source di GitHub");
+/** Shorter label for the same link on the compact overview tiles (desktop "All"). */
+const VIEW_SOURCE_SHORT = tx("GitHub Source", "Source GitHub");
 const GITHUB_REPOSITORY = tx("GitHub Repository", "Repositori GitHub");
 /** `{tag}` is filled with the latest GitHub release tag (src/hooks/useGitHubReleases.js). */
 const RELEASE_TAG = tx("Release {tag}", "Rilis {tag}");
@@ -446,14 +448,14 @@ export const originalProjects = [
     platformIcon: "terminal",
     categoryLabel: tx("System Utility", "Utilitas Sistem"),
     description: tx(
-      "Modular Windows system utility combining WinUI & CLI interfaces, ETW installation monitoring and rollback, guarded leftover/registry cleanup with .reg backups, and non-destructive system maintenance (DISM, SFC, CHKDSK /scan).",
-      "Utilitas sistem Windows modular dengan antarmuka WinUI & CLI, pemantauan instalasi berbasis ETW dan rollback, pembersihan sisa file/registry terproteksi dengan backup .reg, serta pemeliharaan sistem non-destruktif (DISM, SFC, CHKDSK /scan).",
+      "Modular Windows system utility (WinUI & CLI) with ETW install tracing, .reg-backed cleanup, and DISM/SFC maintenance.",
+      "Utilitas sistem Windows modular (WinUI & CLI) dengan pemantauan ETW, pembersihan ber-backup .reg, dan pemeliharaan DISM/SFC.",
     ),
     tags: ["C# / .NET", "WinUI & CLI", "Windows Internals / ETW", tx("System Maintenance", "Pemeliharaan Sistem")],
     art: "niskala",
     image: null, // e.g. "images/niskala.png" (16:9)
     links: [
-      { label: VIEW_SOURCE, href: links.niskalaRepo, icon: "github" },
+      { label: VIEW_SOURCE, shortLabel: VIEW_SOURCE_SHORT, href: links.niskalaRepo, icon: "github" },
       { release: "niskala", label: RELEASE_TAG, href: links.niskalaReleases, icon: "tag" },
     ],
     comparison: null,
@@ -468,13 +470,13 @@ export const originalProjects = [
     platformIcon: "code",
     categoryLabel: tx("Information System", "Sistem Informasi"),
     description: tx(
-      "Full-stack web information system for structured data management, operational workflows and administrative reporting.",
-      "Sistem informasi web full-stack untuk pengelolaan data terstruktur, alur kerja operasional, dan pelaporan administratif.",
+      "Full-stack web information system for structured data management and reporting.",
+      "Sistem informasi web full-stack untuk pengelolaan data dan pelaporan terstruktur.",
     ),
     tags: ["PHP", "CodeIgniter", "JavaScript", "HTML & CSS"],
     art: "sidaf",
     image: null, // e.g. "images/sidaf.png" (16:9); without one the card shows its architecture schematic
-    links: [{ label: VIEW_SOURCE, href: links.sidafRepo, icon: "github" }],
+    links: [{ label: VIEW_SOURCE, shortLabel: VIEW_SOURCE_SHORT, href: links.sidafRepo, icon: "github" }],
     comparison: null,
   },
   {
@@ -487,16 +489,18 @@ export const originalProjects = [
     platformIcon: "cube",
     categoryLabel: tx("VR & 3D Simulation", "Simulasi VR & 3D"),
     description: tx(
-      "Virtual reality simulation of airport procedures, with spatial 3D navigation through terminal and airside areas on Oculus Quest 2 and PCVR.",
-      "Simulasi prosedur bandara berbasis virtual reality, dengan navigasi spasial 3D di area terminal dan sisi udara pada Oculus Quest 2 dan PCVR.",
+      "Interactive 3D airport ground-handling and operational procedure simulation.",
+      "Simulasi interaktif 3D prosedur operasional dan layanan darat bandara.",
     ),
     tags: ["Unity", "C#", "Oculus Quest 2", "PCVR"],
     art: "airport",
     // The card shows the architecture schematic, with the demo video behind its play button.
-    // Set "images/vr-airport.jpg" to use the video's thumbnail instead.
+    // Set "images/vr-airport.jpg" to use the video's thumbnail instead. `poster` is the still
+    // used on the small overview tile, where the schematic would be too small to read.
     image: null,
+    poster: "images/vr-airport.jpg",
     video: { youtubeId: "oLm0qSSHeiM", title: "Demo Aplikasi Simulasi Prosedur Bandara Menggunakan Virtual Reality" },
-    links: [{ label: VIEW_SOURCE, href: links.vrAirportRepo, icon: "github" }],
+    links: [{ label: VIEW_SOURCE, shortLabel: VIEW_SOURCE_SHORT, href: links.vrAirportRepo, icon: "github" }],
     comparison: null,
   },
   {
@@ -509,8 +513,8 @@ export const originalProjects = [
     platformIcon: "controller",
     categoryLabel: tx("Interactive 2D Application", "Aplikasi Interaktif 2D"),
     description: tx(
-      "Interactive 2D application built from scratch, with custom 2D movement kinematics, projectile logic, entity wave management and collision detection.",
-      "Aplikasi interaktif 2D yang dibangun dari nol, dengan kinematika gerak 2D kustom, logika proyektil, manajemen gelombang entitas, dan deteksi tabrakan.",
+      "Interactive 2D aerial action application built from scratch.",
+      "Aplikasi interaktif 2D dengan mekanika pertempuran udara yang dibangun dari awal.",
     ),
     tags: ["GML", tx("2D Kinematics", "Kinematika 2D"), tx("Collision Detection", "Deteksi Tabrakan"), "Windows"],
     art: "warplane",
@@ -518,7 +522,7 @@ export const originalProjects = [
     image: null,
     video: { youtubeId: "LXDtVyzX5zQ", title: "War Plane 1945 - Demo" },
     links: [
-      { label: VIEW_SOURCE, href: links.warPlaneRepo, icon: "github" },
+      { label: VIEW_SOURCE, shortLabel: VIEW_SOURCE_SHORT, href: links.warPlaneRepo, icon: "github" },
       { label: tx("Open Web Build", "Buka Build Web"), href: links.warPlaneWeb, icon: "external" },
     ],
     comparison: null,
@@ -537,18 +541,20 @@ export const preservationProjects = [
     id: "ios-loader",
     category: "preservation",
     caseStudy: routes.iosLoader,
-    shortTitle: tx("32-Bit iOS (ARMv7) Binary Loader", "Loader iOS 32-Bit"),
+    // U+2011 (non-breaking hyphen) keeps "32-Bit" whole on a narrow tile.
+    shortTitle: tx("32‑Bit iOS (ARMv7) Binary Loader", "Loader iOS 32‑Bit"),
     subtitle: tx("Static Recompiler & OpenGL ES Runtime Bridge", "Rekompiler Statis & Runtime Bridge OpenGL ES"),
     platform: "32-Bit iPad",
     platformIcon: "tablet",
     origin: "32-bit iPad · ARMv7 Mach-O",
     target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "Static binary recompilation and OpenGL ES to desktop OpenGL 2.1 runtime bridge enabling 32-bit iPad (ARMv7) Mach-O binaries to execute natively on Windows and Linux x86.",
-      "Rekompilasi biner statis dan jembatan runtime OpenGL ES ke desktop OpenGL 2.1 agar biner 32-bit iPad (ARMv7) Mach-O berjalan native di Windows dan Linux x86.",
+      "Static binary recompilation and OpenGL ES to OpenGL 2.1 runtime bridge for native Windows & Linux x86 execution.",
+      "Rekompilasi biner statis dan jembatan runtime OpenGL ES ke OpenGL 2.1 untuk eksekusi native di Windows & Linux x86.",
     ),
     tags: [tx("Static Recompilation", "Rekompilasi Statis"), "ARMv7 → x86", "Mach-O", "OpenGL ES → GL 2.1"],
     art: "iosloader",
+    compactArt: "iosloader-strip",
     image: null,
     links: [
       { label: GITHUB_REPOSITORY, href: links.iosLoaderRepo, icon: "github", iconOnly: true },
@@ -604,18 +610,19 @@ export const preservationProjects = [
     id: "mac-loader",
     category: "preservation",
     caseStudy: routes.macLoader,
-    shortTitle: tx("32-Bit Mac (i386) Native Loader", "Loader Mac 32-Bit"),
+    shortTitle: tx("32‑Bit Mac (i386) Native Loader", "Loader Mac 32‑Bit"),
     subtitle: tx("User-Space Mach-O Loader & ABI/Syscall Shim", "Loader Mach-O User-Space & Shim ABI/Syscall"),
     platform: "32-Bit Mac",
     platformIcon: "laptop",
     origin: tx("32-bit Mac · i386 Mach-O", "Mac 32-bit · Mach-O i386"),
     target: "Windows & Linux x86 · {tag}",
     description: tx(
-      "Custom user-space Mach-O loader and ABI/syscall shim running legacy 32-bit OS X (i386) binaries natively on Windows x86 and Linux without CPU emulation.",
-      "Loader Mach-O user-space kustom dan jembatan ABI/syscall untuk menjalankan biner klasik 32-bit OS X (i386) secara native di Windows x86 dan Linux tanpa emulasi CPU.",
+      "User-space Mach-O loader and ABI/syscall shim running legacy OS X i386 binaries natively without CPU emulation.",
+      "Loader Mach-O user-space dan jembatan ABI/syscall untuk menjalankan biner klasik OS X i386 secara native tanpa emulasi CPU.",
     ),
     tags: [tx("Mach-O Loader", "Loader Mach-O"), "i386 ABI", tx("dyld binding", "Binding dyld"), "SHA-256"],
     art: "macloader",
+    compactArt: "macloader-strip",
     image: null,
     links: [
       { label: GITHUB_REPOSITORY, href: links.macLoaderRepo, icon: "github", iconOnly: true },

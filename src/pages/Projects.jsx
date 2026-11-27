@@ -29,30 +29,37 @@ import { usePageTitle } from "../utils/hooks.js";
 
 /**
  * One project. `compact` (the "All" overview on desktop) trims the card to a
- * scannable tile: shorter artwork, a two-line summary and no tag list; the
- * originals beside the featured tile become thumbnail rows (`is-row`). The
+ * scannable tile: shorter artwork, the full one- or two-sentence summary (never
+ * clipped) and no tag list; the featured project runs across the top and
+ * the other originals become a row of small tiles under it (`is-tile`). The
  * category views and every screen under 1024px show the full card. A
  * `featured` project spans its row, with the artwork beside the text from
  * tablet width up, and carries a "Featured Project" marker.
  */
 const ArchiveCard = ({ project, badge, text, compact }) => {
-  const row = compact && !project.featured && project.category === "original";
+  const tile = compact && !project.featured && project.category === "original";
   const classes = [
     "archive-card",
     compact && "is-compact",
-    row && "is-row",
+    tile && "is-tile",
     project.featured && "is-featured",
   ].filter(Boolean);
+  const alt = format(text.previewAlt, { title: project.shortTitle });
+  // A tile with a one-row schematic (`compactArt`) swaps it in for the full diagram on desktop.
+  const strip = compact && project.compactArt;
   return (
     <article className={classes.join(" ")}>
       <ProjectPreview
         art={project.art}
-        image={project.image}
+        // The overview tiles use the still frame (`poster`) and play the video in a dialog.
+        image={compact && project.poster ? project.poster : project.image}
         imagePosition={project.imagePosition}
         video={project.video}
-        alt={format(text.previewAlt, { title: project.shortTitle })}
-        className="archive-art"
+        videoMode={compact ? "dialog" : "inline"}
+        alt={alt}
+        className={`archive-art ${strip ? "lg:hidden" : ""}`}
       />
+      {strip && <ProjectPreview art={project.compactArt} alt={alt} className="archive-art is-strip hidden lg:block" />}
       <div className="archive-body">
         <div className="flex flex-wrap items-center gap-2">
           {project.featured && (
@@ -145,7 +152,7 @@ const CatalogSection = ({ id, section, items, text, compact, children = null }) 
 );
 
 /**
- * `/projects`: Original Software and 32-Bit Software Preservation (the two
+ * `/projects`: Original Software and Legacy Software Preservation (the two
  * binary loaders, each linking to its case study) as two clearly
  * separated groups, filterable with `All / Original / 32-Bit` pills
  * (`?category=original|preservation`), with Niskala Utilities first as the

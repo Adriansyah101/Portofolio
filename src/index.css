@@ -916,7 +916,7 @@
 
   /* Overview: a narrower artwork column keeps the featured row short. */
   .archive-card.is-compact.is-featured {
-    @apply lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)];
+    @apply lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)];
   }
 
   .archive-card.is-compact.is-featured .archive-art {
@@ -987,17 +987,31 @@
     @apply lg:text-lg;
   }
 
+  /* Overview summaries are written to fit, so they are never clipped. */
   .archive-card.is-compact .archive-description {
-    @apply lg:line-clamp-2;
+    @apply lg:text-[0.8125rem] lg:leading-snug;
   }
 
   .archive-card.is-compact .project-link {
-    @apply lg:max-w-full lg:min-w-0 lg:px-3 lg:py-1.5 lg:text-xs lg:whitespace-nowrap;
+    @apply lg:flex-none lg:px-2.5 lg:py-1.5 lg:text-xs lg:whitespace-nowrap;
   }
 
-  /* Narrow tiles (1024px) shorten a long label; the full text stays in the tooltip and for screen readers. */
-  .archive-card.is-compact .project-link-label {
-    @apply lg:truncate;
+  /* `shortLabel` ("GitHub Source") stands in for a long label on the overview tiles. */
+  .project-link-label.is-short {
+    @apply hidden;
+  }
+
+  .archive-card.is-compact .project-link-label.is-full {
+    @apply lg:hidden;
+  }
+
+  .archive-card.is-compact .project-link-label.is-short {
+    @apply lg:inline;
+  }
+
+  /* The one-row loader schematic of an overview tile: a short strip, not a cropped diagram. */
+  .archive-card.is-compact .archive-art.is-strip {
+    @apply lg:aspect-auto lg:h-20 xl:h-24;
   }
 
   .archive-card.is-compact .project-link.secondary {
@@ -1009,69 +1023,53 @@
   }
 
   /*
-   * Desktop overview of the original group: the featured project as a tall
-   * tile on the left, the other originals as thumbnail rows beside it (a
-   * shorter row of artwork, one line of summary, no video label).
+   * Desktop overview of the original group: the featured project as one wide
+   * card across the top (artwork beside the text), the other three originals
+   * as a row of small tiles under it (`is-tile`): a short strip of artwork,
+   * the full summary, no video label.
    */
   .catalog.is-all .archive-grid.is-original {
-    @apply lg:grid-cols-2;
+    @apply lg:grid-cols-3 lg:gap-3;
   }
 
-  .catalog.is-all .archive-card.is-featured {
-    @apply lg:col-span-1 lg:row-span-3 lg:flex;
-  }
-
-  .catalog.is-all .archive-card.is-featured .archive-art {
-    @apply lg:aspect-[5/2] lg:h-auto;
-  }
-
-  .catalog.is-all .archive-card.is-featured .project-preview {
-    @apply lg:border-r-0 lg:border-b;
-  }
-
-  .catalog.is-all .archive-card.is-featured .archive-description {
-    @apply lg:line-clamp-2;
-  }
-
-  /* Thumbnail rows of the overview (`is-row`, set only there): the originals beside the featured tile. */
-  .archive-card.is-row {
-    @apply lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)];
-  }
-
-  .archive-card.is-row .archive-art {
-    @apply lg:aspect-auto lg:h-full;
-  }
-
-  .archive-card.is-row .project-preview {
+  .archive-card.is-compact.is-featured .project-preview {
     @apply lg:border-r lg:border-b-0;
   }
 
-  .archive-card.is-row .archive-body {
+  /* The artwork fills whatever height the text needs instead of setting it. */
+  .archive-card.is-compact.is-featured .archive-art > :is(svg, img) {
+    @apply lg:absolute lg:inset-0;
+  }
+
+  .archive-card.is-compact.is-featured .archive-body {
+    @apply lg:justify-center;
+  }
+
+  .archive-card.is-tile .archive-art {
+    @apply lg:aspect-auto lg:h-16 xl:h-20;
+  }
+
+  .archive-card.is-tile .archive-title {
+    @apply lg:text-base;
+  }
+
+  .archive-card.is-tile .archive-body {
     @apply lg:gap-1.5 lg:p-3;
   }
 
-  .archive-card.is-row .archive-description {
-    @apply lg:line-clamp-1;
-  }
-
-  .archive-card.is-row .category-chip {
+  .archive-card.is-tile .category-chip {
     @apply lg:hidden;
   }
 
-  /* One line of actions: the primary label truncates instead of wrapping. */
-  .archive-card.is-row .project-actions {
-    @apply lg:flex-nowrap;
-  }
-
-  .archive-card.is-row .video-chip {
+  .archive-card.is-tile .video-chip {
     @apply lg:hidden;
   }
 
-  .archive-card.is-row .video-play {
+  .archive-card.is-tile .video-play {
     @apply lg:size-10;
   }
 
-  .archive-card.is-row .video-play svg {
+  .archive-card.is-tile .video-play svg {
     @apply lg:size-5;
   }
 
@@ -1087,6 +1085,15 @@
 
   .catalog.is-all .catalog-heading {
     @apply lg:items-center;
+  }
+
+  /* The overview spends its height on the cards: slimmer group padding and heading gap. */
+  .catalog.is-all .catalog-section {
+    @apply xl:p-4;
+  }
+
+  .catalog.is-all .archive-grid {
+    @apply lg:mt-3;
   }
 
   /* Screenshots fill the 8:5 frame like the SVG artwork does (16:9 captures crop slightly at the sides). */

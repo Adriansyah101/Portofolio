@@ -13,7 +13,7 @@ export const PlatformBadge = ({ project, className = "" }) => (
   </span>
 );
 
-/** Calm category marker: "Original" vs "32-Bit Preservation" (`kind` = section id). */
+/** Calm category marker: "Original" vs "Legacy Preservation" (`kind` = section id). */
 export const KindBadge = ({ kind, badge, className = "" }) => (
   <span className={`kind-badge ${className}`} data-kind={kind}>
     <Icon name={badge.icon} className="size-3.5" />
@@ -85,7 +85,7 @@ export const ProjectTags = ({ tags }) => {
  * GitHub / release links. Without a case study, the first external link is
  * styled as the primary action. `arrow: true` on a link adds a trailing →;
  * `iconOnly: true` shows it as a compact icon button (label as tooltip and for
- * screen readers).
+ * screen readers); `shortLabel` replaces the label on the compact overview tiles.
  * Inside a compact archive tile (desktop overview) the CSS turns secondary
  * links into icon buttons; their label stays for screen readers and as a tooltip.
  */
@@ -110,7 +110,8 @@ export const ProjectActions = ({ project }) => {
           title={link.label}
         >
           <Icon name={link.icon} className="size-4 flex-none" />
-          <span className="project-link-label">{link.label}</span>
+          <span className={`project-link-label ${link.shortLabel ? "is-full" : ""}`}>{link.label}</span>
+          {link.shortLabel && <span className="project-link-label is-short">{link.shortLabel}</span>}
           {link.arrow && <ArrowRightIcon className="project-link-arrow size-4" />}
         </a>
       ))}

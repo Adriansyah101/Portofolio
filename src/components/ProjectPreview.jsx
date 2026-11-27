@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CloseIcon } from "./Icons.jsx";
 import { assetUrl } from "../utils/assets.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { tx } from "../utils/i18n.js";
 import {
   AirportSchematic,
   IosLoaderSchematic,
+  IosLoaderStrip,
   MacLoaderSchematic,
+  MacLoaderStrip,
   SidafSchematic,
   WarplaneSchematic,
 } from "./Schematics.jsx";
@@ -169,6 +172,14 @@ const artLabels = {
     "Architecture schematic: an i386 Mach-O and its dyld bind information pass through the user-space loader and ABI shim to Windows and Linux x86",
     "Skema arsitektur: Mach-O i386 dan informasi bind dyld-nya melewati loader user-space dan shim ABI menuju Windows dan Linux x86",
   ),
+  "iosloader-strip": tx(
+    "Schematic: ARMv7 Mach-O recompiled and bridged to native x86 on OpenGL 2.1",
+    "Skema: Mach-O ARMv7 direkompilasi dan dijembatani ke x86 native di OpenGL 2.1",
+  ),
+  "macloader-strip": tx(
+    "Schematic: i386 Mach-O run by the user-space loader and ABI shim on Windows and Linux x86",
+    "Skema: Mach-O i386 dijalankan loader user-space dan shim ABI di Windows dan Linux x86",
+  ),
   niskala: tx("Niskala Utilities splash screen: the N monogram above the NISKALA UTILITIES wordmark", "Layar splash Niskala Utilities: monogram N di atas wordmark NISKALA UTILITIES"),
 };
 
@@ -179,12 +190,64 @@ const artMap = {
   warplane: WarplaneSchematic,
   iosloader: IosLoaderSchematic,
   macloader: MacLoaderSchematic,
+  "iosloader-strip": IosLoaderStrip,
+  "macloader-strip": MacLoaderStrip,
   niskala: NiskalaArt,
 };
 
 const videoText = {
   play: tx("Play video: {title}", "Putar video: {title}"),
   demo: tx("Watch demo", "Tonton demo"),
+  close: tx("Close video", "Tutup video"),
+};
+
+const embedUrl = (video) => `https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`;
+
+/**
+ * The video in a native `<dialog>` at a comfortable 16:9 size (used where the
+ * preview itself is too small to watch in). The player exists only while the
+ * dialog is open, so closing it stops playback.
+ */
+const VideoDialog = ({ video, open, onClose, closeLabel }) => {
+  const dialogRef = useRef(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
+  }, [open]);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="lightbox"
+      aria-label={video.title}
+      onClose={onClose}
+      onClick={(event) => event.target === event.currentTarget && onClose()}
+    >
+      {open && (
+        <div className="lightbox-frame">
+          <div className="aspect-video w-full bg-black">
+            <iframe
+              className="size-full"
+              src={embedUrl(video)}
+              title={video.title}
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+          <div className="lightbox-controls">
+            <p className="min-w-0 flex-1 text-sm text-white-50">{video.title}</p>
+            <button type="button" className="lightbox-btn" onClick={onClose} aria-label={closeLabel} title={closeLabel}>
+              <CloseIcon className="size-5" />
+            </button>
+          </div>
+        </div>
+      )}
+    </dialog>
+  );
 };
 
 /**
@@ -195,8 +258,10 @@ const videoText = {
  * facade: the YouTube player (privacy-enhanced, no cookies until played) only
  * loads after the visitor presses play. `overlay` (for example a badge) is
  * shown on top of the poster and hidden while the video plays.
+ * `videoMode="dialog"` plays it in a dialog instead of inside the preview
+ * (the small overview tiles), so the player never renders cramped.
  */
-const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null, className = "" }) => {
+const ProjectPreview = ({ art, image, imagePosition, video, videoMode = "inline", alt, overlay = null, className = "" }) => {
   const [failed, setFailed] = useState(false);
   const [playing, setPlaying] = useState(false);
   const { lang } = useLanguage();
@@ -228,9 +293,9 @@ const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null,
 
   return (
     <div className={`project-preview is-video ${className}`}>
-      {playing ? (
+      {playing && videoMode === "inline" ? (
         <iframe
-          src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+          src={embedUrl(video)}
           title={video.title}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           referrerPolicy="strict-origin-when-cross-origin"
@@ -256,6 +321,9 @@ const ProjectPreview = ({ art, image, imagePosition, video, alt, overlay = null,
           </button>
           {overlay}
         </>
+      )}
+      {videoMode === "dialog" && (
+        <VideoDialog video={video} open={playing} onClose={() => setPlaying(false)} closeLabel={videoText.close[lang]} />
       )}
     </div>
   );

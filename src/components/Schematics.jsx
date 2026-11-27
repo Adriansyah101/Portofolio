@@ -286,3 +286,53 @@ export const MacLoaderSchematic = ({ label }) => (
     ]}
   />
 );
+
+/**
+ * One-row version of a loader schematic for the small overview tiles, where
+ * the full diagram would shrink past legibility: legacy input → native target,
+ * with the translation layer named on the arrow. Wide (300 × 96) so it fills a
+ * short strip; `meet` keeps it whole at any width.
+ */
+const LoaderStrip = ({ label, from, via, to }) => {
+  const grid = `strip-${useId().replace(/:/g, "")}`;
+  const box = (x, node, accent) => (
+    <g>
+      <rect x={x} y="22" width="84" height="52" rx="8" fill={C.node} stroke={accent ? C.accent : C.stroke} strokeWidth={accent ? 1.5 : 1.1} />
+      <text x={x + 42} y="45" fontSize="14" fontWeight="600" fill={C.label} textAnchor="middle">
+        {node.label}
+      </text>
+      <text x={x + 42} y="62" fontSize="9" fill={accent ? C.accent : C.sub} textAnchor="middle">
+        {node.sub}
+      </text>
+    </g>
+  );
+  return (
+    <svg viewBox="0 0 300 96" preserveAspectRatio="xMidYMid meet" role="img" aria-label={label}>
+      <defs>
+        <pattern id={grid} width="16" height="16" patternUnits="userSpaceOnUse">
+          <path d="M16 0H0V16" fill="none" stroke={C.grid} strokeWidth="0.75" />
+        </pattern>
+      </defs>
+      <rect x="-2000" y="-2000" width="4300" height="4100" fill={C.ground} />
+      <rect x="-2000" y="-2000" width="4300" height="4100" fill={`url(#${grid})`} />
+      <g fontFamily={MONO}>
+        {box(12, from, false)}
+        {box(204, to, true)}
+        <text x="150" y="40" fontSize="8" letterSpacing="0.04em" fill={C.accent} textAnchor="middle">
+          {via}
+        </text>
+      </g>
+      <Arrow points={[[100, 48], [202, 48]]} color={C.accent} />
+    </svg>
+  );
+};
+
+/** iOS loader strip: ARMv7 Mach-O → x86 / OpenGL 2.1. */
+export const IosLoaderStrip = ({ label }) => (
+  <LoaderStrip label={label} from={{ label: "ARMv7", sub: "Mach-O · GL ES" }} via="RECOMP + BRIDGE" to={{ label: "x86", sub: "OpenGL 2.1" }} />
+);
+
+/** Mac loader strip: i386 Mach-O → Windows / Linux x86. */
+export const MacLoaderStrip = ({ label }) => (
+  <LoaderStrip label={label} from={{ label: "i386", sub: "Mach-O · dyld" }} via="LOADER + ABI SHIM" to={{ label: "x86", sub: "Windows · Linux" }} />
+);

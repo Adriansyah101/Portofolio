@@ -11,7 +11,7 @@ a Systems & Application Operations Engineer based in Semarang, Indonesia.
   - **Original Software**: **Niskala Utilities** (featured: Windows WinUI & CLI system utility,
     C# / .NET), **SIDAF** (PHP / CodeIgniter information system), **VR Simulation Airport**
     (Unity / C#, Oculus Quest 2) and **War Plane 1945** (interactive 2D application).
-  - **32-Bit Software Preservation** (two binary loaders, each with its own case study):
+  - **Legacy Software Preservation** (two binary loaders, each with its own case study):
     - **32-Bit iOS (ARMv7) Binary Loader**: static binary recompilation and an OpenGL ES to desktop
       OpenGL 2.1 runtime bridge that run 32-bit iPad Mach-O binaries natively on Windows and Linux x86
       (repository `GTRacingMotorAcademy-PC-Port`).
@@ -50,7 +50,7 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | Route                 | Page                     | Contents                                                                 |
 | --------------------- | ------------------------ | ------------------------------------------------------------------------ |
 | `/`                     | Home                     | Command center: name, role, bio, four-metric strip and calls to action beside the interactive 3D workstation (its screens and tablet open Journey, Projects, Notes and Contact; hover-only tooltips and three camera presets: Overview, Desk Setup, Telemetry) |
-| `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, 32-Bit Software Preservation with the two loaders, each with "Read Case Study" and GitHub / release icon links) with `All / Original Software / 32-Bit Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics; "All" is a one-screen overview; the preservation view adds the legacy-vs-port comparison as tabs |
+| `/projects`             | Projects                 | Two separate groups (Original Software with Niskala Utilities featured first, Legacy Software Preservation with the two loaders, each with "Read Case Study" and GitHub / release icon links) with `All / Original Software / Legacy Preservation` filters (`?category=original` or `preservation`). Live release badges and monochrome architecture schematics. "All" is a desktop overview (Niskala across the top, the other originals as tiles, the loaders with one-row schematics); it fits one screen at 1440 × 900, while at 1280 × 800 the page stays fixed and the catalog scrolls on its own. No summary or button label is ever clipped with an ellipsis. Videos on the overview play in a dialog. The preservation view adds the legacy-vs-native comparison as tabs |
 | `/projects/niskala`     | Niskala Utilities        | Modular architecture, PathGuard / RegistryGuard / PrivilegeScope, `.reg` backups, the closed DISM / SFC / netsh / ipconfig / chkdsk command list, release |
 | `/projects/ios-loader`  | 32-bit iOS loader        | Why it stopped running, legacy-vs-native table, hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge, port engineering and leaderboard architecture, verified target implementations (release download, implementation repository, `host/core`, notes) and SHA-256 verification; a Compare link to the other loader sits beside Previous / Next |
 | `/projects/mac-loader`  | 32-bit Mac loader        | Why it stopped running, legacy-vs-native table, memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility, engineering fixes, verified target implementations (release download, implementation repository, `host/core`, notes) and SHA-256 verification; a Compare link to the other loader sits beside Previous / Next |
@@ -169,6 +169,10 @@ name or a version tag) shows the same text in both languages. Components read co
   projects link straight to GitHub (`View Source on GitHub`); Niskala Utilities also has a case
   study. Preservation projects (the two loaders) have a case study and a comparison table
   (`comparison`); `iconOnly: true` on a link shows it as a compact icon button on the card.
+  Overview tiles never clip text, so keep each `description` to one or two short sentences.
+  `shortLabel` on a link replaces its label on the overview tiles ("GitHub Source"); `poster` is a
+  still image for the overview tile (the VR demo frame), and `compactArt` a one-row schematic for
+  it (the loaders).
 - `releaseSources`: the repositories whose latest GitHub release drives the version badges and
   release links ([`src/hooks/useGitHubReleases.js`](src/hooks/useGitHubReleases.js)), with a
   fallback tag and URL each. In project and case-study data, a link with `release: "<project id>"`
