@@ -1,9 +1,14 @@
+import { useState } from "react";
+
 import TechIcon from "../components/Models/TechLogos/TechIcon.jsx";
 import { ExternalIcon, Icon } from "../components/Icons.jsx";
 import { BrandLogo } from "../components/CompanyEmblems.jsx";
-import { expCards as cardSource, techStackIcons, ui } from "../constants/index.js";
+import Lightbox from "../components/Lightbox.jsx";
+import { expCards as cardSource, fieldDocs, techStackIcons, ui } from "../constants/index.js";
 import { useLocalized } from "../context/LanguageContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { assetUrl } from "../utils/assets.js";
+import { format } from "../utils/i18n.js";
 import { renderInlineCode, softBreak } from "../utils/text.jsx";
 
 /**
@@ -81,8 +86,64 @@ export const ExperiencePanel = () => {
   );
 };
 
-/** What the role covered, one flat card per area: one, two or three per row by panel width. */
-export const OperationalBreakdown = () => {
+/**
+ * Field Documentation: four photos from the harbors in a 2 × 2 (phones) or
+ * 1 × 4 strip, each opening the lightbox. Third-party faces in the files are
+ * blurred.
+ */
+const FieldDocumentation = () => {
+  const photos = useLocalized(fieldDocs);
+  const { journey } = useLocalized(ui);
+  const text = journey.fieldDocs;
+  const [open, setOpen] = useState(null);
+
+  return (
+    <section className="field-docs" aria-labelledby="field-docs-title">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h3 id="field-docs-title" className="font-mono text-xs tracking-widest text-blue-50 uppercase">
+          {text.title}
+        </h3>
+        <p className="text-xs text-blue-50">{text.note}</p>
+      </div>
+      <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        {photos.map((photo, index) => (
+          <li key={photo.id} className="min-w-0">
+            <button
+              type="button"
+              className="field-thumb group"
+              onClick={() => setOpen(index)}
+              aria-label={format(text.open, { caption: photo.caption })}
+            >
+              <img
+                src={assetUrl(photo.src)}
+                width={photo.width}
+                height={photo.height}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                style={photo.position ? { objectPosition: photo.position } : undefined}
+              />
+            </button>
+            <p className="mt-1.5 font-mono text-[10px] leading-snug tracking-wider text-blue-50 uppercase">
+              {photo.place}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <Lightbox items={photos} index={open} onChange={setOpen} onClose={() => setOpen(null)} labels={text} />
+    </section>
+  );
+};
+
+/** What the role covered, one flat card per area (one, two or three per row by panel width), then the field photos. */
+export const OperationalBreakdown = () => (
+  <>
+    <BreakdownCards />
+    <FieldDocumentation />
+  </>
+);
+
+const BreakdownCards = () => {
   const cards = useLocalized(cardSource);
   const items = cards.flatMap((card) => card.breakdown ?? []);
 

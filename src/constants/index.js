@@ -237,6 +237,16 @@ export const ui = {
       "Sistem dan tools di balik operasional produksi sehari-hari, dari server pelabuhan hingga edge.",
     ),
     tech3dHint: tx("Drag an emblem to turn it.", "Geser emblem untuk memutarnya."),
+    fieldDocs: {
+      title: tx("Field Documentation", "Dokumentasi Lapangan"),
+      note: tx("Faces of other people are blurred for privacy.", "Wajah orang lain diburamkan demi privasi."),
+      open: tx("Open photo: {caption}", "Buka foto: {caption}"),
+      dialog: tx("Field documentation photo", "Foto dokumentasi lapangan"),
+      previous: tx("Previous photo", "Foto sebelumnya"),
+      next: tx("Next photo", "Foto berikutnya"),
+      close: tx("Close", "Tutup"),
+      counter: tx("{n} of {total}", "{n} dari {total}"),
+    },
   },
   experience: {
     title: tx("Professional Experience", "Pengalaman Profesional"),
@@ -2015,6 +2025,63 @@ export const expCards = [
         href: links.ferizy,
       },
     ],
+  },
+];
+
+/**
+ * Field Documentation on `/journey` (under the Operational Breakdown), in
+ * display order. The files in `public/images/journey/` are web exports with
+ * every face but the owner's blurred and no EXIF or GPS data; keep it that way
+ * when adding photos. `width` / `height` are the files' pixel sizes. Thumbnails
+ * frame the top of each photo; `position` (CSS object-position) moves the frame
+ * to the people when the top is only sky.
+ */
+export const fieldDocs = [
+  {
+    id: "taa-golive-field",
+    src: "images/journey/taa-golive-field.jpg",
+    position: "center 68%",
+    width: 1200,
+    height: 1600,
+    place: tx("Tanjung Api-Api Harbor", "Pelabuhan Tanjung Api-Api"),
+    caption: tx(
+      "On-site operational coordination with port officers during trip.ferizy.com go-live at Tanjung Api-Api Harbor.",
+      "Koordinasi operasional lapangan bersama petugas pelabuhan saat go-live trip.ferizy.com di Pelabuhan Tanjung Api-Api.",
+    ),
+  },
+  {
+    id: "taa-golive-warroom",
+    src: "images/journey/taa-golive-warroom.jpg",
+    width: 1600,
+    height: 1200,
+    place: tx("Tanjung Api-Api Harbor", "Pelabuhan Tanjung Api-Api"),
+    caption: tx(
+      "Cross-team go-live monitoring and deployment command room at Tanjung Api-Api Harbor.",
+      "Ruang koordinasi dan pemantauan deployment lintas tim saat go-live di Pelabuhan Tanjung Api-Api.",
+    ),
+  },
+  {
+    id: "sby-port-overview",
+    src: "images/journey/sby-port-overview.jpg",
+    width: 1280,
+    height: 960,
+    place: tx("Surabaya Harbor", "Pelabuhan Surabaya"),
+    caption: tx(
+      "Operational site readiness and port lane infrastructure at Surabaya Harbor.",
+      "Kesiapan lokasi operasional dan infrastruktur lajur di Pelabuhan Surabaya.",
+    ),
+  },
+  {
+    id: "sby-omron-barrier-install",
+    src: "images/journey/sby-omron-barrier-install.jpg",
+    position: "center 30%",
+    width: 1200,
+    height: 1600,
+    place: tx("Surabaya Harbor", "Pelabuhan Surabaya"),
+    caption: tx(
+      "Hardware installation and commissioning of Omron automated barrier gate units at Surabaya Harbor.",
+      "Pemasangan dan pengujian perangkat keras barrier gate otomatis berbasis Omron di Pelabuhan Surabaya.",
+    ),
   },
 ];
 

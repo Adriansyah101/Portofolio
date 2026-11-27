@@ -603,6 +603,69 @@
     @apply flex h-full min-w-0 flex-col rounded-xl border border-black-50 bg-black-100 p-5;
   }
 
+  /* Field Documentation strip under the breakdown cards. */
+  .field-docs {
+    @apply mt-6 border-t border-black-50 pt-5 lg:mt-4 lg:pt-4;
+  }
+
+  /* Thumbnails: flat surface, 1px hairline, a quiet desaturated rest state that comes to full colour on hover or focus. */
+  .field-thumb {
+    @apply block aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-lg border border-black-50 bg-black-100 transition-colors duration-300 hover:border-white/25 lg:aspect-[3/2];
+  }
+
+  .field-thumb img {
+    @apply size-full object-cover object-top transition-[filter] duration-300;
+    filter: grayscale(0.35) brightness(0.92);
+  }
+
+  .field-thumb:is(:hover, :focus-visible) img {
+    filter: none;
+  }
+
+  /* Lightbox: the photo on the canvas colour, caption and controls under it. */
+  .lightbox {
+    @apply m-auto overflow-visible border-0 bg-transparent p-0 text-white-50;
+    width: min(64rem, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+  }
+
+  .lightbox::backdrop {
+    background: rgb(9 9 11 / 0.82);
+    backdrop-filter: blur(4px);
+  }
+
+  .lightbox-frame {
+    @apply flex flex-col overflow-hidden rounded-2xl border border-black-50 bg-black-100;
+    max-height: calc(100dvh - 2rem);
+  }
+
+  .lightbox-figure {
+    @apply flex min-h-0 flex-col;
+  }
+
+  .lightbox-image {
+    @apply mx-auto block h-auto w-auto max-w-full object-contain;
+    max-height: calc(100dvh - 13rem);
+    animation: pageIn 0.25s ease both;
+  }
+
+  .lightbox-caption {
+    @apply block border-t border-black-50 px-4 pt-3 md:px-5;
+  }
+
+  .lightbox-controls {
+    @apply flex items-center gap-2 px-4 pt-3 pb-4 md:px-5;
+  }
+
+  .lightbox-btn {
+    @apply flex-center size-10 cursor-pointer rounded-full border border-white/10 text-white-50/85 transition-colors hover:border-white/30 hover:text-white;
+  }
+
+  /* No page scrolling behind the open viewer (phones scroll the document). */
+  html:has(.lightbox[open]) {
+    overflow: hidden;
+  }
+
   .stack-item {
     @apply flex items-center gap-3 rounded-xl border border-black-50 bg-black-100 p-3;
   }

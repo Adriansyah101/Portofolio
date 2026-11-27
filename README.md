@@ -53,7 +53,7 @@ compose window (`mail.google.com`) and `mailto:`, so it needs no keys or mail se
 | `/projects/gangstar`    | Gangstar case study      | Why it stopped running, legacy-vs-port table, porting approach, key engineering fixes, release and checksum verification |
 | `/projects/ios-loader`  | 32-bit iOS loader        | Hybrid loading pipeline (recompiled code, Mach-O data), fixed address layout, symbol and stub resolution, the ARM calling-convention bridge |
 | `/projects/mac-loader`  | 32-bit Mac loader        | Memory layout and low-range patches, dyld binding without dyld, Darwin / Cocoa / OpenGL shims, i386 ABI and TLS compatibility |
-| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown · Enterprise Stack · 3D Tech Cards |
+| `/journey`              | Journey                  | Executive summary of the PT ASDP role beside tabs: Operational Breakdown (with the Field Documentation photo strip and its lightbox) · Enterprise Stack · 3D Tech Cards |
 | `/notes`, `/notes/:slug` | Engineering Notes     | Note list and reading pane side by side on desktop; list and article pages on phones. Three notes, each Context → Engineering Approach → Outcome |
 | `/contact`              | Contact & Community      | Gmail contact card (compose, copy, mailto), warm 3D desk scene, GitHub links |
 
@@ -186,6 +186,9 @@ name or a version tag) shows the same text in both languages. Components read co
   `expCards` entry feeds the Operational Breakdown tab and the résumé. `icon` on a
   `techStackIcons` entry is its flat icon in the Enterprise Stack tab. Set `logo`
   on an `expCards` entry to a key of `brandLogos`.
+- `fieldDocs`: the Field Documentation photos on `/journey` (`public/images/journey/`), with place and
+  caption. The files are web exports in which every face except the site owner's is blurred and
+  all EXIF/GPS data is removed; process any new photo the same way before adding it.
 - `engineeringNotes`: the notes, each with three sections (Context, Engineering Approach, Outcome).
 - `brandLogos`: official company/product logos, read from `public/images/` with root paths
   (`/images/asdp.png`, `/images/ferizy.svg`). Each lists fallback files in order (png → svg); if
